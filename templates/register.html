@@ -1,0 +1,39 @@
+{% extends 'navbar.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="login-form" style="margin-top: 15%;">
+    <form class="forma">
+        <div>
+            <input type="text" class="form-control" placeholder="Korisnicko ime">
+        </div>
+
+        <div>
+            <input type="password" class="form-control" placeholder="Sifra">
+        </div>
+        <div>
+            <input type="text" class="form-control" placeholder="Lokacija">
+        </div>
+
+        <div class="form-confirm">
+            <div>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected disabled>Tip naloga</option>
+                    <option value="1">Kupac</option>
+                    <option value="2">Logisticar</option>
+                    <option value="3">Proizvodjac</option>
+                </select>
+            </div>
+            <div>
+                <button class="form-button" href="#">Registracija</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block links %}
+<form action="/login" method="get">
+    <button class="link"type="submit">Ulogujte se</button>
+</form>
+{% endblock %}

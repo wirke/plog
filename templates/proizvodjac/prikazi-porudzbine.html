@@ -1,0 +1,66 @@
+{% extends 'navbar.html' %}
+{% block title %}Korisnik{% endblock %}
+
+{% block logo %}href="/proizvodjac"{% endblock %}
+
+{% block links %}
+<form class="link" action="/novi-proizvod" method="get">
+    <button class="bezista" type="submit">Novi proizvod</button>
+</form>
+<form class="link" action="/prikazi-proizvode" method="get">
+    <button class="bezista" type="submit">Pregled proizvoda</button>
+</form>
+<form class="link" action="/prikazi-magacine" method="get">
+    <button class="bezista" type="submit">Pregled magacina</button>
+</form>
+<form class="link" action="/prikazi-porudzbine" method="get">
+    <button class="bezista" type="submit">Porudzbine</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+        <div class="red col-12">
+            <div class="blok">
+                <i class="fa-solid fa-hourglass-start ikonica"></i>
+            </div>
+            <div class="blok col-1">
+                kolicina
+            </div>
+            <div class="blok zadnji">
+                proizvod.naziv
+            </div>
+            <div class="blok zadnji">
+                porudzbina.cena
+            </div>
+            <div class="blok zadnji">
+                korisnik.ime
+            </div>
+            <div class="blok zadnji">
+                korisnik.lokacija
+            </div>
+        </div>
+        <div class="red col-12">
+            <div class="blok">
+                <i class="fa-solid fa-circle-check ikonica"></i>
+            </div>
+            <div class="blok col-1">
+                kolicina
+            </div>
+            <div class="blok zadnji">
+                proizvod.naziv
+            </div>
+            <div class="blok zadnji">
+                porudzbina.cena
+            </div>
+            <div class="blok zadnji">
+                korisnik.ime
+            </div>
+            <div class="blok zadnji">
+                korisnik.lokacija
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

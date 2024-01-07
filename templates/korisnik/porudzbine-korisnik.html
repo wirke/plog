@@ -1,0 +1,64 @@
+{% extends 'navbar.html' %}
+{% block title %}Korisnik{% endblock %}
+
+{% block logo %}href="/korisnik"{% endblock %}
+
+{% block links %}
+    <form class="link" action="/prikaz-proizvoda" method="get">
+        <button class="bezista" type="submit">Produkti</button>
+    </form>
+    <form class="link" action="/prikaz-magacina" method="get">
+        <button class="bezista" type="submit">Magacini</button>
+    </form>
+    <form class="link" action="/porudzbine-korisnik" method="get">
+        <button class="bezista" type="submit">Porudzbine</button>
+    </form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+        <div class="red col-12">
+            <div class="blok">
+                <i class="fa-solid fa-hourglass-start ikonica"></i>
+            </div>
+            <div class="blok col-3">
+                proizvod.naziv
+            </div>
+            <div class="blok col-3">
+                proizvod.kategorija
+            </div>
+            <div class="blok zadnji">
+                porudzbina.datum
+            </div>
+            <div class="blok zadnji">
+                proizvod.cena
+            </div>
+            <div class="blok col-1">
+                kolicina
+            </div>
+        </div>
+
+        <div class="red col-12">
+            <div class="blok">
+                <i class="fa-solid fa-truck-fast ikonica"></i>
+            </div>
+            <div class="blok col-3">
+                proizvod.naziv
+            </div>
+            <div class="blok col-3">
+                proizvod.kategorija
+            </div>
+            <div class="blok zadnji">
+                porudzbina.datum
+            </div>
+            <div class="blok zadnji">
+                proizvod.cena
+            </div>
+            <div class="blok col-1">
+                kolicina
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

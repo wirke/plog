@@ -1,0 +1,119 @@
+{% extends 'navbar.html' %}
+{% block title %}Korisnik{% endblock %}
+
+{% block logo %}href="/proizvodjac"{% endblock %}
+
+{% block links %}
+<form class="link" action="/novi-proizvod" method="get">
+    <button class="bezista" type="submit">Novi proizvod</button>
+</form>
+<form class="link" action="/prikazi-proizvode" method="get">
+    <button class="bezista" type="submit">Pregled proizvoda</button>
+</form>
+<form class="link" action="/prikazi-magacine" method="get">
+    <button class="bezista" type="submit">Pregled magacina</button>
+</form>
+<form class="link" action="/prikazi-porudzbine" method="get">
+    <button class="bezista" type="submit">Porudzbine</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+        <div class="pozadina">
+            <div class="red col-12" style="padding-right: 15px; padding-bottom: 15px;">
+
+                <div class="blok" style="width: 200px;">
+                    id
+                </div>
+        
+                <div class="blok col-3">
+                    proizvod.naziv
+                </div>
+        
+                <div class="blok col-3">
+                    proizvod.kategorija
+                </div>
+        
+                <div class="blok zadnji">
+                    proizvod.cena
+                </div>
+                <div class="blok zadnji">
+                    proizvod.preostalo
+                </div>
+                <form action="#" method="get" style="margin-right: 15px;">
+                    <button class="blok sabmit" type="submit">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="kontejner">
+    <div class="red col-12">
+                
+        <form style="margin-left: 0; margin-right: 15px;" action="#" method="get" style="margin-left: 15px;">
+            <button class="blok sabmit" type="submit">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </button>
+        </form>
+    
+        <div class="blok col-3">
+            magacin.naziv
+        </div>
+    
+        <div class="blok col-3">
+            magacin.lokacija
+        </div>
+
+        <div class="blok col-3">
+            magacin.popunjenost/slobodno
+        </div>
+    
+        <div style="width: 100%;">
+            <div class="blok upit">
+    
+                <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                    <i class="fas fa-minus"></i>
+                </button>
+        
+                <div>
+                    <input id="form1" min="1" name="quantity" value="1" type="number">
+                </div>
+        
+                <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+    
+            </div>
+        </div>
+    
+        <form action="#" method="get" style="margin-right: 15px; margin-left: 15px;">
+            <button class="blok sabmit" type="submit">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+        </form>
+
+    </div>
+
+    <div class="red col-12">
+        <form action="#" method="get" style="margin-right: 15px;">
+            <button class="blok sabmit" type="submit">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </form>
+        <div class="col-3 vlaga">
+            <select class="magacin-select blok col-12" aria-label="Default select example">
+                <option selected disabled>Dodajte u magacin</option>
+                <option value="1">magacin1(slobodno/lokacija)</option>
+                <option value="2">magacin2(slobodno/lokacija)</option>
+                <option value="3">magacin3(slobodno/lokacija)</option>
+                <option value="4">magacin4(slobodno/lokacija)</option>
+            </select>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

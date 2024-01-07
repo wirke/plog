@@ -1,0 +1,51 @@
+{% extends 'navbar.html' %}
+{% block title %}Logisticar{% endblock %}
+
+{% block logo %}href="/logisticar"{% endblock %}
+
+{% block links %}
+<form class="link" action="/novi-magacin" method="get">
+    <button class="bezista" type="submit">Novi magacin</button>
+</form>
+<form class="link" action="/moji-magacini" method="get">
+    <button class="bezista" type="submit">Pregled magacina</button>
+</form>
+<form class="link" action="/porudzbine" method="get">
+    <button class="bezista" type="submit">Porudzbine</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+
+        <div class="red col-12">
+
+            <div class="blok" style="width: 200px;">
+                id
+            </div>
+
+            <div class="blok col-4">
+                magacin.naziv
+            </div>
+
+            <div class="blok col-4">
+                magacin.lokacija
+            </div>
+
+            <div class="blok zadnji">
+                magacin.kapacitet/popunjenost
+            </div>
+
+            <div style="width: 100px; margin-right: 15px;">
+                <form action="/magacin" method="get">
+                    <button class="blok sabmit" type="submit">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,210 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Rethink Sans',
+    sans-serif;
+}
+body{
+    background-color: #302b27;
+}
+#content{
+    display: flex;
+    flex-direction: column;
+}
+#sidebar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: fit-content;
+    width: 100%;
+    padding: 10px;
+    background-color: #fff;
+    border-bottom-left-radius: 27px;
+    border-bottom-right-radius: 27px;
+    position: fixed;
+    overflow: auto;
+}
+.logotip{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.logo{
+    width: 150px;
+    margin-right: 15px;
+}
+.tekst{
+    color: #302b27;
+}
+.display{
+    padding-top: 90px;
+}
+.kontejner{
+    background-color: #fc804a;
+    border-radius: 27px;
+    padding: 15px;
+    padding-top: 0;
+    padding-left: 0;
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-top: 15px;
+}
+.pozadina{
+    border-radius: 27px;
+    margin-right: -15px;
+    margin-bottom: -15px;
+}
+.red{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+.blok{
+    background-color: #fff;
+    border-radius: 17px;
+    margin-left: 15px;
+    margin-top: 15px;
+    padding: 15px;
+    border:none;
+}
+.zadnji{
+    width: 100%;
+}
+.sabmit{
+    width: 100%;
+}
+.ikonica{
+    width: 25px;
+    background-color: none;
+    border: none;
+}
+.link{
+    border: none;
+    background-color: #302b27;
+    color: white;
+    border-radius: 20px;
+    font-size: 20px;
+    padding: 17px;
+    margin-left: 8px;
+}
+.link1{
+    border: none;
+    background-color: #fff;
+}
+.linkovi{
+    display: flex;
+    flex-direction: row;
+}
+.naslov-blok{
+    margin-top: 15px;
+    padding: 20px;
+    margin-left: 15px;
+    background-color: #fff;
+    border-radius: 20px;
+    width: fit-content;
+}
+.bezista{
+    background-color: #302b27;
+    border: none;
+    color: #fff;
+}
+.slag{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    padding-right: 15px;
+}
+h1{
+    color: #302b27;
+    font-size: 75;
+}
+.login-form{
+    height: 100%;
+    width: 100%;
+    margin-top: 300px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.forma{
+    display: flex;
+    flex-direction: column;
+    align-content: flex-end;
+}
+.form-control{
+    border: none;
+    width: 500px;
+    height: 50px;
+    margin-top: 20px;
+    border-radius: 27px;
+    font-size: 20px;
+    padding-left: 15px;
+}
+.form-button{
+    border: none;
+    border-radius: 27px;
+    height: 50px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 20px;
+    font-size: 20px;
+}
+.form-confirm{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.form-confirm1{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+.form-select{
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 27px;
+    height: 50px;
+    margin-right: 147px;
+
+
+}
+.magacin-select{
+    border-radius: 15px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+.vlaga{
+    margin-right: 15px;
+}
+.upit{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}
+.dugmic{
+    border-radius: 15px;
+    padding: 5px;
+    border: none;
+    background-color: #302b27;
+    color: #fff;
+    margin: -15px;
+    width: 29px;
+}
+#form1{
+    height: 90%;
+    width: 90%;
+    height: 100%;
+    margin-left: 15px;
+    margin-right: 15px;
+    border: none;
+    color: #302b27;
+    text-align: center;
+}

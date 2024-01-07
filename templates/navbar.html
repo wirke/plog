@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Test{% endblock %}
+
+{% block navbar %}
+    <div id="sidebar">
+        <div class="logotip">
+            <a {% block logo %}{% endblock %}>
+                <img class="logo" src="../static/img/logo.png"> 
+            </a>
+            <p class="tekst">Sve na jednom mestu!</p>
+        </div>
+        <div class="linkovi">
+            {% block links %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

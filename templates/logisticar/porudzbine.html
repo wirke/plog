@@ -1,0 +1,73 @@
+{% extends 'navbar.html' %}
+{% block title %}Logisticar{% endblock %}
+
+{% block logo %}href="/logisticar"{% endblock %}
+
+{% block links %}
+<form class="link" action="/novi-magacin" method="get">
+    <button class="bezista" type="submit">Novi magacin</button>
+</form>
+<form class="link" action="/moji-magacini" method="get">
+    <button class="bezista" type="submit">Pregled magacina</button>
+</form>
+<form class="link" action="/porudzbine" method="get">
+    <button class="bezista" type="submit">Porudzbine</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+        <div class="red col-12">
+            <div class="blok">
+                <i class="fa-solid fa-hourglass-start ikonica"></i>
+            </div>
+            <div class="blok col-1">
+                kolicina
+            </div>
+            <div class="blok zadnji">
+                proizvod.naziv
+            </div>
+            <div class="blok zadnji">
+                proizvod.proizvodjac.naziv
+            </div>
+            <div class="blok col-2">
+                korisnik.ime
+            </div>
+            <div class="blok col-2">
+                korisnik.lokacija
+            </div>
+            <form action="#" style="margin-right: 15px;" method="get">
+                <button class="blok zadnji" type="submit">
+                    <i class="fa-solid fa-paper-plane ikonica"></i> 
+                </button>
+            </form>
+        </div>
+        <div class="red col-12">
+            <div class="blok">
+                <i class="fa-solid fa-circle-check ikonica"></i>
+            </div>
+            <div class="blok col-1">
+                kolicina
+            </div>
+            <div class="blok zadnji">
+                proizvod.naziv
+            </div>
+            <div class="blok zadnji">
+                proizvod.proizvodjac.naziv
+            </div>
+            <div class="blok col-2">
+                korisnik.ime
+            </div>
+            <div class="blok col-2">
+                korisnik.lokacija
+            </div>
+            <form action="#" style="margin-right: 15px;" method="get">
+                <button class="blok zadnji" type="submit">
+                    <i class="fa-solid fa-circle-xmark ikonica"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

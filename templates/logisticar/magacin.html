@@ -1,0 +1,89 @@
+{% extends 'navbar.html' %}
+{% block title %}Korisnik{% endblock %}
+
+{% block logo %}href="/logisticar"{% endblock %}
+
+{% block links %}
+<form class="link" action="/novi-magacin" method="get">
+    <button class="bezista" type="submit">Novi magacin</button>
+</form>
+<form class="link" action="/moji-magacini" method="get">
+    <button class="bezista" type="submit">Pregled magacina</button>
+</form>
+<form class="link" action="/porudzbine" method="get">
+    <button class="bezista" type="submit">Porudzbine</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+        <div class="red col-12">
+            <div class="blok">
+                id
+            </div>
+            <div class="blok zadnji">
+                magacin.naziv
+            </div>
+            <div class="blok zadnji">
+                magacin.lokacija
+            </div>
+            <div class="blok col-2">
+                magacin.kapacitet/popunjenost
+            </div>
+            <form action="#" method="get" style="margin-right: 15px;">
+                <button class="blok sabmit" type="submit">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="kontejner">
+        <div class="red col-12">
+            
+            <form style="margin-left: 0; margin-right: 15px;" action="#" method="get" style="margin-left: 15px;">
+                <button class="blok sabmit" type="submit">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+            </form>
+
+            <div class="blok zadnji">
+                proizvod.naziv
+            </div>
+
+            <div class="blok zadnji">
+                proizvod.kategorija
+            </div>
+
+            <div class="blok zadnji">
+                proizvod.proizvodjac.naziv
+            </div>
+
+            <div class="col-1" style="margin-right: 15px;">
+                <div class="blok upit">
+
+                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                        <i class="fas fa-minus"></i>
+                    </button>
+            
+                    <div>
+                        <input id="form1" min="1" name="quantity" value="1" type="number">
+                    </div>
+            
+                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+
+                </div>
+            </div>
+
+            <form action="#" method="get" style="margin-right: 15px;">
+                <button class="blok sabmit" type="submit">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'navbar.html' %}
+{% block title %}Korisnik{% endblock %}
+
+{% block logo %}href="/korisnik"{% endblock %}
+
+{% block links %}
+<form class="link" action="/prikaz-proizvoda" method="get">
+    <button class="bezista" type="submit">Produkti</button>
+</form>
+<form class="link" action="/prikaz-magacina" method="get">
+    <button class="bezista" type="submit">Magacini</button>
+</form>
+<form class="link" action="/porudzbine-korisnik" method="get">
+    <button class="bezista" type="submit">Porudzbine</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+        <div class="red col-12" style="padding-right: 15px;">
+            <div class="blok zadnji">
+                magacin.naziv
+            </div>
+            <div class="blok col-4">
+                logisticar.naziv
+            </div>
+            <div class="blok col-3">
+                magacin.lokacija
+            </div>
+            <form action="/pregled-magacin" method="get">
+                <button class="blok sabmit" type="submit">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

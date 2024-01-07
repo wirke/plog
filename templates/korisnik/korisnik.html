@@ -1,0 +1,27 @@
+{% extends 'navbar.html' %}
+{% block title %}Korisnik{% endblock %}
+
+{% block logo %}href="/korisnik"{% endblock %}
+
+{% block links %}
+<form class="link" action="/prikaz-proizvoda" method="get">
+    <button class="bezista" type="submit">Produkti</button>
+</form>
+<form class="link" action="/prikaz-magacina" method="get">
+    <button class="bezista" type="submit">Magacini</button>
+</form>
+<form class="link" action="/porudzbine-korisnik" method="get">
+    <button class="bezista" type="submit">Porudzbine</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+        <div class="naslov-blok">
+            <h1>Zdravo, </h1>
+            <h1>korisnik.ime!</h1>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'navbar.html' %}
+{% block title %}Korisnik{% endblock %}
+
+{% block logo %}href="/proizvodjac"{% endblock %}
+
+{% block links %}
+<form class="link" action="/novi-proizvod" method="get">
+    <button class="bezista" type="submit">Novi proizvod</button>
+</form>
+<form class="link" action="/prikazi-proizvode" method="get">
+    <button class="bezista" type="submit">Pregled proizvoda</button>
+</form>
+<form class="link" action="/prikazi-magacine" method="get">
+    <button class="bezista" type="submit">Pregled magacina</button>
+</form>
+<form class="link" action="/prikazi-porudzbine" method="get">
+    <button class="bezista" type="submit">Porudzbine</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+        <div class="red col-12">
+
+            <div class="blok col-4">
+                proizvod.naziv
+            </div>
+            <div class="col-3 vlaga">
+                <select class="magacin-select blok col-12" aria-label="Default select example">
+                    <option selected disabled>Izaberite kategoriju</option>
+                    <option value="1">kategorija1</option>
+                    <option value="2">kategorija2</option>
+                    <option value="3">kategorija3</option>
+                    <option value="4">kategorija4</option>
+                </select>
+            </div>
+            <div class="blok zadnji">
+                proizvod.cena
+            </div>
+            <div class="blok zadnji">
+                proizvod.kolicina
+            </div>
+            <form style="margin-right: 15px;" action="#" method="get">
+                <button class="blok sabmit" type="submit">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

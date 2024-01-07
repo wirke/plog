@@ -1,0 +1,27 @@
+{% extends 'navbar.html' %}
+{% block title %}Logisticar{% endblock %}
+
+{% block logo %}href="/logisticar"{% endblock %}
+
+{% block links %}
+<form class="link" action="/novi-magacin" method="get">
+    <button class="bezista" type="submit">Novi magacin</button>
+</form>
+<form class="link" action="/moji-magacini" method="get">
+    <button class="bezista" type="submit">Pregled magacina</button>
+</form>
+<form class="link" action="/porudzbine" method="get">
+    <button class="bezista" type="submit">Porudzbine</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+        <div class="naslov-blok">
+            <h1>Zdravo, </h1>
+            <h1>logisticar.ime!</h1>
+        </div>
+    </div>
+</div>
+{% endblock %}

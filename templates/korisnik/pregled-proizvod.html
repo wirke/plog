@@ -1,0 +1,70 @@
+{% extends 'navbar.html' %}
+{% block title %}Korisnik{% endblock %}
+
+{% block logo %}href="/korisnik"{% endblock %}
+
+{% block links %}
+    <form class="link" action="/prikaz-proizvoda" method="get">
+        <button class="bezista" type="submit">Produkti</button>
+    </form>
+    <form class="link" action="/prikaz-magacina" method="get">
+        <button class="bezista" type="submit">Magacini</button>
+    </form>
+    <form class="link" action="/porudzbine-korisnik" method="get">
+        <button class="bezista" type="submit">Porudzbine</button>
+    </form>
+{% endblock %}
+
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+
+        <div class="red col-12">
+
+            <div class="blok col-4">
+                proizvod.naziv
+            </div>
+
+            <div class="col-4 vlaga">
+                <select class="magacin-select blok col-12" aria-label="Default select example">
+                    <option selected disabled>Izaberite magacin</option>
+                    <option value="1">magacin</option>
+                </select>
+            </div>
+
+            <div class="blok col-2">
+                cena
+            </div>
+
+            <div class="upit">
+                <div class="blok upit">
+
+                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                        <i class="fas fa-minus"></i>
+                    </button>
+            
+                    <div>
+                        <input id="form1" min="1" name="quantity" value="1" type="number">
+                    </div>
+            
+                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                        <i class="fas fa-plus bela"></i>
+                    </button>
+
+                </div>
+            </div>
+
+            
+        </div>
+
+        <div class="red slag col-12">
+            <form action="/pregled-proizvod" method="get">
+                <button class="blok sabmit" type="submit">
+                    <i class="fa-solid fa-cart-shopping ikonica"></i>
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
