@@ -5,11 +5,11 @@
 <div class="login-form" style="margin-top: 17%;">
     <form class="forma">
         <div>
-            <input type="text" class="form-control" placeholder="Korisnicko ime">
+            <input type="text" name="emailPolje" class="form-control" placeholder="Korisnicko ime">
         </div>
 
         <div>
-            <input type="password" class="form-control" placeholder="Sifra">
+            <input type="password" name="passwordPolje" class="form-control" placeholder="Sifra">
         </div>
 
         <div class="form-confirm1">
@@ -20,7 +20,5 @@
 {% endblock %}
 
 {% block links %}
-<form action="/register" method="get">
-    <button class="link" type="submit">Registracija</button>
-</form>
+<a href="/register" class="link">Registrujte se</a>
 {% endblock %}

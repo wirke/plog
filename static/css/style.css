@@ -82,6 +82,7 @@ body{
     border: none;
 }
 .link{
+    text-decoration: none;
     border: none;
     background-color: #302b27;
     color: white;

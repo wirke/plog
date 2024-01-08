@@ -5,19 +5,19 @@
 <div class="login-form" style="margin-top: 15%;">
     <form class="forma">
         <div>
-            <input type="text" class="form-control" placeholder="Korisnicko ime">
+            <input type="text" class="form-control" name="emailPolje" placeholder="Korisnicko ime">
         </div>
 
         <div>
-            <input type="password" class="form-control" placeholder="Sifra">
+            <input type="password" class="form-control" name="passwordPolje" placeholder="Sifra">
         </div>
         <div>
-            <input type="text" class="form-control" placeholder="Lokacija">
+            <input type="text" class="form-control" name="lokacijaPolje" placeholder="Lokacija">
         </div>
 
         <div class="form-confirm">
             <div>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" name="rola">
                     <option selected disabled>Tip naloga</option>
                     <option value="1">Kupac</option>
                     <option value="2">Logisticar</option>
@@ -33,7 +33,5 @@
 {% endblock %}
 
 {% block links %}
-<form action="/login" method="get">
-    <button class="link"type="submit">Ulogujte se</button>
-</form>
+<a href="/login">Login</a>
 {% endblock %}
