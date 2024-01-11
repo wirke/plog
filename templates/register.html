@@ -2,7 +2,7 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="login-form" style="margin-top: 15%;">
+<div class="login-form" action="{{ url_for('register') }}" method="POST" style="margin-top: 15%;">
     <form class="forma">
         <div>
             <input type="text" class="form-control" name="emailPolje" placeholder="Korisnicko ime">
@@ -25,7 +25,7 @@
                 </select>
             </div>
             <div>
-                <button class="form-button" href="#">Registracija</button>
+                <button class="form-button" type="submit">Registracija</button>
             </div>
         </div>
     </form>
@@ -33,5 +33,5 @@
 {% endblock %}
 
 {% block links %}
-<a href="/login">Login</a>
+<a href="/login" class="link">Login</a>
 {% endblock %}

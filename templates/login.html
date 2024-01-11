@@ -2,7 +2,7 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="login-form" style="margin-top: 17%;">
+<div class="login-form" style="margin-top: 17%;" method="POST">
     <form class="forma">
         <div>
             <input type="text" name="emailPolje" class="form-control" placeholder="Korisnicko ime">
@@ -13,7 +13,7 @@
         </div>
 
         <div class="form-confirm1">
-            <button class="form-button" href="#">Ulogujte se</button>
+            <button class="form-button" type="submit">Ulogujte se</button>
         </div>
     </form>
 </div>
