@@ -1,7 +1,7 @@
 {% extends 'navbar.html' %}
 {% block title %}Korisnik{% endblock %}
 
-{% block logo %}href="/korisnik"{% endblock %}
+{% block logo %}href="/kupac"{% endblock %}
 
 {% block links %}
 {% endblock %}
@@ -11,15 +11,18 @@
     <div class="kontejner">
         <div class="red col-12" style="padding-right: 15px;">
             <div class="blok zadnji">
-                magacin.naziv
-            </div>
-            <div class="blok col-4">
-                logisticar.naziv
+                magacin.proizvod.naziv
             </div>
             <div class="blok col-3">
-                magacin.lokacija
+                magacin.proizvod.kategorija
             </div>
-            <form action="/korisnik/magacin" method="get">
+            <div class="blok col-3">
+                magacin.proizvod.cena
+            </div>
+            <div class="blok col-2">
+                magacin.proizvod.kolicina
+            </div>
+            <form action="/kupac/proizvod" method="get">
                 <button class="blok sabmit" type="submit">
                     <i class="fa-solid fa-eye"></i>
                 </button>

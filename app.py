@@ -77,29 +77,29 @@ def logout():
 def test() -> html:
     return render_template("/test.html")
 #############################################################################
-@app.route("/korisnik", methods=['GET', 'POST'])
-def korisnik() -> html:
-    return render_template("/korisnik/korisnik.html")
+@app.route("/kupac", methods=['GET', 'POST'])
+def kupac() -> html:
+    return render_template("/kupac/kupac.html")
 
-@app.route("/korisnik/proizvodi", methods=['GET', 'POST'])
+@app.route("/kupac/proizvodi", methods=['GET', 'POST'])
 def prikaz_proizvoda() -> html:
-    return render_template("/korisnik/prikaz-proizvoda.html")
+    return render_template("/kupac/proizvodi.html")
 
-@app.route("/korisnik/proizvod", methods=['GET', 'POST'])
+@app.route("/kupac/proizvod", methods=['GET', 'POST'])
 def naruci_proizvod() -> html:
-    return render_template("/korisnik/pregled-proizvod.html")
+    return render_template("/kupac/proizvod.html")
 
-@app.route("/korisnik/magacini", methods=['GET', 'POST'])
+@app.route("/kupac/magacini", methods=['GET', 'POST'])
 def prikaz_magacina() -> html:
-    return render_template("/korisnik/prikaz-magacina.html")
+    return render_template("/kupac/magacini.html")
 
-@app.route("/korisnik/magacin", methods=['GET', 'POST'])
+@app.route("/kupac/magacin", methods=['GET', 'POST'])
 def prelged_magacina() -> html:
-    return render_template("/korisnik/pregled-magacin.html")
+    return render_template("/kupac/magacin.html")
 
-@app.route("/korisnik/porudzbine", methods=['GET', 'POST'])
+@app.route("/kupac/porudzbine", methods=['GET', 'POST'])
 def porudzbine_korisnik() -> html:
-    return render_template("/korisnik/porudzbine-korisnik.html")
+    return render_template("/kupac/porudzbine.html")
 #############################################################################
 @app.route("/proizvodjac", methods=['GET', 'POST'])
 def proizvodjac() -> html:

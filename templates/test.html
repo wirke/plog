@@ -4,13 +4,13 @@
 {% block navbar %}
     <div id="sidebar">
         <div class="linkovi">
-            <form class="link" action="/korisnik/proizvodi" method="get">
+            <form class="link" action="/kupac/proizvodi" method="get">
                 <button class="bezista" type="submit">Kproizvodi</button>
             </form>
-            <form class="link" action="/korisnik/magacini" method="get">
+            <form class="link" action="/kupac/magacini" method="get">
                 <button class="bezista" type="submit">Kmagacini</button>
             </form>
-            <form class="link" action="/korisnik/porudzbine" method="get">
+            <form class="link" action="/kupac/porudzbine" method="get">
                 <button class="bezista" type="submit">Kporudzbine</button>
             </form>
             <form class="link" action="/proizvodjac/novi-proizvod" method="get">
@@ -36,4 +36,18 @@
             </form>
         </div>
     </div>
+{% endblock %}
+
+{% block content %}
+<div>
+    <form class="link" action="/korisnik" method="get">
+        <button class="bezista" type="submit">Lporudzbine</button>
+    </form>
+    <form class="link" action="/proizvodjac" method="get">
+        <button class="bezista" type="submit">Lporudzbine</button>
+    </form>
+    <form class="link" action="/logisticar" method="get">
+        <button class="bezista" type="submit">Lporudzbine</button>
+    </form>
+</div>
 {% endblock %}
