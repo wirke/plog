@@ -1,12 +1,12 @@
 {% extends 'navbar.html' %}
 {% block korisnik %}
-<form class="link" action="/prikaz-proizvoda" method="get">
+<form class="link" action="/korisnik/proizvodi" method="get">
     <button class="bezista" type="submit">Produkti</button>
 </form>
-<form class="link" action="/prikaz-magacina" method="get">
+<form class="link" action="/korisnik/magacini" method="get">
     <button class="bezista" type="submit">Magacini</button>
 </form>
-<form class="link" action="/porudzbine-korisnik" method="get">
+<form class="link" action="/korisnik/porudzbine" method="get">
     <button class="bezista" type="submit">Porudzbine</button>
 </form>
 <form class="link" action="/logout" method="get">
@@ -15,13 +15,16 @@
 {% endblock %}
 
 {% block proizvodjac %}
-<form class="link" action="/prikaz-proizvoda" method="get">
-    <button class="bezista" type="submit">Produkti</button>
-</form>
-<form class="link" action="/prikaz-magacina" method="get">
+<form class="link" action="/proizvodjac/novi-proizvod" method="get">
     <button class="bezista" type="submit">Magacini</button>
 </form>
-<form class="link" action="/porudzbine-korisnik" method="get">
+<form class="link" action="/proizvodjac/proizvodi" method="get">
+    <button class="bezista" type="submit">Produkti</button>
+</form>
+<form class="link" action="/proizvodjac/magacini" method="get">
+    <button class="bezista" type="submit">Magacini</button>
+</form>
+<form class="link" action="/proizvodjac/porudzbine" method="get">
     <button class="bezista" type="submit">Porudzbine</button>
 </form>
 <form class="link" action="/logout" method="get">
@@ -30,13 +33,13 @@
 {% endblock %}
 
 {% block logisticar %}
-<form class="link" action="/prikaz-proizvoda" method="get">
+<form class="link" action="/logisticar/novi-magacin" method="get">
     <button class="bezista" type="submit">Produkti</button>
 </form>
-<form class="link" action="/prikaz-magacina" method="get">
+<form class="link" action="/logisticar/moji-magacini" method="get">
     <button class="bezista" type="submit">Magacini</button>
 </form>
-<form class="link" action="/porudzbine-korisnik" method="get">
+<form class="link" action="/logisticar/porudzbine" method="get">
     <button class="bezista" type="submit">Porudzbine</button>
 </form>
 <form class="link" action="/logout" method="get">
