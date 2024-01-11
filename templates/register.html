@@ -3,29 +3,29 @@
 
 {% block content %}
 <div class="login-form" style="margin-top: 15%;">
-    <form class="forma">
+    <form class="forma" method="POST" action="{{ url_for('register') }}">
         <div>
-            <input type="text" class="form-control" name="emailPolje" placeholder="Korisnicko ime">
+            <input type="email" class="form-control" name="emailPolje" placeholder="Korisnicko ime" required>
         </div>
 
         <div>
-            <input type="password" class="form-control" name="passwordPolje" placeholder="Sifra">
+            <input type="password" class="form-control" name="passwordPolje" placeholder="Sifra" required>
         </div>
         <div>
-            <input type="text" class="form-control" name="lokacijaPolje" placeholder="Lokacija">
+            <input type="text" class="form-control" name="lokacijaPolje" placeholder="Lokacija" required>
         </div>
 
         <div class="form-confirm">
             <div>
-                <select class="form-select" name="rola">
+                <select class="form-select" name="rola" required>
                     <option selected disabled>Tip naloga</option>
-                    <option value="1">Kupac</option>
-                    <option value="2">Logisticar</option>
-                    <option value="3">Proizvodjac</option>
+                    <option>Kupac</option>
+                    <option>Logisticar</option>
+                    <option>Proizvodjac</option>
                 </select>
             </div>
             <div>
-                <button class="form-button" href="#">Registracija</button>
+                <button class="form-button" type="submit">Registracija</button>
             </div>
         </div>
     </form>
@@ -33,5 +33,5 @@
 {% endblock %}
 
 {% block links %}
-<a href="/login">Login</a>
+<a href="/login" class="link">Login</a>
 {% endblock %}
