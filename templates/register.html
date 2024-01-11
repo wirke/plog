@@ -5,7 +5,11 @@
 <div class="login-form" style="margin-top: 15%;">
     <form class="forma" method="POST" action="{{ url_for('register') }}">
         <div>
-            <input type="email" class="form-control" name="emailPolje" placeholder="Korisnicko ime" required>
+            <input type="email" class="form-control" name="emailPolje" placeholder="E-mail" required>
+        </div>
+
+        <div>
+            <input type="text" class="form-control" name="imePolje" placeholder="Korisničko ime" required>
         </div>
 
         <div>
@@ -32,6 +36,6 @@
 </div>
 {% endblock %}
 
-{% block links %}
+{% block forma %}
 <a href="/login" class="link">Login</a>
 {% endblock %}
