@@ -58,12 +58,12 @@ def register():
         return render_template("register.html")
     elif request.method == "POST":
         upit = """ INSERT INTO
-        user(email, sifra, rola, lokacija)
-        VALUES (%s, %s, %s, %s)
+        user(email, ime, sifra, rola, lokacija)
+        VALUES (%s, %s, %s, %s, %s)
         """
         password = request.form['passwordPolje']
         pw_hash = bcrypt.generate_password_hash(password)
-        forma = (request.form['emailPolje'], pw_hash, request.form['rola'], request.form['lokacijaPolje'])
+        forma = (request.form['emailPolje'], request.form['imePolje'], pw_hash, request.form['rola'], request.form['lokacijaPolje'])
         kursor.execute(upit,forma)
         konekcija.commit()
         return redirect(url_for("login"))
