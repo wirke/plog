@@ -109,9 +109,9 @@ def proizvodjac() -> html:
 def novi_proizvod() -> html:
     return render_template("/proizvodjac/novi-proizvod.html")
 
-@app.route("/proizvodjac/proizvodi", methods=['GET', 'POST'])
+@app.route("/proizvodjac/moji-proizvodi", methods=['GET', 'POST'])
 def porudzbine_proizvoda() -> html:
-    return render_template("/proizvodjac/prikazi-proizvode.html")
+    return render_template("/proizvodjac/moji-proizvodi.html")
 
 @app.route("/proizvodjac/proizvod", methods=['GET', 'POST'])
 def proizvod() -> html:
@@ -119,15 +119,15 @@ def proizvod() -> html:
 
 @app.route("/proizvodjac/magacini", methods=['GET', 'POST'])
 def pregledaj_magacine() -> html:
-    return render_template("/proizvodjac/prikazi-magacine.html")
+    return render_template("/proizvodjac/magacini.html")
 
 @app.route("/proizvodjac/magacin", methods=['GET', 'POST'])
 def napuni_magacin() -> html:
-    return render_template("/proizvodjac/napuni-magacin.html")
+    return render_template("/proizvodjac/magacin.html")
 
 @app.route("/proizvodjac/porudzbine", methods=['GET', 'POST'])
 def pregledaj_porudzbine() -> html:
-    return render_template("/proizvodjac/prikazi-porudzbine.html")
+    return render_template("/proizvodjac/porudzbine.html")
 #############################################################################
 @app.route("/logisticar", methods=['GET', 'POST'])
 def logisticar() -> html:

@@ -14,9 +14,9 @@
                 <button class="bezista" type="submit">Kporudzbine</button>
             </form>
             <form class="link" action="/proizvodjac/novi-proizvod" method="get">
-                <button class="bezista" type="submit">Pnovi-proizvod</button>
+                <button class="bezista" type="submit">Pnproizvod</button>
             </form>
-            <form class="link" action="/proizvodjac/proizvodi" method="get">
+            <form class="link" action="/proizvodjac/moji-proizvodi" method="get">
                 <button class="bezista" type="submit">Pproizvodi</button>
             </form>
             <form class="link" action="/proizvodjac/magacini" method="get">
@@ -39,15 +39,17 @@
 {% endblock %}
 
 {% block content %}
-<div>
-    <form class="link" action="/korisnik" method="get">
-        <button class="bezista" type="submit">Lporudzbine</button>
-    </form>
-    <form class="link" action="/proizvodjac" method="get">
-        <button class="bezista" type="submit">Lporudzbine</button>
-    </form>
-    <form class="link" action="/logisticar" method="get">
-        <button class="bezista" type="submit">Lporudzbine</button>
-    </form>
+<div class="column" style="margin-top: 19%;">
+
+    <div style="margin-bottom: 43px;">
+        <a class="link2" href="/kupac" method="get">Kupac</a>
+    </div>
+    <div style="margin-bottom: 43px;">
+        <a class="link2" href="/proizvodjac" method="get">Proizvođač</a>
+    </div>
+    <div>
+        <a class="link2" href="/logisticar" method="get">Logističar</a>
+    </div style="margin-bottom: 43px;">
+        
 </div>
 {% endblock %}

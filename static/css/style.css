@@ -95,6 +95,17 @@ body{
     border: none;
     background-color: #fff;
 }
+.link2{
+    text-decoration: none;
+    border: none;
+    background-color: #fc804a;
+    color: #302b27;
+    border-radius: 20px;
+    font-size: 20px;
+    padding: 17px;
+    margin-left: 8px;
+    width: fit-content;
+}
 .linkovi{
     display: flex;
     flex-direction: row;

@@ -1,28 +1,28 @@
 {% extends 'navbar.html' %}
 
-{% if session['user']['rola'] == 'Kupac' %}
+{% if ulogovani_korisnik['user']['rola'] == 'Kupac' %}
 {% block link %}
 <form class="link" action="/kupac/proizvodi" method="get">
-    <button class="bezista" type="submit">Kproizvodi</button>
+    <button class="bezista" type="submit">Proizvodi</button>
 </form>
 <form class="link" action="/kupac/magacini" method="get">
-    <button class="bezista" type="submit">Kmagacini</button>
+    <button class="bezista" type="submit">Magacini</button>
 </form>
 <form class="link" action="/kupac/porudzbine" method="get">
-    <button class="bezista" type="submit">Kporudzbine</button>
+    <button class="bezista" type="submit">Porudzbine</button>
 </form>
 <form class="link" action="/logout" method="get">
     <i class="fa-solid fa-right-from-bracket bezista"></i>
 </form>
 {% endblock %}
 
-{% elif session['user']['rola'] == 'Proizvodjac' %}
+{% elif ulogovani_korisnik['user']['rola'] == 'Proizvodjac' %}
 {% block link %}
 <form class="link" action="/proizvodjac/novi-proizvod" method="get">
-    <button class="bezista" type="submit">Magacini</button>
+    <button class="bezista" type="submit">Novi proizvod</button>
 </form>
-<form class="link" action="/proizvodjac/proizvodi" method="get">
-    <button class="bezista" type="submit">Produkti</button>
+<form class="link" action="/proizvodjac/moji-proizvodi" method="get">
+    <button class="bezista" type="submit">Moji proizvodi</button>
 </form>
 <form class="link" action="/proizvodjac/magacini" method="get">
     <button class="bezista" type="submit">Magacini</button>
@@ -35,13 +35,13 @@
 </form>
 {% endblock %}
 
-{% elif session['user']['rola'] == 'Logisticar' %}
+{% elif ulogovani_korisnik['user']['rola'] == 'Logisticar' %}
 {% block link %}
 <form class="link" action="/logisticar/novi-magacin" method="get">
-    <button class="bezista" type="submit">Produkti</button>
+    <button class="bezista" type="submit">Novi magacin</button>
 </form>
 <form class="link" action="/logisticar/moji-magacini" method="get">
-    <button class="bezista" type="submit">Magacini</button>
+    <button class="bezista" type="submit">Moji magacini</button>
 </form>
 <form class="link" action="/logisticar/porudzbine" method="get">
     <button class="bezista" type="submit">Porudzbine</button>
