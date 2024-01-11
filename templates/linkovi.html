@@ -1,6 +1,6 @@
 {% extends 'navbar.html' %}
 
-{% if session['user'] is defined and session['user']['rola'] == 'korisnik' %}
+{% if session['user']['rola'] == 'korisnik' %}
 {% block link %}
 <form class="link" action="/korisnik/proizvodi" method="get">
     <button class="bezista" type="submit">Produkti</button>
@@ -16,7 +16,7 @@
 </form>
 {% endblock %}
 
-{% elif session['user'] is defined and session['user']['rola'] == 'proizvodjac' %}
+{% elif session['user']['rola'] == 'proizvodjac' %}
 {% block link %}
 <form class="link" action="/proizvodjac/novi-proizvod" method="get">
     <button class="bezista" type="submit">Magacini</button>
@@ -35,7 +35,7 @@
 </form>
 {% endblock %}
 
-{% elif session['user'] is defined and session['user']['rola'] == 'logisticar' %}
+{% elif session['user']['rola'] == 'logisticar' %}
 {% block link %}
 <form class="link" action="/logisticar/novi-magacin" method="get">
     <button class="bezista" type="submit">Produkti</button>
