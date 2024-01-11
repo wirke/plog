@@ -7,7 +7,7 @@ import json
 import html
 
 konekcija = mysql.connector.connect(
-    passwd='',
+    passwd='2578',
     user='root',
     database='plog',
     port=3306,
@@ -46,7 +46,7 @@ def login():
                 session["ulogovani_korisnik"] = str(user)
                 return redirect(url_for("korisnik"))
             else:
-                return render_template("login.html", error="Nevalidan email ili sifra")
+                return render_template("login.html", error="Nevalidni kredencijali")
 
         except Exception as e:
             print(f"Error: {e}")
@@ -124,10 +124,6 @@ def napuni_magacin() -> html:
 @app.route("/prikazi-porudzbine", methods=['GET', 'POST'])
 def pregledaj_porudzbine() -> html:
     return render_template("/proizvodjac/prikazi-porudzbine.html")
-
-@app.route("/porudzbina", methods=['GET', 'POST'])
-def porudzbina() -> html:
-    return render_template("/proizvodjac/porudzbina.html")
 #############################################################################
 @app.route("/logisticar", methods=['GET', 'POST'])
 def logisticar() -> html:
@@ -144,10 +140,6 @@ def magacin() -> html:
 @app.route("/novi-magacin", methods=['GET', 'POST'])
 def novi_magacin() -> html:
     return render_template("/logisticar/novi-magacin.html")
-
-@app.route("/porudzbine-logisticar", methods=['GET', 'POST'])
-def porudzbine_logisticar() -> html:
-    return render_template("/logisticar/porudzbine-logisticar.html")
 
 @app.route("/porudzbine", methods=['GET', 'POST'])
 def porudzbina_magacin() -> html:
