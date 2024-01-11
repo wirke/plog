@@ -73,6 +73,10 @@ def logout():
     session.pop("ulogovani_korisnik", None)
     return redirect(url_for("login"))
 #############################################################################
+@app.route("/test", methods=['GET', 'POST'])
+def test() -> html:
+    return render_template("/test.html")
+#############################################################################
 @app.route("/korisnik", methods=['GET', 'POST'])
 def korisnik() -> html:
     return render_template("/korisnik/korisnik.html")

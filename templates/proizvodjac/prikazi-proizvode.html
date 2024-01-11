@@ -4,18 +4,6 @@
 {% block logo %}href="/proizvodjac"{% endblock %}
 
 {% block links %}
-<form class="link" action="/novi-proizvod" method="get">
-    <button class="bezista" type="submit">Novi proizvod</button>
-</form>
-<form class="link" action="/prikazi-proizvode" method="get">
-    <button class="bezista" type="submit">Pregled proizvoda</button>
-</form>
-<form class="link" action="/prikazi-magacine" method="get">
-    <button class="bezista" type="submit">Pregled magacina</button>
-</form>
-<form class="link" action="/prikazi-porudzbine" method="get">
-    <button class="bezista" type="submit">Porudzbine</button>
-</form>
 {% endblock %}
 
 {% block content %}
@@ -44,7 +32,7 @@
             </div>
 
             <div style="width: 100px; margin-right: 15px;">
-                <form action="/proizvod" method="get">
+                <form action="/proizvodjac/proizvod" method="get">
                     <button class="blok sabmit" type="submit">
                         <i class="fa-solid fa-eye"></i>
                     </button>

@@ -4,15 +4,7 @@
 {% block logo %}href="/korisnik"{% endblock %}
 
 {% block links %}
-<form class="link" action="/prikaz-proizvoda" method="get">
-    <button class="bezista" type="submit">Produkti</button>
-</form>
-<form class="link" action="/prikaz-magacina" method="get">
-    <button class="bezista" type="submit">Magacini</button>
-</form>
-<form class="link" action="/porudzbine-korisnik" method="get">
-    <button class="bezista" type="submit">Porudzbine</button>
-</form>
+
 {% endblock %}
 
 {% block content %}
@@ -28,7 +20,7 @@
             <div class="blok col-3">
                 proizvod.cena
             </div>
-            <form action="/pregled-proizvod" method="get">
+            <form action="/korisnik/proizvod" method="get">
                 <button class="blok sabmit" type="submit">
                     <i class="fa-solid fa-eye"></i>
                 </button>
