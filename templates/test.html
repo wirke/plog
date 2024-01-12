@@ -3,37 +3,23 @@
 
 {% block navbar %}
     <div id="sidebar">
-        <div class="linkovi">
-            <form class="link" action="/kupac/proizvodi" method="get">
-                <button class="bezista" type="submit">Kproizvodi</button>
-            </form>
-            <form class="link" action="/kupac/magacini" method="get">
-                <button class="bezista" type="submit">Kmagacini</button>
-            </form>
-            <form class="link" action="/kupac/porudzbine" method="get">
-                <button class="bezista" type="submit">Kporudzbine</button>
-            </form>
-            <form class="link" action="/proizvodjac/novi-proizvod" method="get">
-                <button class="bezista" type="submit">Pnproizvod</button>
-            </form>
-            <form class="link" action="/proizvodjac/moji-proizvodi" method="get">
-                <button class="bezista" type="submit">Pproizvodi</button>
-            </form>
-            <form class="link" action="/proizvodjac/magacini" method="get">
-                <button class="bezista" type="submit">Pmagacini</button>
-            </form>
-            <form class="link" action="/proizvodjac/porudzbine" method="get">
-                <button class="bezista" type="submit">Pporudzbine</button>
-            </form>
-            <form class="link" action="/logisticar/novi-magacin" method="get">
-                <button class="bezista" type="submit">Lnovi-magacin</button>
-            </form>
-            <form class="link" action="/logisticar/moji-magacini" method="get">
-                <button class="bezista" type="submit">Lmoji-magacini</button>
-            </form>
-            <form class="link" action="/logisticar/porudzbine" method="get">
-                <button class="bezista" type="submit">Lporudzbine</button>
-            </form>
+        <div class="linkovi" style="width: 100%;">
+            <a style="margin-left: 0;" href="/kupac/proizvodi" class="bezista link " type="submit">Proizvodi</a>
+            <a href="/kupac/magacini" class="bezista link " type="submit">Magacini</a>
+            <a href="/kupac/porudzbine" class="bezista link " type="submit">Porudzbine</a>
+
+            <a href="/proizvodjac/novi-proizvod" class="bezista link " type="submit">Novi proizvod</a>
+            <a href="/proizvodjac/moji-proizvodi" class="bezista link " type="submit">Moji proizvodi</a>
+            <a href="/proizvodjac/magacini" class="bezista link " type="submit">Magacini</a>
+            <a href="/proizvodjac/porudzbine" class="bezista link " type="submit">Porudzbine</a>
+
+            <a href="/logisticar/novi-magacin" class="bezista link " type="submit">Novi magacin</a>
+            <a href="/logisticar/moji-magacini" class="bezista link " type="submit">Moji magacini</a>
+            <a href="/logisticar/porudzbine" class="bezista link " type="submit">Porudzbine</a>
+
+            <a href="/logout" class="bezista link" style="width: 3%;" type="submit">
+                <i class="fa-solid fa-right-from-bracket bezista"></i>
+            </a>
         </div>
     </div>
 {% endblock %}

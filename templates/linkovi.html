@@ -2,51 +2,46 @@
 
 {% if ulogovani_korisnik['user']['rola'] == 'Kupac' %}
 {% block link %}
-<form class="link" action="/kupac/proizvodi" method="get">
-    <button class="bezista" type="submit">Proizvodi</button>
-</form>
-<form class="link" action="/kupac/magacini" method="get">
-    <button class="bezista" type="submit">Magacini</button>
-</form>
-<form class="link" action="/kupac/porudzbine" method="get">
-    <button class="bezista" type="submit">Porudzbine</button>
-</form>
-<form class="link" action="/logout" method="get">
-    <i class="fa-solid fa-right-from-bracket bezista"></i>
-</form>
+
+    <a href="/kupac/proizvodi" class="bezista link" type="submit">Proizvodi</a>
+
+    <a href="/kupac/magacini" class="bezista link" type="submit">Magacini</a>
+
+    <a href="/kupac/porudzbine" class="bezista link" type="submit">Porudzbine</a>
+
+    <a href="/logout" class="bezista link" type="submit">
+        <i class="fa-solid fa-right-from-bracket bezista"></i>
+    </a>
+
 {% endblock %}
 
 {% elif ulogovani_korisnik['user']['rola'] == 'Proizvodjac' %}
 {% block link %}
-<form class="link" action="/proizvodjac/novi-proizvod" method="get">
-    <button class="bezista" type="submit">Novi proizvod</button>
-</form>
-<form class="link" action="/proizvodjac/moji-proizvodi" method="get">
-    <button class="bezista" type="submit">Moji proizvodi</button>
-</form>
-<form class="link" action="/proizvodjac/magacini" method="get">
-    <button class="bezista" type="submit">Magacini</button>
-</form>
-<form class="link" action="/proizvodjac/porudzbine" method="get">
-    <button class="bezista" type="submit">Porudzbine</button>
-</form>
-<form class="link" action="/logout" method="get">
-    <i class="fa-solid fa-right-from-bracket bezista"></i>
-</form>
+    <a href="/proizvodjac/novi-proizvod" class="bezista link" type="submit">Novi proizvod</a>
+
+    <a href="/proizvodjac/moji-proizvodi" class="bezista link" type="submit">Moji Proizvodi</a>
+
+    <a href="/proizvodjac/magacini" class="bezista link" type="submit">Magacini</a>
+
+    <a href="/proizvodjac/porudzbine" class="bezista link" type="submit">Porudzbine</a>
+
+    <a href="/logout" class="bezista link" type="submit">
+        <i class="fa-solid fa-right-from-bracket bezista"></i>
+    </a>
+
 {% endblock %}
 
 {% elif ulogovani_korisnik['user']['rola'] == 'Logisticar' %}
 {% block link %}
-<form class="link" action="/logisticar/novi-magacin" method="get">
-    <button class="bezista" type="submit">Novi magacin</button>
-</form>
-<form class="link" action="/logisticar/moji-magacini" method="get">
-    <button class="bezista" type="submit">Moji magacini</button>
-</form>
-<form class="link" action="/logisticar/porudzbine" method="get">
-    <button class="bezista" type="submit">Porudzbine</button>
-</form>
-<form class="link" action="/logout" method="get">
-    <i class="fa-solid fa-right-from-bracket bezista"></i>
-</form>
+
+    <a href="/logisticar/novi-magacin" class="bezista link" type="submit">Novi magacin</a>
+
+    <a href="/logisticar/moji-magacini" class="bezista link" type="submit">Moji magacini</a>
+
+    <a href="/logisticar/porudzbine" class="bezista link" type="submit">Porudzbine</a>
+
+    <a href="/logout" class="bezista link" type="submit">
+        <i class="fa-solid fa-right-from-bracket bezista"></i>
+    </a>
+
 {% endblock %}
