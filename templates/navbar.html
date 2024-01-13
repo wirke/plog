@@ -3,11 +3,9 @@
 {% block navbar %}
     <div id="sidebar">
         <div class="logotip">
-            <a {% block logo %}
-            {% if ulogovan() %}
-            {% block logo %}href="/pocetna"{% endblock %}
-            {% endif %}
-            {% endblock %} style="padding: 10px; background-color: #302b27; border-radius: 20px;">
+            <a {% block logo %}{% if ulogovan() %}href="/pocetna"{% endif %}{% endblock %}
+               style="padding: 10px; background-color: #302b27; border-radius: 20px;">
+
                 <img style="margin: 0;" class="logo" src="../static/img/ico1.svg">
             </a>
             <h1 style="margin-left: 15px; margin-top: 7px;" class="tekst">Paket Logger</h1>
