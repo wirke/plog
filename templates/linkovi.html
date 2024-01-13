@@ -1,47 +1,56 @@
 {% extends 'navbar.html' %}
 
-{% if ulogovani_korisnik['user']['rola'] == 'Kupac' %}
 {% block link %}
+{% if ulogovan() %}
 
-    <a href="/kupac/proizvodi" class="bezista link" type="submit">Proizvodi</a>
+{% if rola() == 'Kupac' %}
+{% block title %}Plog - Kupac{% endblock %}
 
-    <a href="/kupac/magacini" class="bezista link" type="submit">Magacini</a>
+<a href="/kupac/proizvodi" class="bezista link" type="submit">Proizvodi</a>
 
-    <a href="/kupac/porudzbine" class="bezista link" type="submit">Porudzbine</a>
+<a href="/kupac/magacini" class="bezista link" type="submit">Magacini</a>
 
-    <a href="/logout" class="bezista link" type="submit">
-        <i class="fa-solid fa-right-from-bracket bezista"></i>
-    </a>
+<a href="/kupac/porudzbine" class="bezista link" type="submit">Porudzbine</a>
 
+<a href="/logout" class="bezista link" type="submit">
+    <i class="fa-solid fa-right-from-bracket bezista"></i>
+</a>
+
+{% elif rola() == 'Proizvođač' %}
+{% block title %}Plog - Proizvođač{% endblock %}
+
+<a href="/proizvodjac/novi-proizvod" class="bezista link" type="submit">Novi proizvod</a>
+
+<a href="/proizvodjac/moji-proizvodi" class="bezista link" type="submit">Moji Proizvodi</a>
+
+<a href="/proizvodjac/magacini" class="bezista link" type="submit">Magacini</a>
+
+<a href="/proizvodjac/porudzbine" class="bezista link" type="submit">Porudzbine</a>
+
+<a href="/logout" class="bezista link" type="submit">
+    <i class="fa-solid fa-right-from-bracket bezista"></i>
+</a>
+
+{% elif rola() == 'Logističar' %}
+{% block title %}Plog - Logističar{% endblock %}
+
+<a href="/logisticar/novi-magacin" class="bezista link" type="submit">Novi magacin</a>
+
+<a href="/logisticar/moji-magacini" class="bezista link" type="submit">Moji magacini</a>
+
+<a href="/logisticar/porudzbine" class="bezista link" type="submit">Porudzbine</a>
+
+<a href="/logout" class="bezista link" type="submit">
+    <i class="fa-solid fa-right-from-bracket bezista"></i>
+</a>
+
+{% else %}{% endif %}
+
+{% endif %}
 {% endblock %}
 
-{% elif ulogovani_korisnik['user']['rola'] == 'Proizvodjac' %}
-{% block link %}
-    <a href="/proizvodjac/novi-proizvod" class="bezista link" type="submit">Novi proizvod</a>
-
-    <a href="/proizvodjac/moji-proizvodi" class="bezista link" type="submit">Moji Proizvodi</a>
-
-    <a href="/proizvodjac/magacini" class="bezista link" type="submit">Magacini</a>
-
-    <a href="/proizvodjac/porudzbine" class="bezista link" type="submit">Porudzbine</a>
-
-    <a href="/logout" class="bezista link" type="submit">
-        <i class="fa-solid fa-right-from-bracket bezista"></i>
-    </a>
-
-{% endblock %}
-
-{% elif ulogovani_korisnik['user']['rola'] == 'Logisticar' %}
-{% block link %}
-
-    <a href="/logisticar/novi-magacin" class="bezista link" type="submit">Novi magacin</a>
-
-    <a href="/logisticar/moji-magacini" class="bezista link" type="submit">Moji magacini</a>
-
-    <a href="/logisticar/porudzbine" class="bezista link" type="submit">Porudzbine</a>
-
-    <a href="/logout" class="bezista link" type="submit">
-        <i class="fa-solid fa-right-from-bracket bezista"></i>
-    </a>
-
+{% block logo %}
+{% if ulogovan() %}
+{% block logo %}href="/pocetna"{% endblock %}
+{% endif %}
 {% endblock %}
