@@ -1,8 +1,7 @@
-from flask import Flask, render_template, url_for, request, redirect, session, abort
+from flask import Flask, render_template, url_for, request, redirect, session
 from flask_bcrypt import Bcrypt
 import ast
 import mysql.connector
-import mariadb
 import json
 import html
 
