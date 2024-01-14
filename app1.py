@@ -75,27 +75,27 @@ def logout():
 #############################################################################
 @app.route("/korisnik", methods=['GET', 'POST'])
 def korisnik() -> html:
-    return render_template("/korisnik/korisnik.html")
+    return render_template("/kupac/korisnik.html")
 
 @app.route("/prikaz-proizvoda", methods=['GET', 'POST'])
 def prikaz_proizvoda() -> html:
-    return render_template("/korisnik/prikaz-proizvoda.html")
+    return render_template("/kupac/proizvodi.html")
 
 @app.route("/pregled-proizvod", methods=['GET', 'POST'])
 def naruci_proizvod() -> html:
-    return render_template("/korisnik/pregled-proizvod.html")
+    return render_template("/kupac/proizvod.html")
 
 @app.route("/prikaz-magacina", methods=['GET', 'POST'])
 def prikaz_magacina() -> html:
-    return render_template("/korisnik/prikaz-magacina.html")
+    return render_template("/kupac/magacini.html")
 
 @app.route("/pregled-magacin", methods=['GET', 'POST'])
 def prelged_magacina() -> html:
-    return render_template("/korisnik/pregled-magacin.html")
+    return render_template("/kupac/magacin.html")
 
 @app.route("/porudzbine-korisnik", methods=['GET', 'POST'])
 def porudzbine_korisnik() -> html:
-    return render_template("/korisnik/porudzbine-korisnik.html")
+    return render_template("/kupac/porudzbine.html")
 #############################################################################
 @app.route("/proizvodjac", methods=['GET', 'POST'])
 def proizvodjac() -> html:
