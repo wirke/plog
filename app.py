@@ -45,19 +45,14 @@ def login():
         upit = "SELECT * FROM user WHERE email=%s"
         email = (forma['emailPolje'],)
         sifra = request.form['passwordPolje']
-        print('unos')
 
         try:
             kursor.execute(upit, email)
             user = kursor.fetchone()
-            print('kursor')
 
             if user and bcrypt.check_password_hash(user['sifra'], sifra):
-                print('uzimam korisnika')
                 session['korisnik_id'] = user['id']
-                print('proveravam id')
                 session['rola'] = user['rola']
-                print('proveravam rolu')
                 return redirect(url_for('pocetna'), error="uspesno ulogovan")
             else:
                 return render_template("login.html", error="Nevalidan email ili sifra")
@@ -131,7 +126,7 @@ def pocetna() -> html:
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def prikaz_proizvoda() -> html:
     return render_template("/kupac/proizvodi.html")
-# i tako za svaku
+# i tako za svaku #
 @app.route("/kupac/proizvod", methods=['GET', 'POST'])
 def naruci_proizvod() -> html:
     if ulogovan() != True or ((rola != 'Kupac') or (rola != 'Admin')):
