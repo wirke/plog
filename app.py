@@ -1,4 +1,5 @@
 from flask import Flask, render_template, url_for, request, redirect, session
+from functools import wraps
 from flask_bcrypt import Bcrypt
 import ast
 import mysql.connector
@@ -89,27 +90,48 @@ def register():
         konekcija.commit()
         return redirect(url_for("login"))
 #############################################################################
+def zahteva_dozvolu(roles=[]):
+    def omotac(f):
+        @wraps(f)
+        def omotana_funkcija(*args, **kwargs):
+            if ulogovan():
+                trenutna_rola = rola()
+                if not roles or trenutna_rola in roles:
+                    return f(*args, **kwargs)
+            return redirect(url_for('greska'))
+        return omotana_funkcija
+    return omotac
+
+def zahteva_ulogovanje(f):
+    @wraps(f)
+    def omotana_funkcija(*args, **kwargs):
+        if ulogovan():
+            return f(*args, **kwargs)
+        return redirect(url_for('greska'))
+    return omotana_funkcija
+
+@app.route("/greska", methods=['GET', 'POST'])
+def greska() -> html:
+    return render_template("/greska.html")
+#############################################################################
 @app.route("/test", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin'])
 def test() -> html:
-    if ulogovan() or (rola != 'Admin'):
-        rola_korisnika = rola()
-        return render_template("/greska.html", rola=rola_korisnika)
     return render_template("/test.html")
 
 @app.route("/pocetna", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
 def pocetna() -> html:
-    if ulogovan():
-        korisnik_id = session['korisnik_id']
-        trenutna_rola = rola()
-        if (rola != 'Kupac') or (rola != 'Proizvođač') or (rola != 'Logističar') or (rola != 'Admin'):
-            return render_template("/pocetna.html", rola=trenutna_rola)
+    return render_template("/pocetna.html")
 #############################################################################
 @app.route("/kupac/proizvodi", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def prikaz_proizvoda() -> html:
-    if ulogovan() != True or ((rola != 'Kupac') or (rola != 'Admin')):
-        return render_template("/greska.html")
     return render_template("/kupac/proizvodi.html")
-
+# i tako za svaku
 @app.route("/kupac/proizvod", methods=['GET', 'POST'])
 def naruci_proizvod() -> html:
     if ulogovan() != True or ((rola != 'Kupac') or (rola != 'Admin')):
