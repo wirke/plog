@@ -7,8 +7,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Rethink+Sans:wght@500;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet", href="../static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet", href="../static/bootstrap/css/bootstrap.min.css" defer>
+    <link rel="stylesheet" href="../static/css/style.css" defer>
     <title>
         {% block title %}{% endblock %}
     </title>
@@ -20,9 +20,22 @@
         {% block navbar %}{% endblock %}
         {% block content %}{% endblock %}
     </div>
-<script src="../static/bootstrap/js/bootstrap.min.js"></script>
 <script src="../static/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../static/bootstrap/js/bootstrap.min.js"></script>
 <script src="../static/fontawesome/js/all.min.js"></script>
 <script src="../static/script/main.js"></script>
+{% block skripte %}
+
+{% endblock %}
+<script>
+    window.onload = function() {
+        document.body.style.display = 'block';
+    };
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    });
+</script>
 </body>
 </html>

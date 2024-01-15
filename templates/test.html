@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<button class="toggle-button" data-target="div1">Toggle Div 1</button>
+<button class="toggle-button" data-target="div2">Toggle Div 2</button>
+<button class="toggle-button" data-target="div3">Toggle Div 3</button>
+
+<div id="div1" class="toggle-div">This is Div 1</div>
+<div id="div2" class="toggle-div">This is Div 2</div>
+<div id="div3" class="toggle-div">This is Div 3</div>
+
+{% endblock %}
+
+{% block skripte %}
+
+<script>
+    $(document).ready(function(){
+        $(".toggle-button").click(function(){
+            // Get the target div ID from the data attribute
+            var targetDivId = $(this).data("target");
+
+            // Toggle the visibility of the clicked div
+            $("#" + targetDivId).toggle();
+
+            // Hide all other divs
+            $(".toggle-div").not("#" + targetDivId).hide();
+        });
+    });
+</script>
+
+{% endblock %}

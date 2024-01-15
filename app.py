@@ -128,6 +128,12 @@ def zahteva_ulogovanje(f):
 def greska() -> html:
     return render_template("/greska.html")
 #############################################################################
+@app.route("/test", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin'])
+def test() -> html:
+    return render_template("/test.html")
+
 @app.route("/pocetna", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
