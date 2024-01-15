@@ -4,8 +4,14 @@
 <div class="display">
     <div class="kontejner">
         <div class="naslov-blok">
-            <h1>Zdravo, </h1>
-            <h1>{ user.ime }</h1>
+            {% if user_data %}
+              <h1>Dobrodošli, {{ user_data['ime'] }}!</h1>
+              <h1>Email: {{ user_data['email'] }}</h1>
+              <h1>Lokacija: {{ user_data['lokacija'] }}</h1>
+              <h1>Rola: {{ user_data['rola'] }}</h1>
+            {% else %}
+              <h1>Niste ulogovani.</p>
+            {% endif %} 
         </div>
     </div>
 </div>
