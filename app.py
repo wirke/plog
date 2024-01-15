@@ -3,7 +3,7 @@ from flask_bcrypt import Bcrypt
 from functools import wraps
 import mysql.connector
 import html
-
+#############################################################################
 konekcija = mysql.connector.connect(
     passwd='',
     user='root',

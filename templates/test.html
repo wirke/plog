@@ -1,32 +1,132 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<button data-target="div1">Toggle Div 1</button>
+<button data-target="div2">Toggle Div 2</button>
+<button data-target="div3">Toggle Div 3</button>
 
-<button class="toggle-button" data-target="div1">Toggle Div 1</button>
-<button class="toggle-button" data-target="div2">Toggle Div 2</button>
-<button class="toggle-button" data-target="div3">Toggle Div 3</button>
+<div id="div1" class="toggle-div">
+    <div class="display">
+        <div class="kontejner">
+            <div class="naslov-blok">
+                <h1>Dobrodošli, {{ user_data['ime'] }}!</h1>
+                <h1>Email: {{ user_data['email'] }}</h1>
+                <h1>Lokacija: {{ user_data['lokacija'] }}</h1>
+                <h1>Rola: {{ user_data['rola'] }}</h1>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div id="div1" class="toggle-div">This is Div 1</div>
-<div id="div2" class="toggle-div">This is Div 2</div>
-<div id="div3" class="toggle-div">This is Div 3</div>
+<div id="div2" class="toggle-div">
+    <div class="display">
 
+        <div class="kontejner">
+            <div class="red col-12" style="padding-right: 15px;">
+                <div class="col-3 vlaga">
+                    <select class="magacin-select blok col-12" aria-label="Default select example">
+                        <option selected disabled>Lokacija</option>
+                        <option value="1">lokacija1</option>
+                        <option value="2">lokacija2</option>
+                    </select>
+                </div>
+        
+                <form action="#" method="get">
+                    <button class="blok sabmit" type="submit">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    
+        <div class="kontejner">
+            <div class="red col-12" style="padding-right: 15px;">
+                <div class="blok zadnji">
+                    magacin.naziv
+                </div>
+                <div class="blok col-4">
+                    logisticar.naziv
+                </div>
+                <div class="blok col-3">
+                    magacin.lokacija
+                </div>
+                <form action="/kupac/magacin" method="get">
+                    <button class="blok sabmit" type="submit">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="div3" class="toggle-div">
+    <div class="display">
+        <div class="kontejner">
+            <div class="red col-12">
+                <div class="blok">
+                    <i class="fa-solid fa-hourglass-start ikonica"></i>
+                </div>
+                <div class="blok col-1">
+                    kolicina
+                </div>
+                <div class="blok zadnji">
+                    proizvod.naziv
+                </div>
+                <div class="blok zadnji">
+                    proizvod.proizvodjac.naziv
+                </div>
+                <div class="blok col-2">
+                    korisnik.ime
+                </div>
+                <div class="blok col-2">
+                    korisnik.lokacija
+                </div>
+                <form action="#" style="margin-right: 15px;" method="post">
+                    <button class="blok zadnji" type="submit">
+                        <i class="fa-solid fa-paper-plane ikonica"></i> 
+                    </button>
+                </form>
+            </div>
+            <div class="red col-12">
+                <div class="blok">
+                    <i class="fa-solid fa-truck-fast ikonica"></i>
+                </div>
+                <div class="blok col-1">
+                    kolicina
+                </div>
+                <div class="blok zadnji">
+                    proizvod.naziv
+                </div>
+                <div class="blok zadnji">
+                    proizvod.proizvodjac.naziv
+                </div>
+                <div class="blok col-2">
+                    korisnik.ime
+                </div>
+                <div class="blok col-2">
+                    korisnik.lokacija
+                </div>
+                <form style="margin-right: 15px;" method="post">
+                    <button class="blok zadnji" type="submit">
+                        <i class="fa-solid fa-circle-check ikonica"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block skripte %}
-
 <script>
     $(document).ready(function(){
-        $(".toggle-button").click(function(){
-            // Get the target div ID from the data attribute
-            var targetDivId = $(this).data("target");
-
-            // Toggle the visibility of the clicked div
-            $("#" + targetDivId).toggle();
-
-            // Hide all other divs
-            $(".toggle-div").not("#" + targetDivId).hide();
+        $(".toggle-div").hide();
+        $("button").click(function(){
+            $(".toggle-div").hide();
+            var divId = $(this).data("target");
+            $("#" + divId).show();
         });
     });
 </script>
-
 {% endblock %}
