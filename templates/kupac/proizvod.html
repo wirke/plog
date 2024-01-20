@@ -7,18 +7,19 @@
         <div class="red col-12">
 
             <div class="blok col-4">
-                proizvod.naziv
+                {{ proizvod.ime }}
             </div>
 
-            <div class="col-4 vlaga">
-                <select class="magacin-select blok col-12" aria-label="Default select example">
-                    <option selected disabled>Izaberite magacin</option>
-                    <option value="1">magacin</option>
+            <form class="col-4 vlaga" action="{{ url_for('kupi_proizvod', proizvod_id=proizvod.id) }}" method="get">
+                <select class="magacin-select blok col-12" type="submit">
+                    {% for skladiste in skladista %}
+                        <option>{{ skladiste.skladiste_ime }} - {{ skladiste.lokacija }}</option>
+                    {% endfor %}
                 </select>
-            </div>
+              </form>
 
             <div class="blok col-2">
-                cena
+                {{ proizvod.cena }}
             </div>
 
             <div class="upit">
@@ -32,10 +33,9 @@
                         <input id="form1" min="1" name="quantity" value="1" type="number">
                     </div>
             
-                    <form class="dugmic" action="/kupac/kupi" method="post">
-                        <input type="hidden" name="proizvod_id" value="{{ proizvod.id }}">
-                        <button type="submit">Kupi proizvod</button>
-                    </form>
+                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                        <i class="fas fa-plus bela"></i>
+                    </button>
 
                 </div>
             </div>
@@ -44,7 +44,7 @@
         </div>
 
         <div class="red slag col-12">
-            <form action="/kupac/proizvod" method="get">
+            <form action="#" method="get">
                 <button class="blok sabmit" type="submit">
                     <i class="fa-solid fa-cart-shopping ikonica"></i>
                 </button>
