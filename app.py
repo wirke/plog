@@ -206,6 +206,7 @@ def sve_porudzbine() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def prikaz_proizvoda() -> html:
+
     odabrana_kategorija = request.args.get('kategorija', '')
     odabrano_sortiranje = request.args.get('sortiranje', 'asc')
 
@@ -229,12 +230,20 @@ def prikaz_proizvoda() -> html:
 @app.route("/kupac/proizvod/<int:proizvod_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
-def kupovina_proizvoda(proizvod_id: int) -> html:
+def kupi_proizvod(proizvod_id: int) -> html:
+
     proizvod = get_proizvod(proizvod_id)
-    if proizvod:
-        return render_template("/kupac/proizvod.html", proizvod=proizvod)
-    else:
-        return redirect(url_for('prikaz_proizvoda'))
+    if not proizvod:
+        return redirect(url_for('pocetna'))
+    upit_skladista = """
+        SELECT s.ime AS skladiste_ime, s.lokacija
+        FROM proizvod p
+        JOIN sadrzi ps ON p.id = ps.proizvod_id
+        JOIN skladiste s ON ps.skladiste_id = s.id
+        WHERE p.id = %s"""
+    kursor.execute(upit_skladista, (proizvod_id,))
+    skladista = kursor.fetchall()
+    return render_template("/kupac/proizvod.html", proizvod=proizvod, skladista=skladista)
 
 @app.route("/kupac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
