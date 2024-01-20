@@ -5,20 +5,14 @@
 <div class="display">
     <div class="kontejner">
 
-        <div class="red col-12">
+            <form action="{{ url_for('novi_magacin') }}" class="red col-12" method="POST">
 
-            <div class="blok col-4">
-                magacin.naziv
+            <div class="col-4 blok">
+                <input type="text" name="magacinNaziv" placeholder="Unesite naziv" required>
             </div>
 
             <div class="col-4 vlaga">
-                <select class="magacin-select blok col-12" aria-label="Default select example">
-                    <option selected disabled>Izaberite lokaciju</option>
-                    <option value="1">lokacija1</option>
-                    <option value="2">lokacija2</option>
-                    <option value="3">lokacija3</option>
-                    <option value="4">lokacija4</option>
-                </select>
+                    <input class="magacin-select blok col-12" name="magacinLokacija" type="text" placeholder="Unesite lokaciju" required>
             </div>
 
             <div class="upit zadnji">
@@ -29,7 +23,7 @@
                     </button>
             
                     <div>
-                        <input id="form1" min="1" name="quantity" value="1" type="number">
+                        <input id="form1" name="magacinKapacitet" min="1" name="quantity" value="1" type="number" required>
                     </div>
             
                     <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
@@ -40,14 +34,11 @@
             </div>
 
             <div class="red slag zadnji">
-                <form action="#" method="get">
                     <button class="blok sabmit" type="submit">
                         <i class="fa-solid fa-plus"></i>
                     </button>
-                </form>
             </div>
-            
-        </div>
+        </form> 
     </div>
 </div>
 
