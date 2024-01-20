@@ -327,7 +327,6 @@ def novi_magacin() -> html:
         konekcija.commit()
         return redirect(url_for("novi_magacin"))
 
-
 @app.route("/logisticar/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
