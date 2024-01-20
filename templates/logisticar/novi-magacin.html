@@ -7,15 +7,15 @@
 
             <form action="{{ url_for('novi_magacin') }}" class="red col-12" method="POST">
 
-            <div class="col-4 blok">
-                <input type="text" name="magacinNaziv" placeholder="Unesite naziv" required>
+            <div class="col-4 vlaga">
+                <input class="magacin-select blok col-12" type="text" name="magacinNaziv" placeholder="Unesite naziv" required>
             </div>
 
             <div class="col-4 vlaga">
                     <input class="magacin-select blok col-12" name="magacinLokacija" type="text" placeholder="Unesite lokaciju" required>
             </div>
 
-            <div class="upit zadnji">
+            <div class="upit">
                 <div class="blok upit">
 
                     <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
