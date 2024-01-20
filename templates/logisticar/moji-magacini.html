@@ -3,23 +3,19 @@
 {% block content %}
 <div class="display">
     <div class="kontejner">
-
+        {% for s in skladista %}
         <div class="red col-12">
 
-            <div class="blok" style="width: 200px;">
-                id
+            <div class="blok col-4">
+                {{ s.ime }}
             </div>
 
             <div class="blok col-4">
-                magacin.naziv
-            </div>
-
-            <div class="blok col-4">
-                magacin.lokacija
+                {{ s.lokacija }}
             </div>
 
             <div class="blok zadnji">
-                magacin.kapacitet/popunjenost
+                {{ s.kapacitet }}
             </div>
 
             <div style="width: 100px; margin-right: 15px;">
@@ -31,6 +27,7 @@
             </div>
             
         </div>
+    {% endfor %}
     </div>
 </div>
 {% endblock %}
