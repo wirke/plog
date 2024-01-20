@@ -32,9 +32,10 @@
                         <input id="form1" min="1" name="quantity" value="1" type="number">
                     </div>
             
-                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                        <i class="fas fa-plus bela"></i>
-                    </button>
+                    <form class="dugmic" action="/kupac/kupi" method="post">
+                        <input type="hidden" name="proizvod_id" value="{{ proizvod.id }}">
+                        <button type="submit">Kupi proizvod</button>
+                    </form>
 
                 </div>
             </div>

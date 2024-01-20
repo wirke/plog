@@ -4,54 +4,47 @@
 <div class="display">
 
     <div class="kontejner">
-        <div class="pozadina">
-            <div class="red col-12" style="padding-right: 15px; padding-bottom: 15px;">
+        <form  method="GET" action="{{ url_for('prikaz_proizvoda') }}">
+            <select class="blok col-3" name="kategorija" id="kategorija">
+                <option value="">Sve kategorije</option>
 
-                <div class="col-3 vlaga">
-                    <select class="magacin-select blok col-12" aria-label="Default select example">
-                        <option selected disabled>Kategorija</option>
-                        <option value="1">kategorija1</option>
-                        <option value="2">kategorija2</option>
-                        <option value="3">kategorija3</option>
-                        <option value="4">kategorija4</option>
-                    </select>
-                </div>
-
-                <div class="col-2 vlaga">
-                    <select class="magacin-select blok col-12" aria-label="Default select example">
-                        <option selected disabled>Cena</option>
-                        <option value="1">Rastuca</option>
-                        <option value="2">Opadajuca</option>
-                    </select>
-                </div>
-
-                <form action="#" method="get">
-                    <button class="blok sabmit" type="submit">
-                        <i class="fa-solid fa-check"></i>
-                    </button>
-                </form>
+                {% for kategorija in sve_kategorije %}
+                    <option value="{{ kategorija }}">{{ kategorija }}</option>
+                {% endfor %}
                 
-            </div>
-        </div>
+            </select>
+            
+            <select class="blok col-3" name="sortiranje" id="sortiranje">
+                <option value="asc">Cena - Rastuće</option>
+                <option value="desc">Cena - Opadajuće</option>
+            </select>
+            
+            <button class="blok col-1" type="submit">Primeni</button>
+        </form>
     </div>
 
     <div class="kontejner">
+        {% for proizvod in proizvodi %}
         <div class="red col-12" style="padding-right: 15px;">
-            <div class="blok zadnji">
-                proizvod.naziv
-            </div>
-            <div class="blok col-4">
-                proizvod.kategorija
+            <div class="blok col-3">
+                {{ proizvod.ime }}
             </div>
             <div class="blok col-3">
-                proizvod.cena
+                {{ proizvod.proizvodjac_ime }}
             </div>
-            <form action="/kupac/proizvod" method="get">
-                <button class="blok sabmit" type="submit">
+            <div class="blok col-3">
+                {{ proizvod.kategorija }}
+            </div>
+            <div class="blok zadnji">
+                {{ proizvod.cena }}
+            </div>
+            <form href="{{ url_for('kupovina_proizvoda', proizvod_id=proizvod.id) }}" method="get">
+                <button class="blok sabmit">
                     <i class="fa-solid fa-eye"></i>
                 </button>
             </form>
         </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

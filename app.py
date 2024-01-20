@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect, session, flash
+from flask import Flask, render_template, url_for, request, redirect, session
 from flask_bcrypt import Bcrypt
 from functools import wraps
 import mysql.connector
@@ -41,6 +41,8 @@ def inject_user_data():
         korisnik = kursor.fetchone()
         user_data = korisnik if korisnik else None
     return dict(user_data=user_data)
+
+
 #############################################################################
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -60,17 +62,14 @@ def login():
                 print(f"Uspesno logovanje. Email: {user['email']}")
                 session['korisnik_id'] = user['id']
                 session['rola'] = user['rola']
-                flash("Uspesno ste ulogovani!", "success")
                 return redirect(url_for('pocetna'))
             else:
                 print("Neuspelo logovanje. Email:", forma['emailPolje'])
                 print("Hash iz baze:", user['sifra'])
-                flash("Nevalidni kredencijali", "error")
                 return redirect(url_for('greska'))
             
         except Exception as e:
             print(f"Error: {e}")
-            flash("Greska u logovanju", "error")
             return redirect(url_for('greska'))
 
 @app.route("/register", methods=["GET","POST"])
@@ -140,17 +139,102 @@ def test() -> html:
 def pocetna() -> html:
     return render_template("/pocetna.html")
 #############################################################################
+def get_proizvod(proizvod_id: int) -> dict:
+    upit_proizvod = """
+        SELECT p.id, p.ime, p.kategorija, p.cena, p.proizvodjac_id, u.ime AS proizvodjac_ime
+        FROM proizvod p
+        JOIN user u ON p.proizvodjac_id = u.id
+        WHERE p.id = %s
+    """
+    kursor.execute(upit_proizvod, (proizvod_id,))
+    proizvod = kursor.fetchone()
+    return proizvod
+
+def svi_proizvodi() -> html:
+    upit_proizvodi = """
+        SELECT id, ime, kategorija, cena
+        FROM proizvod
+    """
+    kursor.execute(upit_proizvodi)
+    proizvodi = kursor.fetchall()
+    return proizvodi
+
+def get_skladiste(skladiste_id: int) -> html:
+    upit_skladiste = """
+        SELECT id, ime, kapacitet, lokacija
+        FROM skladiste
+        WHERE user_id = %s
+    """
+    kursor.execute(upit_skladiste, (skladiste_id,))
+    skladiste = kursor.fetchone()
+    return skladiste
+
+def sva_skladista() -> html:
+    upit_skladista = """
+        SELECT s.id, s.ime AS skladiste_ime, s.kapacitet, s.lokacija, l.ime AS logisticar_ime
+        FROM skladiste s
+        LEFT JOIN user l ON s.logisticar_id = l.id
+    """
+    kursor.execute(upit_skladista)
+    skladista = kursor.fetchall()
+    return skladista
+
+def get_porudzbinu() -> html:
+    korisnik_id = session.get('korisnik_id')
+
+    upit_porudzbine = """
+        SELECT p.id, p.datum, p.kolicina, p.isporuceno, p.kategorija, p.kupac_id,
+               p.proizvodjac_id, p.skladiste_id, s.ime AS skladiste_ime
+        FROM porudzbina p
+        JOIN skladiste s ON p.skladiste_id = s.id
+        WHERE p.kupac_id = %s
+    """
+    kursor.execute(upit_porudzbine, (korisnik_id,))
+    porudzbina = kursor.fetchone()
+    return porudzbina
+
+def sve_porudzbine() -> html:
+    upit_porudzbine = """
+        SELECT id, datum, kolicina, isporuceno, kategorija, kupac_id, proizvodjac_id, skladiste_id
+        FROM porudzbina
+    """
+    kursor.execute(upit_porudzbine)
+    porudzbine = kursor.fetchall()
+    return porudzbine
+#############################################################################
 @app.route("/kupac/proizvodi", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def prikaz_proizvoda() -> html:
-    return render_template("/kupac/proizvodi.html")
+    odabrana_kategorija = request.args.get('kategorija', '')
+    odabrano_sortiranje = request.args.get('sortiranje', 'asc')
 
-@app.route("/kupac/proizvod", methods=['GET', 'POST'])
+    upit_kategorije = "SELECT DISTINCT kategorija FROM proizvod"
+    kursor.execute(upit_kategorije)
+    sve_kategorije = [red['kategorija'] for red in kursor.fetchall()]
+
+    upit_proizvoda = """
+        SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
+        FROM proizvod p
+        JOIN user u ON p.proizvodjac_id = u.id
+        WHERE (%s = '' OR p.kategorija = %s)
+        ORDER BY p.cena {0}
+    """.format(odabrano_sortiranje)
+
+    kursor.execute(upit_proizvoda, (odabrana_kategorija, odabrana_kategorija))
+    proizvodi = kursor.fetchall()
+
+    return render_template("/kupac/proizvodi.html", proizvodi=proizvodi, sve_kategorije=sve_kategorije, odabrana_kategorija=odabrana_kategorija, odabrano_sortiranje=odabrano_sortiranje)
+
+@app.route("/kupac/proizvod/<int:proizvod_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
-def naruci_proizvod() -> html:
-    return render_template("/kupac/proizvod.html")
+def kupovina_proizvoda(proizvod_id: int) -> html:
+    proizvod = get_proizvod(proizvod_id)
+    if proizvod:
+        return render_template("/kupac/proizvod.html", proizvod=proizvod)
+    else:
+        return redirect(url_for('prikaz_proizvoda'))
 
 @app.route("/kupac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje

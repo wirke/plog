@@ -1,0 +1,62 @@
+def get_proizvod(proizvod_id: int) -> dict:
+    upit_proizvod = """
+        SELECT p.id, p.ime, p.kategorija, p.cena, p.proizvodjac_id, u.ime AS proizvodjac_ime
+        FROM proizvod p
+        JOIN user u ON p.proizvodjac_id = u.id
+        WHERE p.id = %s
+    """
+    kursor.execute(upit_proizvod, (proizvod_id,))
+    return kursor.fetchone()
+
+def get_skladiste(skladiste_id: int) -> html:
+    upit_skladista = """
+        SELECT id, ime, kapacitet, lokacija
+        FROM skladiste
+        WHERE user_id = %s
+    """
+    korisnik_id = session.get('korisnik_id')
+    kursor.execute(upit_skladista, (korisnik_id,))
+    return kursor.fetchone()
+
+def get_porudzbinu(porudzbina_id: int) -> html:
+    korisnik_id = session.get('korisnik_id')
+
+    upit_porudzbine = """
+        SELECT p.id, p.datum, p.kolicina, p.isporuceno, p.kategorija, p.kupac_id,
+               p.proizvodjac_id, p.skladiste_id, s.ime AS skladiste_ime
+        FROM porudzbina p
+        JOIN skladiste s ON p.skladiste_id = s.id
+        WHERE p.kupac_id = %s
+    """
+    kursor.execute(upit_porudzbine, (korisnik_id,))
+    return kursor.fetchone()
+
+def svi_proizvodi() -> html:
+    upit_proizvodi = """
+        SELECT id, ime, kategorija, cena
+        FROM proizvod
+    """
+    kursor.execute(upit_proizvodi)
+    proizvodi = kursor.fetchall()
+
+    return proizvodi
+
+def sva_porudzbine() -> html:
+    upit_porudzbine = """
+        SELECT id, datum, kolicina, isporuceno, kategorija, kupac_id, proizvodjac_id, skladiste_id
+        FROM porudzbina
+    """
+    kursor.execute(upit_porudzbine)
+    porudzbine = kursor.fetchall()
+
+    return porudzbine
+
+def sva_skladista() -> html:
+    upit_skladista = """
+        SELECT id, ime, kapacitet, lokacija
+        FROM skladiste
+    """
+    kursor.execute(upit_skladista)
+    skladista = kursor.fetchall()
+
+    return skladista
