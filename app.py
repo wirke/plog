@@ -315,7 +315,18 @@ def magacin() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def novi_magacin() -> html:
-    return render_template("/logisticar/novi-magacin.html")
+    if request.method == "GET":
+        return render_template("/logisticar/novi-magacin.html")
+    elif request.method == "POST":
+        upit = """
+        INSERT INTO skladiste(logisticar_id, ime, kapacitet, lokacija)
+        VALUES (%s, %s, %s, %s)
+        """
+        forma = (session['korisnik_id'], request.form['magacinNaziv'], request.form['magacinKapacitet'], request.form['magacinLokacija'])
+        kursor.execute(upit, forma)
+        konekcija.commit()
+        return redirect(url_for("novi_magacin"))
+
 
 @app.route("/logisticar/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
