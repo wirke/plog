@@ -213,8 +213,9 @@ def moji_magacini() -> html:
     upit = """
     SELECT ime, lokacija, kapacitet
     FROM skladiste
+    WHERE logisticar_id = %s
     """
-    kursor.execute(upit)
+    kursor.execute(upit, (session['korisnik_id'],))
     skladista = kursor.fetchall()
     return render_template("/logisticar/moji-magacini.html",skladista=skladista)
 
