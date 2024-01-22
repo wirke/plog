@@ -4,17 +4,17 @@
 <div class="display">
     <div class="kontejner">
         <div class="red col-12">
-           <!-- {% for s in skladista %} -->
+           {% for s in skladista %}
             <div class="blok zadnji">
-                <!--{{ s.ime }} -->
+                {{ s.ime }} 
                 skladiste.ime
             </div>
             <div class="blok zadnji">
-               <!-- {{ s.lokacija }} -->
+                {{ s.lokacija }} 
                skladiste.lokacija
             </div>
             <div class="blok col-2">
-               <!-- {{ s.kapacitet }} -->
+                {{ s.kapacitet }} 
                skladiste.kapacitet
             </div>
             <form action="#" method="get" style="margin-right: 15px;">
@@ -22,7 +22,7 @@
                     <i class="fa-solid fa-pen"></i>
                 </button>
             </form>
-        <!-- {% endfor %} -->
+         {% endfor %} 
         </div>
     </div>
     <div class="kontejner">
