@@ -4,53 +4,37 @@
 <div class="display">
     <div class="kontejner">
 
-        <div class="red col-12">
+        <div class="red">
 
-            <div class="blok col-4">
+            <div class="blok col-3">
                 {{ proizvod.ime }}
             </div>
 
-            <form class="col-4 vlaga" action="{{ url_for('kupi_proizvod', proizvod_id=proizvod.id) }}" method="get">
-                <select class="magacin-select blok col-12" type="submit">
-                    {% for skladiste in skladista %}
-                        <option>{{ skladiste.skladiste_ime }} - {{ skladiste.lokacija }}</option>
-                    {% endfor %}
-                </select>
-              </form>
+            <div class="blok col-2">
+                {{ proizvod.proizvodjac_ime }}
+            </div>
 
             <div class="blok col-2">
                 {{ proizvod.cena }}
             </div>
 
-            <div class="upit">
-                <div class="blok upit">
-
-                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                        <i class="fas fa-minus"></i>
-                    </button>
-            
-                    <div>
-                        <input id="form1" min="1" name="quantity" value="1" type="number">
-                    </div>
-            
-                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                        <i class="fas fa-plus bela"></i>
-                    </button>
-
+            <form class="red" action="{{ url_for('kupi_proizvod', proizvod_id=proizvod.id) }}" method="post">
+                <select class="blok zadnji" name="skladiste" required  type="submit">
+                    <option selected disabled>Izaberi magacin</option>
+                    {% for skladiste in skladista %}
+                        <option value="{{ skladiste.id }}">{{ skladiste.skladiste_ime }} - {{ skladiste.lokacija }}</option>
+                    {% endfor %}
+                </select>
+                
+                <div class="col-3" style="height: 55px;">
+                    <input name="kolicina" class="blok" required id="form1" min="1" value="1" type="number">
                 </div>
-            </div>
-
-            
-        </div>
-
-        <div class="red slag col-12">
-            <form action="#" method="get">
-                <button class="blok sabmit" type="submit">
-                    <i class="fa-solid fa-cart-shopping ikonica"></i>
+                
+                <button class="blok"  type="submit">
+                    <i class="fa-solid fa-cart-shopping"></i>
                 </button>
             </form>
         </div>
-
     </div>
 </div>
 {% endblock %}

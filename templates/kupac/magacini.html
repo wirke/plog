@@ -4,40 +4,41 @@
 <div class="display">
 
     <div class="kontejner">
-        <div class="red col-12" style="padding-right: 15px;">
-            <div class="col-3 vlaga">
-                <select class="magacin-select blok col-12" aria-label="Default select example">
-                    <option selected disabled>Lokacija</option>
-                    <option value="1">lokacija1</option>
-                    <option value="2">lokacija2</option>
-                </select>
-            </div>
-    
-            <form action="#" method="get">
-                <button class="blok sabmit" type="submit">
-                    <i class="fa-solid fa-check"></i>
-                </button>
-            </form>
-        </div>
+        <form  method="GET" action="{{ url_for('prikaz_magacina') }}">
+            <select class="blok col-3" name="lokacija" id="lokacija">
+                <option value="">Odaberi lokaciju</option>
+
+                {% for lokacija in sve_lokacije %}
+                    <option value="{{ lokacija }}">{{ lokacija }}</option>
+                {% endfor %}
+                
+            </select>
+            
+            <button class="blok col-1" type="submit">Primeni</button>
+        </form>
     </div>
 
     <div class="kontejner">
+        {% for s in skladista %}
         <div class="red col-12" style="padding-right: 15px;">
-            <div class="blok zadnji">
-                magacin.naziv
-            </div>
-            <div class="blok col-4">
-                logisticar.naziv
+            <div class="blok col-3">
+                {{ skladiste.skladiste_ime }}
             </div>
             <div class="blok col-3">
-                magacin.lokacija
+                {{ skladiste.logisticar_ime }}
             </div>
-            <form action="/kupac/magacin" method="get">
-                <button class="blok sabmit" type="submit">
+            <div class="blok col-3">
+                {{ skladiste.lokacija }}
+            </div>
+            <div class="blok zadnji">
+                {{ skladiste.kapacitet }}
+            </div>
+            <form action="{{ url_for('prikazi_magacin', skladiste_id=skladiste.id) }}">
+                <button class="blok sabmit">
                     <i class="fa-solid fa-eye"></i>
                 </button>
             </form>
         </div>
-    </div>
+        {% endfor %}
 </div>
 {% endblock %}
