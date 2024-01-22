@@ -4,21 +4,22 @@
 <div class="display">
     <div class="kontejner">
         <div class="red col-12">
-            
+            {% for s in skladista %}
             <div class="blok zadnji">
-                magacin.naziv
+                {{ s.ime }}
             </div>
             <div class="blok zadnji">
-                magacin.lokacija
+                {{ s.lokacija }}
             </div>
             <div class="blok col-2">
-                magacin.kapacitet/popunjenost
+                {{ s.kapacitet }}
             </div>
             <form action="#" method="get" style="margin-right: 15px;">
                 <button class="blok sabmit" type="submit">
                     <i class="fa-solid fa-pen"></i>
                 </button>
             </form>
+        {% endfor %}
         </div>
     </div>
     <div class="kontejner">

@@ -224,7 +224,14 @@ def moji_magacini() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def magacin() -> html:
-    return render_template("/logisticar/magacin.html")
+    upit_skladiste = """
+        SELECT ime, lokacija, kapacitet
+        FROM skladiste
+        WHERE id = %s
+        """
+    kursor.execute(upit_skladiste, (session['korisnik_id'],))
+    skladista = kursor.fetchall()
+    return render_template("/logisticar/magacin.html", skladista=skladista)
 
 @app.route("/logisticar/novi-magacin", methods=['GET', 'POST'])
 @zahteva_ulogovanje
