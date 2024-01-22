@@ -19,10 +19,10 @@
     </div>
 
     <div class="kontejner">
-        {% for s in skladista %}
+        {% for s in skladiste %}
         <div class="red col-12" style="padding-right: 15px;">
             <div class="blok col-3">
-                {{ skladiste.skladiste_ime }}
+                {{ skladiste.ime }}
             </div>
             <div class="blok col-3">
                 {{ skladiste.logisticar_ime }}
@@ -33,7 +33,7 @@
             <div class="blok zadnji">
                 {{ skladiste.kapacitet }}
             </div>
-            <form action="{{ url_for('prikazi_skladiste', skladiste_id=skladiste.id) }}">
+            <form action="{{ url_for('pregled_magacina', skladiste_id=skladiste.id) }}">
                 <button class="blok sabmit">
                     <i class="fa-solid fa-eye"></i>
                 </button>
