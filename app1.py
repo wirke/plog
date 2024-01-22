@@ -209,14 +209,29 @@ def pregledaj_porudzbine() -> html:
 @app.route("/logisticar/moji-magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
-def moji_magacina() -> html:
-    return render_template("/logisticar/moji-magacini.html")
+def moji_magacini() -> html:
+    upit = """
+    SELECT ime, lokacija, kapacitet
+    FROM skladiste
+    WHERE logisticar_id = %s
+    """
+    kursor.execute(upit, (session['korisnik_id'],))
+    skladista = kursor.fetchall()
+    return render_template("/logisticar/moji-magacini.html",skladista=skladista)
+
 
 @app.route("/logisticar/magacin", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def magacin() -> html:
-    return render_template("/logisticar/magacin.html")
+    upit_skladiste = """
+        SELECT ime, lokacija, kapacitet
+        FROM skladiste
+        WHERE id = %s
+        """
+    kursor.execute(upit_skladiste, (session['korisnik_id'],))
+    skladista = kursor.fetchall()
+    return render_template("/logisticar/magacin.html", skladista=skladista)
 
 @app.route("/logisticar/novi-magacin", methods=['GET', 'POST'])
 @zahteva_ulogovanje
