@@ -1,62 +1,71 @@
-def get_proizvod(proizvod_id: int) -> dict:
-    upit_proizvod = """
-        SELECT p.id, p.ime, p.kategorija, p.cena, p.proizvodjac_id, u.ime AS proizvodjac_ime
-        FROM proizvod p
-        JOIN user u ON p.proizvodjac_id = u.id
-        WHERE p.id = %s
-    """
-    kursor.execute(upit_proizvod, (proizvod_id,))
-    return kursor.fetchone()
+<div class="display">
+    <div class="kontejner">
+        <div class="red">
 
-def get_skladiste(skladiste_id: int) -> html:
-    upit_skladista = """
-        SELECT id, ime, kapacitet, lokacija
-        FROM skladiste
-        WHERE user_id = %s
-    """
-    korisnik_id = session.get('korisnik_id')
-    kursor.execute(upit_skladista, (korisnik_id,))
-    return kursor.fetchone()
+            <div class="blok col-4" style="height: 450px;">
+                proizvod.slika
+            </div>
 
-def get_porudzbinu(porudzbina_id: int) -> html:
-    korisnik_id = session.get('korisnik_id')
+            <div class="zadnji" style="display:flex;flex-direction:column;justify-content:space-between;">
+                <div class="column">
+                    <div class="red">
+    
+                        <div class="blok zadnji">
+                            {{proizvod.ime}}
+                        </div>
+                        <div class="blok col-5">
+                            {{ proizvod.proizvodjac_ime }}
+                        </div>
+    
+                    </div>
+    
+                    <div class="red">
+                        <div class="blok zadnji">
+                            <p>Kategorija - {{ proizvod.kategorija }}</p>
+                            Opis - 
+                        </div>
+                    </div>
+                </div>
 
-    upit_porudzbine = """
-        SELECT p.id, p.datum, p.kolicina, p.isporuceno, p.kategorija, p.kupac_id,
-               p.proizvodjac_id, p.skladiste_id, s.ime AS skladiste_ime
-        FROM porudzbina p
-        JOIN skladiste s ON p.skladiste_id = s.id
-        WHERE p.kupac_id = %s
-    """
-    kursor.execute(upit_porudzbine, (korisnik_id,))
-    return kursor.fetchone()
+                <div class="red col-12">
 
-def svi_proizvodi() -> html:
-    upit_proizvodi = """
-        SELECT id, ime, kategorija, cena
-        FROM proizvod
-    """
-    kursor.execute(upit_proizvodi)
-    proizvodi = kursor.fetchall()
+                    <div class="blok upit" style="width: 15%;">
+                        
+                        <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                
+                        <div>
+                            <input id="form1" min="1" name="quantity" value="1" type="number">
+                        </div>
+                
+                        <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        
+                    </div>
 
-    return proizvodi
+                    <form method="GET" action="{{ url_for('prikaz_proizvoda') }}">
+                        <select class="blok" name="kategorija" id="kategorija">
+                            <option value="" disabled>Izaberite magacin</option>
+            
+                            {% for kategorija in sve_kategorije %}
+                                <option value="{{ kategorija }}">{{ kategorija }}</option>
+                            {% endfor %}
+                            
+                        </select>
+                    </form>
 
-def sva_porudzbine() -> html:
-    upit_porudzbine = """
-        SELECT id, datum, kolicina, isporuceno, kategorija, kupac_id, proizvodjac_id, skladiste_id
-        FROM porudzbina
-    """
-    kursor.execute(upit_porudzbine)
-    porudzbine = kursor.fetchall()
+                    <div class="blok col-2">
+                        {{proizvod.cena}}
+                    </div>
 
-    return porudzbine
+                    <button class="blok">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                    </button>
 
-def sva_skladista() -> html:
-    upit_skladista = """
-        SELECT id, ime, kapacitet, lokacija
-        FROM skladiste
-    """
-    kursor.execute(upit_skladista)
-    skladista = kursor.fetchall()
-
-    return skladista
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
