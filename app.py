@@ -263,9 +263,9 @@ def kupi_proizvod(proizvod_id: int) -> html:
     """.format(odabrano_sortiranje)
 
     kursor.execute(upit_proizvoda, (odabrana_kategorija, odabrana_kategorija))
-    proizvodi = kursor.fetchall()
+    proizvod = kursor.fetchall()
 
-    return render_template("/kupac/proizvod.html", skladista=skladista, proizvodi=proizvodi, odabrana_kategorija=odabrana_kategorija, odabrano_sortiranje=odabrano_sortiranje)
+    return render_template("/kupac/proizvod.html", skladista=skladista, proizvod=proizvod, odabrana_kategorija=odabrana_kategorija, odabrano_sortiranje=odabrano_sortiranje)
 
 @app.route("/kupac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -351,19 +351,21 @@ def pregledaj_porudzbine() -> html:
 @app.route("/logisticar/moji-magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
-def moji_magacina() -> html:
-    return render_template("/logisticar/moji-magacini.html")
-
-@app.route("/logisticar/magacin", methods=['GET', 'POST'])
-@zahteva_ulogovanje
-@zahteva_dozvolu(roles=['Admin', 'Logističar'])
-def magacin() -> html:
-    return render_template("/logisticar/magacin.html")
+def moji_magacini() -> html:
+    upit = """
+    SELECT ime, lokacija, kapacitet
+    FROM skladiste
+    WHERE logisticar_id = %s
+    """
+    kursor.execute(upit, (session['korisnik_id'],))
+    skladista = kursor.fetchall()
+    return render_template("/logisticar/moji-magacini.html",skladista=skladista)
 
 @app.route("/logisticar/novi-magacin", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def novi_magacin() -> html:
+
     if request.method == "GET":
         return render_template("/logisticar/novi-magacin.html")
     elif request.method == "POST":
@@ -375,11 +377,29 @@ def novi_magacin() -> html:
         kursor.execute(upit, forma)
         konekcija.commit()
         return redirect(url_for("novi_magacin"))
+    
+@app.route("/logisticar/magacin/<int:skladiste_id>", methods=['GET'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Logističar'])
+def prikazi_skladiste(skladiste_id: int) -> html:
+
+    skladiste = get_skladiste(skladiste_id)
+    upit_proizvodi_u_skladistu = """
+        SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
+        FROM proizvod p
+        JOIN sadrzi s ON p.id = s.proizvod_id
+        WHERE s.skladiste_id = %s
+    """
+    kursor.execute(upit_proizvodi_u_skladistu, (skladiste_id,))
+    proizvodi_u_skladistu = kursor.fetchall()
+
+    return render_template("/logisticar/magacin.html", skladiste=skladiste, proizvodi_u_skladistu=proizvodi_u_skladistu)
 
 @app.route("/logisticar/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def porudzbina_magacin() -> html:
+
     return render_template("/logisticar/porudzbine.html")
 
 if __name__ == "__main__":
