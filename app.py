@@ -338,19 +338,31 @@ def porudzbine_korisnik() -> html:
     JOIN skladiste s ON p.skladiste_id = s.id;
     """
     kursor.execute(prikaz_porudzbina)
-    porudzbine = kursor.fetchall
+    porudzbine = kursor.fetchall()
     return render_template("/kupac/porudzbine.html", porudzbine=porudzbine)
 
+def postoji_porudzbina(korisnik_id):
+    upit = """
+        SELECT COUNT(*) AS broj_porudzbina
+        FROM porudzbina
+        WHERE kupac_id = %s
+    """
+    kursor.execute(upit, (korisnik_id,))
+    rezultat = kursor.fetchone()
+    
+    if rezultat['broj_porudzbina'] > 0:
+        return True
+    else:
+        return False
+
 @app.route("/poruci_proizvod/<int:proizvod_id>", methods=['POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def poruci_proizvod(proizvod_id):
     if request.method == 'POST':
 
         skladiste_id = request.form.get('skladiste')
         kolicina = request.form.get('kolicina')
-
-        if 'korisnik_id' not in session:
-            return redirect(url_for('login'))
-
         korisnik_id = session['korisnik_id']
 
         dodaj_porudzbinu = """

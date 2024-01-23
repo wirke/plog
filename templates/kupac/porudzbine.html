@@ -4,45 +4,32 @@
 <div class="display">
     <div class="kontejner">
         <div class="red col-12">
-            <div class="blok">
-                <i class="fa-solid fa-hourglass-start ikonica"></i>
-            </div>
-            <div class="blok col-3">
-                proizvod.naziv
-            </div>
-            <div class="blok col-3">
-                proizvod.kategorija
-            </div>
-            <div class="blok zadnji">
-                porudzbina.datum
-            </div>
-            <div class="blok zadnji">
-                proizvod.cena
-            </div>
-            <div class="blok col-1">
-                kolicina
-            </div>
-        </div>
-
-        <div class="red col-12">
-            <div class="blok">
-                <i class="fa-solid fa-truck-fast ikonica"></i>
-            </div>
-            <div class="blok col-3">
-                proizvod.naziv
-            </div>
-            <div class="blok col-3">
-                proizvod.kategorija
-            </div>
-            <div class="blok zadnji">
-                porudzbina.datum
-            </div>
-            <div class="blok zadnji">
-                proizvod.cena
-            </div>
-            <div class="blok col-1">
-                kolicina
-            </div>
+            {% for p in porudzbina %}
+             {% if postoji_porudzbina() %}
+             <div class="blok">
+                 <i class="fa-solid fa-hourglass-start ikonica"></i>
+             </div>
+             <div class="blok col-3">
+                 {{proizvod.naziv}}
+             </div>
+             <div class="blok col-3">
+                 {{proizvod.kategorija}}
+             </div>
+             <div class="blok zadnji">
+                 {{porudzbina.datum}}
+             </div>
+             <div class="blok zadnji">
+                 {{proizvod.cena}}
+             </div>
+             <div class="blok col-1">
+                 {{kolicina}}
+             </div>
+             {% else %}
+             <div class="blok">
+                 <h>Nemate porudzbine</h>
+             </div>
+             {% endif%}
+            {% endfor %}
         </div>
     </div>
 </div>
