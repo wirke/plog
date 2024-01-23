@@ -325,16 +325,22 @@ def prikazi_magacin(skladiste_id: int) -> html:
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def porudzbine_korisnik() -> html:
 
+    korisnik_id = session.get('korisnik_id')
+
     prikaz_porudzbina = """
     SELECT p.id AS porudzbina_id, p.datum, p.kolicina, p.isporuceno, p.kategorija, u.ime AS kupac_ime, pr.ime AS proizvod_ime, s.ime AS skladiste_ime
     FROM porudzbina p
     JOIN user u ON p.kupac_id = u.id
     JOIN proizvod pr ON p.proizvod_id = pr.id
     JOIN skladiste s ON p.skladiste_id = s.id;
+    WHERE kupac_ime = %s
     """
-    kursor.execute(prikaz_porudzbina)
-    porudzbine = kursor.fetchall()
-    return render_template("/kupac/porudzbine.html", porudzbine=porudzbine)
+    kursor.execute(prikaz_porudzbina, (korisnik_id,))
+    if postoji_porudzbina(korisnik_id):
+        porudzbine = kursor.fetchall()
+        return render_template("/kupac/porudzbine.html", porudzbine=porudzbine)
+    else:
+        return render_template("/kupac/porudzbine.html")
 
 def postoji_porudzbina(korisnik_id):
     upit = """
