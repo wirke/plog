@@ -349,7 +349,12 @@ def proizvod() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def pregledaj_magacine() -> html:
-    return render_template("/proizvodjac/magacini.html")
+    upit = """SELECT ime, lokacija, kapacitet
+    FROM skladiste"""
+    kursor.execute(upit)
+    skladista = kursor.fetchall()
+    return render_template("/proizvodjac/magacini.html",skladista=skladista)
+
 
 @app.route("/proizvodjac/magacin", methods=['GET', 'POST'])
 @zahteva_ulogovanje
