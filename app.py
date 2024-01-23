@@ -300,7 +300,6 @@ def prikazi_magacin(skladiste_id: int) -> html:
         JOIN sadrzi ON proizvod.id = sadrzi.proizvod_id
         JOIN user u ON proizvod.proizvodjac_id = u.id
         WHERE sadrzi.skladiste_id = %s
-
     """.format(skladiste)
     kursor.execute(upit_proizvoda, (skladiste_id,))
     proizvodi = kursor.fetchall()

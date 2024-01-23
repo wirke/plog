@@ -33,11 +33,13 @@
             <div class="blok zadnji">
                 {{ s.kapacitet }}
             </div>
-            <form >
+            {% for skladiste in skladiste %}
+            <form action="{{ url_for('prikazi_magacin', skladiste_id=skladiste.id) }}" method="get">
                 <button class="blok sabmit">
                     <i class="fa-solid fa-eye"></i>
                 </button>
             </form>
+            {% endfor %}
         </div>
         {% endfor %}
 </div>
