@@ -329,7 +329,17 @@ def prikazi_magacin(skladiste_id: int) -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def porudzbine_korisnik() -> html:
-    return render_template("/kupac/porudzbine.html")
+
+    prikaz_porudzbina = """
+    SELECT p.id AS porudzbina_id, p.datum, p.kolicina, p.isporuceno, p.kategorija, u.ime AS kupac_ime, pr.ime AS proizvod_ime, s.ime AS skladiste_ime
+    FROM porudzbina p
+    JOIN user u ON p.kupac_id = u.id
+    JOIN proizvod pr ON p.proizvod_id = pr.id
+    JOIN skladiste s ON p.skladiste_id = s.id;
+    """
+    kursor.execute(prikaz_porudzbina)
+    porudzbine = kursor.fetchall
+    return render_template("/kupac/porudzbine.html", porudzbine=porudzbine)
 
 @app.route("/poruci_proizvod/<int:proizvod_id>", methods=['POST'])
 def poruci_proizvod(proizvod_id):
@@ -394,7 +404,6 @@ def pregledaj_magacine() -> html:
     kursor.execute(upit)
     skladista = kursor.fetchall()
     return render_template("/proizvodjac/magacini.html",skladista=skladista)
-
 
 @app.route("/proizvodjac/magacin", methods=['GET', 'POST'])
 @zahteva_ulogovanje
