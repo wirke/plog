@@ -14,7 +14,7 @@
                 
             </select>
             
-            <select class="blok col-2" name="sortiranje" id="sortiranje">
+            <select class="blok col-2" name="odabrano_sortiranje" id="sortiranje">
                 <option value="asc">Cena - Rastuće</option>
                 <option value="desc">Cena - Opadajuće</option>
             </select>
@@ -38,7 +38,7 @@
             <div class="blok zadnji">
                 {{ proizvod.cena }}
             </div>
-            <form action="{{ url_for('kupi_proizvod', proizvod_id=proizvod.id) }}">
+            <form action="{{ url_for('kupi_proizvod' proizvod_id=proizvod.id) }}">
                 <button class="blok sabmit">
                     <i class="fa-solid fa-eye"></i>
                 </button>

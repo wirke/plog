@@ -240,31 +240,34 @@ def prikaz_proizvoda() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def kupi_proizvod(proizvod_id: int) -> html:
+    try:
+        uzmi_proizvod = get_proizvod(proizvod_id)
 
-    uzmi_proizvod = get_proizvod(proizvod_id)
+        upit_skladista = """
+            SELECT s.id, s.ime, s.lokacija, u.ime AS logisticar_ime
+            FROM proizvod p
+            JOIN sadrzi ps ON p.id = ps.proizvod_id
+            JOIN skladiste s ON ps.skladiste_id = s.id
+            JOIN user u ON s.logisticar_id = u.id
+            WHERE p.id = %s
+        """
+        kursor.execute(upit_skladista, (proizvod_id,))
+        skladista = kursor.fetchall()
 
-    upit_skladista = """
-        SELECT s.id, s.ime, s.lokacija
-        FROM proizvod p
-        JOIN sadrzi ps ON p.id = ps.proizvod_id
-        JOIN skladiste s ON ps.skladiste_id = s.id
-        WHERE p.id = %s
-        """.format(uzmi_proizvod)
-    
-    kursor.execute(upit_skladista, (proizvod_id,))
-    skladista = kursor.fetchall()
+        upit_proizvoda = """
+            SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
+            FROM proizvod p
+            JOIN user u ON p.proizvodjac_id = u.id
+            WHERE p.id = %s
+        """
+        kursor.execute(upit_proizvoda, (proizvod_id,))
+        proizvod = kursor.fetchall()
 
-    upit_proizvoda = """
-        SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
-        FROM proizvod p
-        JOIN user u ON p.proizvodjac_id = u.id
-        WHERE p.id = %s
-        """.format(uzmi_proizvod)
-    
-    kursor.execute(upit_proizvoda, (proizvod_id,))
-    proizvod = kursor.fetchall()
+        return render_template("/kupac/proizvod.html", skladista=skladista, proizvod=proizvod)
 
-    return render_template("/kupac/proizvod.html", skladista=skladista, proizvod=proizvod)
+    except Exception as e:
+        return str(e)
+
 
 @app.route("/kupac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -276,13 +279,15 @@ def prikaz_magacina() -> html:
     kursor.execute(upit_lokacija)
     sve_lokacije = [red['lokacija'] for red in kursor.fetchall()]
 
+    if request.method == 'POST':
+        nova_vrednost = request.form.get('nova_vrednost')
+
     upit_skladista = """
         SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
         FROM skladiste s
         JOIN user u ON s.logisticar_id = u.id
         WHERE (%s = '' OR s.lokacija = %s)
-    """.format(odabrana_lokacija)
-
+    """
     kursor.execute(upit_skladista, (odabrana_lokacija, odabrana_lokacija))
     skladiste = kursor.fetchall()
 
@@ -294,17 +299,35 @@ def prikaz_magacina() -> html:
 def prikazi_magacin(skladiste_id: int) -> html:
 
     skladiste = get_skladiste(skladiste_id)
-    upit_proizvoda = """
-        SELECT proizvod.id, proizvod.ime, proizvod.kategorija, proizvod.cena, u.ime AS proizvodjac_ime
-        FROM proizvod
-        JOIN sadrzi ON proizvod.id = sadrzi.proizvod_id
-        JOIN user u ON proizvod.proizvodjac_id = u.id
-        WHERE sadrzi.skladiste_id = %s
-    """.format(skladiste)
-    kursor.execute(upit_proizvoda, (skladiste_id,))
+
+    cena_max = request.args.get('cena_max', None, type=float)
+    cena_min = request.args.get('cena_min', None, type=float)
+    odabrano_sortiranje = request.args.get('sortiranje', '')
+    kategorija = request.args.get('kategorija', '')
+    
+    upit_kategorija = """
+        SELECT DISTINCT p.kategorija
+        FROM skladiste s
+        JOIN sadrzi sa ON s.id = sa.skladiste_id
+        JOIN proizvod p ON sa.proizvod_id = p.id
+        WHERE s.id = %s
+    """
+    kursor.execute(upit_kategorija, (skladiste_id,))
+    kategorija = kursor.fetchall()
+
+    upit_proizvodi = """
+        SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
+        FROM skladiste s
+        JOIN sadrzi sa ON s.id = sa.skladiste_id
+        JOIN proizvod p ON sa.proizvod_id = p.id
+        JOIN user u ON p.proizvodjac_id = u.id
+        WHERE s.id = %s AND (%s IS NULL OR p.cena <= %s) AND (%s IS NULL OR p.cena >= %s) AND (%s IS NULL OR p.kategorija = %s)
+        ORDER BY p.cena %s
+    """
+    kursor.execute(upit_proizvodi, (skladiste_id, cena_max, cena_max, cena_min, cena_min, kategorija, kategorija, odabrano_sortiranje,))
     proizvodi = kursor.fetchall()
 
-    return render_template("/kupac/magacin.html", skladiste=skladiste, proizvodi=proizvodi)
+    return render_template("/kupac/magacin.html", skladiste=skladiste, kategorija=kategorija, proizvodi=proizvodi)
 
 @app.route("/kupac/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -378,7 +401,7 @@ def novi_magacin() -> html:
         konekcija.commit()
         return redirect(url_for("novi_magacin"))
     
-@app.route("/kupac/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
+@app.route("/logisticar/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def pregled_magacina(skladiste_id: int) -> html:

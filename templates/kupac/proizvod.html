@@ -23,7 +23,7 @@
                 <select class="blok zadnji" name="skladiste" required  type="submit">
                     <option selected disabled>Izaberi magacin</option>
                     {% for skladiste in skladista %}
-                        <option value="{{ skladiste.id }}">{{ skladiste.skladiste_ime }} - {{ skladiste.lokacija }}</option>
+                        <option value="{{ skladiste.id }}">{{ skladiste.logisticar_ime }} - {{ skladiste.lokacija }}</option>
                     {% endfor %}
                 </select>
                 
