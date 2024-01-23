@@ -6,25 +6,19 @@
         <div class="red col-12">
 
             <div class="blok col-4">
-                proizvod.naziv
+                <form method="POST">
+                <input type="text" name="proizvodIme" placeholder="Ime proizvoda" required>
             </div>
             <div class="col-3 vlaga">
-                <select class="magacin-select blok col-12" aria-label="Default select example">
-                    <option selected disabled>Izaberite kategoriju</option>
-                    <option value="1">kategorija1</option>
-                    <option value="2">kategorija2</option>
-                    <option value="3">kategorija3</option>
-                    <option value="4">kategorija4</option>
-                </select>
+                <input class="magacin-select blok col-12" type="text" name="kategorijaIme" placeholder="Kategorija" required>
             </div>
             <div class="blok zadnji">
-                proizvod.cena
+                <input type="number" min="1" name="proizvodKolicina" placeholder="Kolicina"required>
             </div>
             <div class="blok zadnji">
-                proizvod.kolicina
+                <input type="number" min="1" name="proizvodCena" placeholder="Cena" required>
             </div>
-            <form style="margin-right: 15px;" action="#" method="get">
-                <button class="blok sabmit" type="submit">
+                <button action="{{ url_for('novi_proizvod') }}" class="blok sabmit" type="submit">
                     <i class="fa-solid fa-plus"></i>
                 </button>
             </form>
