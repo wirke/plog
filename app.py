@@ -316,7 +316,15 @@ def porudzbine_korisnik() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def novi_proizvod() -> html:
-    return render_template("/proizvodjac/novi-proizvod.html")
+    if request.method == "GET":
+        return render_template("/proizvodjac/novi-proizvod.html")
+    upit = """INSERT INTO proizvod(proizvodjac_id, ime, kategorija, cena, kolicina)
+    VALUES (%s, %s, %s, %s, %s)
+    """
+    forma = (session['korisnik_id'], request.form['proizvodIme'], request.form['kategorijaIme'], request.form['proizvodCena'], request.form['proizvodKolicina'])
+    kursor.execute(upit, forma)
+    konekcija.commit()
+    return redirect(url_for("novi_proizvod"))
 
 @app.route("/proizvodjac/moji-proizvodi", methods=['GET', 'POST'])
 @zahteva_ulogovanje
