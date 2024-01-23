@@ -241,16 +241,14 @@ def prikaz_proizvoda() -> html:
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def kupi_proizvod(proizvod_id: int) -> html:
 
-    odabrana_kategorija = request.args.get('kategorija', '')
-    odabrano_sortiranje = request.args.get('sortiranje', 'asc')
-
+    proizvod = get_proizvod(proizvod_id)
     upit_skladista = """
-        SELECT s.id, s.ime AS skladiste_ime, s.lokacija
+        SELECT s.id, s.ime, s.lokacija
         FROM proizvod p
         JOIN sadrzi ps ON p.id = ps.proizvod_id
         JOIN skladiste s ON ps.skladiste_id = s.id
         WHERE p.id = %s
-    """
+        """
     kursor.execute(upit_skladista, (proizvod_id,))
     skladista = kursor.fetchall()
 
@@ -258,14 +256,13 @@ def kupi_proizvod(proizvod_id: int) -> html:
         SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
         FROM proizvod p
         JOIN user u ON p.proizvodjac_id = u.id
-        WHERE (%s = '' OR p.kategorija = %s)
-        ORDER BY p.cena {0}
-    """.format(odabrano_sortiranje)
+        WHERE p.id = %s
+        """
 
-    kursor.execute(upit_proizvoda, (odabrana_kategorija, odabrana_kategorija))
-    proizvod = kursor.fetchall()
+    kursor.execute(upit_proizvoda, (proizvod_id,))
+    proizvodi = kursor.fetchall()
 
-    return render_template("/kupac/proizvod.html", skladista=skladista, proizvod=proizvod, odabrana_kategorija=odabrana_kategorija, odabrano_sortiranje=odabrano_sortiranje)
+    return render_template("/kupac/proizvod.html", skladista=skladista, proizvodi=proizvodi)
 
 @app.route("/kupac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -281,13 +278,13 @@ def prikaz_magacina() -> html:
         SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
         FROM skladiste s
         JOIN user u ON s.logisticar_id = u.id
-        WHERE s.lokacija = %s
+        WHERE (%s = '' OR s.lokacija = %s)
     """.format(odabrana_lokacija)
 
-    kursor.execute(upit_skladista, (odabrana_lokacija, ))
-    skladista = kursor.fetchall()
+    kursor.execute(upit_skladista, (odabrana_lokacija, odabrana_lokacija))
+    skladiste = kursor.fetchall()
 
-    return render_template("/kupac/magacini.html", skladista=skladista, sve_lokacije=sve_lokacije, odabrana_lokacija=odabrana_lokacija)
+    return render_template("/kupac/magacini.html", skladiste=skladiste, sve_lokacije=sve_lokacije, odabrana_lokacija=odabrana_lokacija)
 
 @app.route("/kupac/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -296,11 +293,13 @@ def prikazi_magacin(skladiste_id: int) -> html:
 
     skladiste = get_skladiste(skladiste_id)
     upit_proizvoda = """
-        SELECT id, ime, kategorija, cena, ime AS proizvod_ime
+        SELECT proizvod.id, proizvod.ime, proizvod.kategorija, proizvod.cena, u.ime AS proizvodjac_ime
         FROM proizvod
         JOIN sadrzi ON proizvod.id = sadrzi.proizvod_id
+        JOIN user u ON proizvod.proizvodjac_id = u.id
         WHERE sadrzi.skladiste_id = %s
-    """
+
+    """.format(skladiste)
     kursor.execute(upit_proizvoda, (skladiste_id,))
     proizvodi = kursor.fetchall()
 

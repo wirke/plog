@@ -7,18 +7,18 @@
         <div class="red">
 
             <div class="blok col-3">
-                {{ proizvod.ime }}
+                {{ proizvodi.ime }}
             </div>
 
             <div class="blok col-2">
-                {{ proizvod.proizvodjac_ime }}
+                {{ proizvodi.proizvodjac_ime }}
             </div>
 
             <div class="blok col-2">
-                {{ proizvod.cena }}
+                {{ proizvodi.cena }}
             </div>
 
-            <form class="red" action="{{ url_for('kupi_proizvod', proizvod_id=proizvod.id) }}" method="post">
+            <form class="red" action="" method="post">
                 <select class="blok zadnji" name="skladiste" required  type="submit">
                     <option selected disabled>Izaberi magacin</option>
                     {% for skladiste in skladista %}
