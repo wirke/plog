@@ -240,8 +240,6 @@ def prikaz_proizvoda() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def kupi_proizvod(proizvod_id: int) -> html:
-    try:
-        uzmi_proizvod = get_proizvod(proizvod_id)
 
         upit_skladista = """
             SELECT s.id, s.ime, s.lokacija, u.ime AS logisticar_ime
@@ -264,9 +262,6 @@ def kupi_proizvod(proizvod_id: int) -> html:
         proizvod = kursor.fetchall()
 
         return render_template("/kupac/proizvod.html", skladista=skladista, proizvod=proizvod)
-
-    except Exception as e:
-        return str(e)
 
 @app.route("/kupac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -355,7 +350,7 @@ def postoji_porudzbina(korisnik_id):
     else:
         return False
 
-@app.route("/poruci_proizvod/<int:proizvod_id>", methods=['POST'])
+@app.route("/poruci_proizvod/<int:proizvod_id>", methods=['POST', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def poruci_proizvod(proizvod_id):
