@@ -6,18 +6,19 @@
 
         <div class="red">
 
+            {% for proizvod in proizvod %}
             <div class="blok col-3">
-                {{ proizvodi.ime }}
+                {{ proizvod.ime }}
             </div>
 
             <div class="blok col-2">
-                {{ proizvodi.proizvodjac_ime }}
+                {{ proizvod.proizvodjac_ime }}
             </div>
 
             <div class="blok col-2">
-                {{ proizvodi.cena }}
+                {{ proizvod.cena }}
             </div>
-
+            {% endfor %}
             <form class="red" action="" method="post">
                 <select class="blok zadnji" name="skladiste" required  type="submit">
                     <option selected disabled>Izaberi magacin</option>
