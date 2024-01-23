@@ -268,7 +268,6 @@ def kupi_proizvod(proizvod_id: int) -> html:
     except Exception as e:
         return str(e)
 
-
 @app.route("/kupac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
@@ -278,9 +277,6 @@ def prikaz_magacina() -> html:
     upit_lokacija = "SELECT DISTINCT lokacija FROM skladiste"
     kursor.execute(upit_lokacija)
     sve_lokacije = [red['lokacija'] for red in kursor.fetchall()]
-
-    if request.method == 'POST':
-        nova_vrednost = request.form.get('nova_vrednost')
 
     upit_skladista = """
         SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
@@ -327,13 +323,34 @@ def prikazi_magacin(skladiste_id: int) -> html:
     kursor.execute(upit_proizvodi, (skladiste_id, cena_max, cena_max, cena_min, cena_min, kategorija, kategorija, odabrano_sortiranje,))
     proizvodi = kursor.fetchall()
 
-    return render_template("/kupac/magacin.html", skladiste=skladiste, kategorija=kategorija, proizvodi=proizvodi)
+    return render_template("/kupac/magacin.html", skladiste=skladiste, kategorija=kategorija, proizvodi=proizvodi, cena_max=cena_max, cena_min=cena_min, odabrano_sortiranje=odabrano_sortiranje)
 
 @app.route("/kupac/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def porudzbine_korisnik() -> html:
     return render_template("/kupac/porudzbine.html")
+
+@app.route("/poruci_proizvod/<int:proizvod_id>", methods=['POST'])
+def poruci_proizvod(proizvod_id):
+    if request.method == 'POST':
+
+        skladiste_id = request.form.get('skladiste')
+        kolicina = request.form.get('kolicina')
+
+        if 'korisnik_id' not in session:
+            return redirect(url_for('login'))
+
+        korisnik_id = session['korisnik_id']
+
+        dodaj_porudzbinu = """
+            INSERT INTO porudzbina (datum, kolicina, isporuceno, kategorija, kupac_id, proizvod_id, skladiste_id)
+            VALUES (CURRENT_DATE(), %s, 0, (SELECT kategorija FROM proizvod WHERE id = %s), %s, %s, %s)
+        """
+        kursor.execute(dodaj_porudzbinu, (kolicina, proizvod_id, korisnik_id, proizvod_id, skladiste_id))
+        konekcija.commit()
+
+        return redirect(url_for('porudzbine'))
 #############################################################################
 @app.route("/proizvodjac/novi-proizvod", methods=['GET', 'POST'])
 @zahteva_ulogovanje

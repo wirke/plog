@@ -19,7 +19,7 @@
                 {{ proizvod.cena }}
             </div>
             {% endfor %}
-            <form class="red" action="" method="post">
+            <form class="red" action="{{ url_for('poruci_proizvod', proizvod_id=proizvod.id) }}" method="post">
                 <select class="blok zadnji" name="skladiste" required  type="submit">
                     <option selected disabled>Izaberi magacin</option>
                     {% for skladiste in skladista %}
