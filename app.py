@@ -43,6 +43,30 @@ def inject_user_data():
         user_data = korisnik if korisnik else None
     return dict(user_data=user_data)
 #############################################################################
+def zahteva_dozvolu(roles=[]):
+    def omotac(f):
+        @wraps(f)
+        def omotana_funkcija(*args, **kwargs):
+            if ulogovan():
+                trenutna_rola = rola()
+                if not roles or trenutna_rola in roles:
+                    return f(*args, **kwargs)
+            return redirect(url_for('greska'))
+        return omotana_funkcija
+    return omotac
+
+def zahteva_ulogovanje(f):
+    @wraps(f)
+    def omotana_funkcija(*args, **kwargs):
+        if ulogovan():
+            return f(*args, **kwargs)
+        return redirect(url_for('greska'))
+    return omotana_funkcija
+
+@app.route("/greska", methods=['GET', 'POST'])
+def greska() -> html:
+    return render_template("/greska.html")
+#############################################################################
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == "GET":
@@ -101,30 +125,6 @@ def logout():
     session.pop('rola', None)
     return redirect(url_for('login'))
 #############################################################################
-def zahteva_dozvolu(roles=[]):
-    def omotac(f):
-        @wraps(f)
-        def omotana_funkcija(*args, **kwargs):
-            if ulogovan():
-                trenutna_rola = rola()
-                if not roles or trenutna_rola in roles:
-                    return f(*args, **kwargs)
-            return redirect(url_for('greska'))
-        return omotana_funkcija
-    return omotac
-
-def zahteva_ulogovanje(f):
-    @wraps(f)
-    def omotana_funkcija(*args, **kwargs):
-        if ulogovan():
-            return f(*args, **kwargs)
-        return redirect(url_for('greska'))
-    return omotana_funkcija
-
-@app.route("/greska", methods=['GET', 'POST'])
-def greska() -> html:
-    return render_template("/greska.html")
-#############################################################################
 @app.route("/test", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin'])
@@ -136,80 +136,6 @@ def test() -> html:
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
 def pocetna() -> html:
     return render_template("/pocetna.html")
-#############################################################################
-def get_proizvod(proizvod_id: int) -> dict:
-    upit_proizvod = """
-        SELECT p.id, p.ime, p.kategorija, p.cena, p.proizvodjac_id, u.ime AS proizvodjac_ime
-        FROM proizvod p
-        JOIN user u ON p.proizvodjac_id = u.id
-        WHERE p.id = %s
-    """
-    kursor.execute(upit_proizvod, (proizvod_id,))
-    proizvod = kursor.fetchone()
-    return proizvod
-
-def svi_proizvodi() -> dict:
-    upit_proizvodi = """
-        SELECT id, ime, kategorija, cena
-        FROM proizvod
-    """
-    kursor.execute(upit_proizvodi)
-    proizvodi = kursor.fetchall()
-    return proizvodi
-
-def proveri_dostupnost_kolicine(proizvod_id, skladiste_id, kolicina):
-    upit_dostupnost = """
-        SELECT ps.kolicina
-        FROM sadrzi ps
-        WHERE ps.proizvod_id = %s AND ps.skladiste_id = %s
-    """
-    kursor.execute(upit_dostupnost, (proizvod_id, skladiste_id))
-    dostupna_kolicina = kursor.fetchone()
-
-    return dostupna_kolicina['kolicina'] if dostupna_kolicina else 0
-
-def get_skladiste(skladiste_id: int) -> dict:
-    upit_skladiste = """
-        SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
-        FROM skladiste s
-        JOIN user u ON s.logisticar_id = u.id
-        WHERE s.id = %s
-    """
-    kursor.execute(upit_skladiste, (skladiste_id,))
-    skladiste = kursor.fetchone()
-    return skladiste
-
-def sva_skladista() -> dict:
-    upit_skladista = """
-        SELECT s.id, s.ime AS skladiste_ime, s.kapacitet, s.lokacija, l.ime AS logisticar_ime
-        FROM skladiste s
-        LEFT JOIN user l ON s.logisticar_id = l.id
-    """
-    kursor.execute(upit_skladista)
-    skladista = kursor.fetchall()
-    return skladista
-
-def get_porudzbinu() -> dict:
-    korisnik_id = session.get('korisnik_id')
-
-    upit_porudzbine = """
-        SELECT p.id, p.datum, p.kolicina, p.isporuceno, p.kategorija, p.kupac_id, p.proizvodjac_id, p.skladiste_id, s.ime AS skladiste_ime
-        FROM porudzbina p
-        JOIN skladiste s ON p.skladiste_id = s.id
-        WHERE p.kupac_id = %s
-    """
-    kursor.execute(upit_porudzbine, (korisnik_id,))
-    porudzbina = kursor.fetchone()
-    return porudzbina
-
-def sve_porudzbine() -> dict:
-    upit_porudzbine = """
-        SELECT id, datum, kolicina, isporuceno, kategorija, kupac_id, proizvodjac_id, skladiste_id
-        FROM porudzbina
-    """
-    kursor.execute(upit_porudzbine)
-    porudzbine = kursor.fetchall()
-    return porudzbine
 #############################################################################
 @app.route("/kupac/proizvodi", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -287,12 +213,19 @@ def prikaz_magacina() -> html:
 @app.route("/kupac/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
-def prikazi_magacin(skladiste_id: int) -> html:
+def prikazi_magacin(skladiste_id) -> html:
 
-    skladiste = get_skladiste(skladiste_id)
+    upit_skladiste = """
+        SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
+        FROM skladiste s
+        JOIN user u ON s.logisticar_id = u.id
+        WHERE s.id = %s
+    """
+    kursor.execute(upit_skladiste, (skladiste_id,))
+    skladiste = kursor.fetchone()
 
-    cena_max = request.args.get('cena_max', None, type=float)
-    cena_min = request.args.get('cena_min', None, type=float)
+    cena_max = request.args.get('cena_max', '')
+    cena_min = request.args.get('cena_min', '')
     odabrano_sortiranje = request.args.get('sortiranje', '')
     kategorija = request.args.get('kategorija', '')
     
@@ -435,7 +368,7 @@ def pregledaj_porudzbine() -> html:
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def moji_magacini() -> html:
     upit = """
-    SELECT ime, lokacija, kapacitet
+    SELECT id, ime, lokacija, kapacitet
     FROM skladiste
     WHERE logisticar_id = %s
     """
@@ -463,10 +396,16 @@ def novi_magacin() -> html:
 @app.route("/logisticar/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
-def pregled_magacina(skladiste_id: int) -> html:
-    skladiste = get_skladiste(skladiste_id)
-    if not skladiste:
-        return redirect(url_for('pocetna'))
+def magacin(skladiste_id: int) -> html:
+
+    upit_skladiste = """
+        SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
+        FROM skladiste s
+        JOIN user u ON s.logisticar_id = u.id
+        WHERE s.id = %s
+    """
+    kursor.execute(upit_skladiste, (skladiste_id,))
+    skladiste = kursor.fetchone()
 
     upit_proizvoda = """
         SELECT p.id, p.ime, p.kategorija, p.cena, ps.kolicina
@@ -557,6 +496,17 @@ def azuriraj_kapacitet_skladista(skladiste_id, nova_vrednost):
         return True
     else:
         return False
+    
+def proveri_dostupnost_kolicine(proizvod_id, skladiste_id, kolicina):
+    upit_dostupnost = """
+        SELECT ps.kolicina
+        FROM sadrzi ps
+        WHERE ps.proizvod_id = %s AND ps.skladiste_id = %s
+    """
+    kursor.execute(upit_dostupnost, (proizvod_id, skladiste_id))
+    dostupna_kolicina = kursor.fetchone()
+
+    return dostupna_kolicina['kolicina'] if dostupna_kolicina else 0
 
 @app.route("/logisticar/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
