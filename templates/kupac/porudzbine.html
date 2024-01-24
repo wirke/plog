@@ -7,7 +7,11 @@
             {% for p in porudzbina %}
              {% if postoji_porudzbina() %}
              <div class="blok">
+                {% if porudzbina.isporuceno == 0 %}
                  <i class="fa-solid fa-hourglass-start ikonica"></i>
+                {% else %}
+                 <i class="fa-solid fa-truck-fast"></i>
+                {% endif %}
              </div>
              <div class="blok col-3">
                  {{proizvod.naziv}}
@@ -28,7 +32,7 @@
              <div class="blok">
                  <h>Nemate porudzbine</h>
              </div>
-             {% endif%}
+             {% endif %}
             {% endfor %}
         </div>
     </div>

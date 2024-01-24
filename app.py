@@ -167,27 +167,27 @@ def prikaz_proizvoda() -> html:
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def kupi_proizvod(proizvod_id: int) -> html:
 
-        upit_skladista = """
-            SELECT s.id, s.ime, s.lokacija, u.ime AS logisticar_ime
-            FROM proizvod p
-            JOIN sadrzi ps ON p.id = ps.proizvod_id
-            JOIN skladiste s ON ps.skladiste_id = s.id
-            JOIN user u ON s.logisticar_id = u.id
-            WHERE p.id = %s
-        """
-        kursor.execute(upit_skladista, (proizvod_id,))
-        skladista = kursor.fetchall()
+    upit_skladista = """
+        SELECT s.id, s.ime, s.lokacija, u.ime AS logisticar_ime
+        FROM proizvod p
+        JOIN sadrzi ps ON p.id = ps.proizvod_id
+        JOIN skladiste s ON ps.skladiste_id = s.id
+        JOIN user u ON s.logisticar_id = u.id
+        WHERE p.id = %s
+    """
+    kursor.execute(upit_skladista, (proizvod_id,))
+    skladista = kursor.fetchall()
 
-        upit_proizvoda = """
-            SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
-            FROM proizvod p
-            JOIN user u ON p.proizvodjac_id = u.id
-            WHERE p.id = %s
-        """
-        kursor.execute(upit_proizvoda, (proizvod_id,))
-        proizvod = kursor.fetchall()
+    upit_proizvoda = """
+        SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
+        FROM proizvod p
+        JOIN user u ON p.proizvodjac_id = u.id
+        WHERE p.id = %s
+    """
+    kursor.execute(upit_proizvoda, (proizvod_id,))
+    proizvod = kursor.fetchall()
 
-        return render_template("/kupac/proizvod.html", skladista=skladista, proizvod=proizvod)
+    return render_template("/kupac/proizvod.html", skladista=skladista, proizvod=proizvod)
 
 @app.route("/kupac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -265,12 +265,13 @@ def porudzbine_korisnik() -> html:
     FROM porudzbina p
     JOIN user u ON p.kupac_id = u.id
     JOIN proizvod pr ON p.proizvod_id = pr.id
-    JOIN skladiste s ON p.skladiste_id = s.id;
-    WHERE kupac_ime = %s
+    JOIN skladiste s ON p.skladiste_id = s.id
+    WHERE u.id = %s
     """
     kursor.execute(prikaz_porudzbina, (korisnik_id,))
+    porudzbine = kursor.fetchall()
+    
     if postoji_porudzbina(korisnik_id):
-        porudzbine = kursor.fetchall()
         return render_template("/kupac/porudzbine.html", porudzbine=porudzbine)
     else:
         return render_template("/kupac/porudzbine.html")
@@ -312,6 +313,7 @@ def poruci_proizvod(proizvod_id):
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def novi_proizvod() -> html:
+
     if request.method == "GET":
         return render_template("/proizvodjac/novi-proizvod.html")
     upit = """INSERT INTO proizvod(proizvodjac_id, ime, kategorija, cena, kolicina)

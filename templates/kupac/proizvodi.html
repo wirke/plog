@@ -38,11 +38,9 @@
             <div class="blok zadnji">
                 {{ proizvod.cena }}
             </div>
-            <form action="{{ url_for('kupi_proizvod', proizvod_id=proizvod.id) }}">
-                <button class="blok sabmit">
-                    <i class="fa-solid fa-eye"></i>
-                </button>
-            </form>
+            <a class="blok sabmit" style="width: fit-content; margin-right: -15px;" href="{{ url_for('kupi_proizvod', proizvod_id = proizvod.id) }}" method="GET">
+                <i class="fa-solid fa-eye"></i>
+            </a>
         </div>
         {% endfor %}
     </div>
