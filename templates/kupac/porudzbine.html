@@ -10,25 +10,25 @@
                  <i class="fa-solid fa-hourglass-start ikonica"></i>
              </div>
              <div class="blok col-3">
-                 {{proizvod.naziv}}
+                 {{ proizvod.naziv }}
              </div>
              <div class="blok col-3">
-                 {{proizvod.kategorija}}
+                 {{ proizvod.kategorija }}
              </div>
              <div class="blok zadnji">
-                 {{porudzbina.datum}}
+                 {{ porudzbina.datum }}
              </div>
              <div class="blok zadnji">
-                 {{proizvod.cena}}
+                 {{ proizvod.cena }}
              </div>
              <div class="blok col-1">
-                 {{kolicina}}
+                 {{ kolicina }}
              </div>
              {% else %}
              <div class="blok">
                  <h>Nemate porudzbine</h>
              </div>
-             {% endif%}
+             {% endif %}
             {% endfor %}
         </div>
     </div>

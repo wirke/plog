@@ -373,8 +373,8 @@ def moji_magacini() -> html:
     WHERE logisticar_id = %s
     """
     kursor.execute(upit, (session['korisnik_id'],))
-    skladista = kursor.fetchall()
-    return render_template("/logisticar/moji-magacini.html",skladista=skladista)
+    skladiste = kursor.fetchall()
+    return render_template("/logisticar/moji-magacini.html",skladiste=skladiste)
 
 @app.route("/logisticar/novi-magacin", methods=['GET', 'POST'])
 @zahteva_ulogovanje
