@@ -26,6 +26,7 @@
         </div>
     </div>
     <div class="kontejner">
+        {% for p in proizvodi %}
         <div class="red col-12">
             
             <form style="margin-left: 0; margin-right: 15px;" action="#" method="get" style="margin-left: 15px;">
@@ -35,15 +36,15 @@
             </form>
 
             <div class="blok zadnji">
-                proizvod.ime
+                {{ p.ime }}
             </div>
 
             <div class="blok zadnji">
-                proizvod.kategorija
+               {{ p.kategorija }}
             </div>
 
             <div class="blok zadnji">
-                proizvod.proizvodjac_naziv
+                 {{ p.proizvodjac_naziv }}
             </div>
 
             <div class="col-1" style="margin-right: 15px;">
@@ -72,5 +73,6 @@
 
         </div>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}

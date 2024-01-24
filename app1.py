@@ -151,18 +151,42 @@ def prikaz_proizvoda() -> html:
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def naruci_proizvod() -> html:
     return render_template("/kupac/proizvod.html")
-
+##############################
 @app.route("/kupac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def prikaz_magacina() -> html:
-    return render_template("/kupac/magacini.html")
+    upit = """
+    SELECT id, ime, lokacija, kapacitet
+    FROM skladiste
+    WHERE logisticar_id = %s
+    """
+    kursor.execute(upit, (session['korisnik_id'],))
+    skladiste = kursor.fetchall()
+    return render_template("/logisticar/moji-magacini.html",skladiste=skladiste)
 
-@app.route("/kupac/magacin", methods=['GET', 'POST'])
+@app.route("/kupac/magacin/<id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
-def prelged_magacina() -> html:
-    return render_template("/kupac/magacin.html")
+def magacin(sk_id) -> html:
+    upit_skladiste = """
+        SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
+        FROM skladiste s
+        JOIN user u ON s.logisticar_id = u.id
+        WHERE s.id = %s
+    """.format(sk_id)
+    kursor.execute(upit_skladiste)
+    skladiste = kursor.fetchone()
+
+    upit_proizvoda = """
+        SELECT p.id, p.ime, p.kategorija, p.cena, ps.kolicina
+        FROM proizvod p
+        JOIN sadrzi ps ON p.id = ps.proizvod_id
+        WHERE ps.skladiste_id = %s
+    """.format(sk_id)
+    kursor.execute(upit_proizvoda)
+    proizvodi = kursor.fetchall()
+    return render_template("/kupac/magacin.html", skladiste=skladiste, proizvodi=proizvodi)
 
 @app.route("/kupac/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
