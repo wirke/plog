@@ -13,7 +13,7 @@
                 {{ por.proizvod_ime }}
             </div>
             <div class="blok zadnji">
-                {{ por.u_proizvodjac.ime }}
+                {{ por.proizvodjac_ime }}
             </div>
             <div class="blok col-2">
                 {{ por.kupac_ime }}
@@ -28,14 +28,24 @@
             </form>
         </div>
         <div class="red col-12">
-            <div class="blok col-1">
+            <div class="blok zadnji">
                 {{ por.napomena }}
             </div>
-            <form style="margin-right: 15px;" method="post">
+            <div class="blok zadnji">
+                <form style="margin-right: 15px;" method="post">
+                    <button class="blok zadnji" type="submit">
+                {% if por.isporuceno == 0 %}
+                    <i class="fa-solid fa-circle-check ikonica"></i>
+                {% else %}
+                    <i class="fa-solid fa-truck-fast"></i>
+                {% endif %}
+                </button></form>
+               </div>
+            <!--<form style="margin-right: 15px;" method="post">
                 <button class="blok zadnji" type="submit">
                     <i class="fa-solid fa-circle-check ikonica"></i>
                 </button>
-            </form>
+            </form> -->
         </div>
         <!--
         <div class="red col-12">

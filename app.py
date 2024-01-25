@@ -512,7 +512,7 @@ def proveri_dostupnost_kolicine(proizvod_id, skladiste_id, kolicina):
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def porudzbina_magacin() -> html:
-    upit = """SELECT p.kolicina, pr.ime AS proizvod_ime, uk.ime AS kupac_ime, uk.lokacija AS kupac_lokacija, p.isporuceno, p.napomena, u_proizvodjac.ime
+    upit = """SELECT p.kolicina, pr.ime AS proizvod_ime, uk.ime AS kupac_ime, uk.lokacija AS kupac_lokacija, p.isporuceno, p.napomena, u_proizvodjac.ime AS proizvodjac_ime
     FROM porudzbina p
     JOIN proizvod pr ON p.proizvod_id = pr.id
     JOIN user uk ON p.kupac_id = uk.id
