@@ -512,8 +512,17 @@ def proveri_dostupnost_kolicine(proizvod_id, skladiste_id, kolicina):
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def porudzbina_magacin() -> html:
-
-    return render_template("/logisticar/porudzbine.html")
+    upit = """SELECT p.kolicina, pr.ime AS proizvod_ime, uk.ime AS kupac_ime, uk.lokacija AS kupac_lokacija, p.isporuceno, p.napomena, u_proizvodjac.ime
+    FROM porudzbina p
+    JOIN proizvod pr ON p.proizvod_id = pr.id
+    JOIN user uk ON p.kupac_id = uk.id
+    JOIN skladiste s ON p.skladiste_id = s.id
+    JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
+    WHERE s.logisticar_id = %s
+    """
+    kursor.execute(upit, (session['korisnik_id'],))
+    porudzbina = kursor.fetchall()
+    return render_template("/logisticar/porudzbine.html", porudzbina=porudzbina)
 
 if __name__ == "__main__":
     app.run(debug=True)
