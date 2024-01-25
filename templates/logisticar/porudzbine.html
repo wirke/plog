@@ -2,25 +2,24 @@
 {% block title %}Plog - Porudzbine{% endblock %}
 {% block content %}
 <div class="display">
+    {% for por in porudzbina %}
     <div class="kontejner">
         <div class="red col-12">
-            <div class="blok">
-                <i class="fa-solid fa-hourglass-start ikonica"></i>
-            </div>
+            
             <div class="blok col-1">
-                kolicina
+                {{ por.kolicina }}
             </div>
             <div class="blok zadnji">
-                proizvod.naziv
+                {{ por.proizvod_ime }}
             </div>
             <div class="blok zadnji">
-                proizvod.proizvodjac.naziv
+                {{ por.proizvodjac_ime }}
             </div>
             <div class="blok col-2">
-                korisnik.ime
+                {{ por.kupac_ime }}
             </div>
             <div class="blok col-2">
-                korisnik.lokacija
+                {{ por.kupac_lokacija }}
             </div>
             <form action="#" style="margin-right: 15px;" method="post">
                 <button class="blok zadnji" type="submit">
@@ -29,9 +28,28 @@
             </form>
         </div>
         <div class="red col-12">
-            <div class="blok">
-                <i class="fa-solid fa-truck-fast ikonica"></i>
+            <div class="blok zadnji">
+                {{ por.napomena }}
             </div>
+            <div class="blok zadnji">
+                <form style="margin-right: 15px;" method="post">
+                    <button class="blok zadnji" type="submit">
+                {% if por.isporuceno == 0 %}
+                    <i class="fa-solid fa-circle-check ikonica"></i>
+                {% else %}
+                    <i class="fa-solid fa-truck-fast"></i>
+                {% endif %}
+                </button></form>
+               </div>
+            <!--<form style="margin-right: 15px;" method="post">
+                <button class="blok zadnji" type="submit">
+                    <i class="fa-solid fa-circle-check ikonica"></i>
+                </button>
+            </form> -->
+        </div>
+        <!--
+        <div class="red col-12">
+           
             <div class="blok col-1">
                 kolicina
             </div>
@@ -53,6 +71,8 @@
                 </button>
             </form>
         </div>
+    -->
     </div>
+    {% endfor %}
 </div>
 {% endblock %}
