@@ -4,36 +4,42 @@
 <div class="display">
     <div class="kontejner">
         <div class="red col-12">
-            {% for p in porudzbina %}
-             {% if postoji_porudzbina() %}
-             <div class="blok">
-                {% if porudzbina.isporuceno == 0 %}
-                 <i class="fa-solid fa-hourglass-start ikonica"></i>
-                {% else %}
-                 <i class="fa-solid fa-truck-fast"></i>
-                {% endif %}
-             </div>
-             <div class="blok col-3">
-                 {{p.naziv_proizvoda}}
-             </div>
-             <div class="blok col-3">
-                 {{p.proizvod.kategorija}}
-             </div>
-             <div class="blok zadnji">
-                 {{p.datum}}
-             </div>
-             <div class="blok zadnji">
-                 {{p.cena}}
-             </div>
-             <div class="blok col-1">
-                 {{p.kolicina}}
-             </div>
-             {% else %}
-             <div class="blok">
-                 <h>Nemate porudzbine</h>
-             </div>
-             {% endif %}
-            {% endfor %}
+            {% if porudzbine %}
+                {% for p in porudzbine %}
+                    <div class="blok">
+                        {% if p.isporuceno == 0 %}
+                            <i class="fa-solid fa-hourglass-start ikonica"></i>
+                        {% else %}
+                            <i class="fa-solid fa-truck-fast"></i>
+                        {% endif %}
+                    </div>
+                    <div class="blok zadnji">
+                        {{ p.proizvod_ime }}
+                    </div>
+                    <div class="blok zadnji">
+                        {{ p.proizvodjac_ime }}
+                    </div>
+                    <div class="blok zadnji">
+                        {{ p.skladiste_ime }}
+                    </div>
+                    <div class="blok col-2">
+                        {{ p.proizvod_kategorija }}
+                    </div>
+                    <div class="blok col-1">
+                        {{ p.datum }}
+                    </div>
+                    <div class="blok col-1">
+                        {{ p.cena }}
+                    </div>
+                    <div class="blok col-1">
+                        {{ p.kolicina }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="blok">
+                    <h>Prazno za sada</h>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

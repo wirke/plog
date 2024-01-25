@@ -193,19 +193,28 @@ def kupi_proizvod(proizvod_id: int) -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def prikaz_magacina() -> html:
-
     odabrana_lokacija = request.args.get('lokacija', '')
+    
     upit_lokacija = "SELECT DISTINCT lokacija FROM skladiste"
     kursor.execute(upit_lokacija)
     sve_lokacije = [red['lokacija'] for red in kursor.fetchall()]
 
-    upit_skladista = """
-        SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
-        FROM skladiste s
-        JOIN user u ON s.logisticar_id = u.id
-        WHERE (%s = '' OR s.lokacija = %s)
-    """
-    kursor.execute(upit_skladista, (odabrana_lokacija, odabrana_lokacija))
+    if odabrana_lokacija:
+        upit_skladista = """
+            SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
+            FROM skladiste s
+            JOIN user u ON s.logisticar_id = u.id
+            WHERE s.lokacija = %s
+        """
+        kursor.execute(upit_skladista, (odabrana_lokacija,))
+    else:
+        upit_skladista = """
+            SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
+            FROM skladiste s
+            JOIN user u ON s.logisticar_id = u.id
+        """
+        kursor.execute(upit_skladista)
+
     skladiste = kursor.fetchall()
 
     return render_template("/kupac/magacini.html", skladiste=skladiste, sve_lokacije=sve_lokacije, odabrana_lokacija=odabrana_lokacija)
@@ -214,7 +223,6 @@ def prikaz_magacina() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def prikazi_magacin(skladiste_id) -> html:
-
     upit_skladiste = """
         SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
         FROM skladiste s
@@ -224,34 +232,43 @@ def prikazi_magacin(skladiste_id) -> html:
     kursor.execute(upit_skladiste, (skladiste_id,))
     skladiste = kursor.fetchone()
 
-    cena_max = request.args.get('cena_max', '')
-    cena_min = request.args.get('cena_min', '')
-    odabrano_sortiranje = request.args.get('sortiranje', '')
-    kategorija = request.args.get('kategorija', '')
-    
-    upit_kategorija = """
-        SELECT DISTINCT p.kategorija
-        FROM skladiste s
-        JOIN sadrzi sa ON s.id = sa.skladiste_id
-        JOIN proizvod p ON sa.proizvod_id = p.id
-        WHERE s.id = %s
-    """
-    kursor.execute(upit_kategorija, (skladiste_id,))
-    kategorija = kursor.fetchall()
+    if skladiste:
+        cena_max = request.args.get('cena_max', '')
+        cena_min = request.args.get('cena_min', '')
+        odabrano_sortiranje = request.args.get('sortiranje', '')
+        kategorija = request.args.get('kategorija', '')
 
-    upit_proizvodi = """
-        SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
-        FROM skladiste s
-        JOIN sadrzi sa ON s.id = sa.skladiste_id
-        JOIN proizvod p ON sa.proizvod_id = p.id
-        JOIN user u ON p.proizvodjac_id = u.id
-        WHERE s.id = %s AND (%s IS NULL OR p.cena <= %s) AND (%s IS NULL OR p.cena >= %s) AND (%s IS NULL OR p.kategorija = %s)
-        ORDER BY p.cena %s
-    """
-    kursor.execute(upit_proizvodi, (skladiste_id, cena_max, cena_max, cena_min, cena_min, kategorija, kategorija, odabrano_sortiranje,))
-    proizvodi = kursor.fetchall()
+        if kategorija:
+            kategorija_filter = kategorija[0]
+        else:
+            kategorija_filter = ''
 
-    return render_template("/kupac/magacin.html", skladiste=skladiste, kategorija=kategorija, proizvodi=proizvodi, cena_max=cena_max, cena_min=cena_min, odabrano_sortiranje=odabrano_sortiranje)
+        upit_kategorija = """
+            SELECT DISTINCT p.kategorija
+            FROM skladiste s
+            JOIN sadrzi sa ON s.id = sa.skladiste_id
+            JOIN proizvod p ON sa.proizvod_id = p.id
+            WHERE s.id = %s
+        """
+        kursor.execute(upit_kategorija, (skladiste_id,))
+        kategorija = [red['kategorija'] for red in kursor.fetchall()]
+
+        upit_proizvodi = """
+            SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
+            FROM skladiste s
+            JOIN sadrzi sa ON s.id = sa.skladiste_id
+            JOIN proizvod p ON sa.proizvod_id = p.id
+            JOIN user u ON p.proizvodjac_id = u.id
+            WHERE s.id = %s AND (%s = '' OR p.cena <= %s) AND (%s = '' OR p.cena >= %s) AND (%s = '' OR p.kategorija = %s)
+            ORDER BY p.cena %s
+        """
+        kursor.execute(upit_proizvodi, (skladiste_id, cena_max, cena_max, cena_min, cena_min, kategorija_filter, kategorija_filter, odabrano_sortiranje,))
+        proizvodi = kursor.fetchall()
+
+        return render_template("/kupac/magacin.html", skladiste=skladiste, kategorija=kategorija, proizvodi=proizvodi, cena_max=cena_max, cena_min=cena_min, odabrano_sortiranje=odabrano_sortiranje)
+    else:
+        return render_template("/error.html", poruka="Skladište nije pronađeno.")
+
 
 @app.route("/kupac/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -260,13 +277,13 @@ def porudzbine_korisnik() -> html:
     korisnik_id = session.get('korisnik_id')
 
     prikaz_porudzbina = """
-    SELECT p.id AS porudzbina_id, p.datum, p.kolicina, p.isporuceno, pr.cena, pr.kategorija AS proizvod_kategorija, u_proizvodjac.ime AS proizvodjac_ime, s.ime AS skladiste_ime, u_kupac.ime AS kupac_ime
-    FROM porudzbina p
-    JOIN user u_kupac ON p.kupac_id = u_kupac.id
-    JOIN proizvod pr ON p.proizvod_id = pr.id
-    JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
-    JOIN skladiste s ON p.skladiste_id = s.id
-    WHERE kupac_id = %s
+        SELECT p.id AS porudzbina_id, p.datum, p.kolicina, p.isporuceno, pr.cena, pr.kategorija AS proizvod_kategorija, pr.ime AS proizvod_ime,u_proizvodjac.ime AS proizvodjac_ime, s.ime AS skladiste_ime, u_kupac.ime AS kupac_ime
+        FROM porudzbina p
+        JOIN user u_kupac ON p.kupac_id = u_kupac.id
+        JOIN proizvod pr ON p.proizvod_id = pr.id
+        JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
+        JOIN skladiste s ON p.skladiste_id = s.id
+        WHERE p.kupac_id = %s
     """
     kursor.execute(prikaz_porudzbina, (korisnik_id,))
     porudzbine = kursor.fetchall()
