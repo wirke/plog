@@ -63,9 +63,9 @@ def zahteva_ulogovanje(f):
         return redirect(url_for('greska'))
     return omotana_funkcija
 
-@app.route("/greska", methods=['GET', 'POST'])
-def greska() -> html:
-    return render_template("/greska.html")
+@app.route("/greska")
+def greska(poruka):
+    return render_template("/greska.html", poruka=poruka)
 #############################################################################
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -538,17 +538,30 @@ def proveri_dostupnost_kolicine(proizvod_id, skladiste_id, kolicina):
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def porudzbina_magacin() -> html:
-    upit = """SELECT p.kolicina, pr.ime AS proizvod_ime, uk.ime AS kupac_ime, uk.lokacija AS kupac_lokacija, p.isporuceno, p.napomena, u_proizvodjac.ime AS proizvodjac_ime
+    upit_broj_porudzbina = """
+    SELECT COUNT(*) AS broj_porudzbina
     FROM porudzbina p
-    JOIN proizvod pr ON p.proizvod_id = pr.id
-    JOIN user uk ON p.kupac_id = uk.id
     JOIN skladiste s ON p.skladiste_id = s.id
-    JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
     WHERE s.logisticar_id = %s
     """
-    kursor.execute(upit, (session['korisnik_id'],))
-    porudzbina = kursor.fetchall()
-    return render_template("/logisticar/porudzbine.html", porudzbina=porudzbina)
+    kursor.execute(upit_broj_porudzbina, (session['korisnik_id'],))
+    rezultat = kursor.fetchone()
+    
+    if rezultat['broj_porudzbina'] > 0:
+        upit_porudzbina = """
+        SELECT p.kolicina, pr.ime AS proizvod_ime, uk.ime AS kupac_ime, uk.lokacija AS kupac_lokacija, p.isporuceno, p.napomena, u_proizvodjac.ime AS proizvodjac_ime
+        FROM porudzbina p
+        JOIN proizvod pr ON p.proizvod_id = pr.id
+        JOIN user uk ON p.kupac_id = uk.id
+        JOIN skladiste s ON p.skladiste_id = s.id
+        JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
+        WHERE s.logisticar_id = %s
+        """
+        kursor.execute(upit_porudzbina, (session['korisnik_id'],))
+        porudzbina = kursor.fetchall()
+        return render_template("/logisticar/porudzbine.html", porudzbina=porudzbina)
+    else:
+        return render_template("/logisticar/porudzbine.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -25,6 +25,11 @@ body{
     position: fixed;
     overflow: auto;
 }
+.zubor{
+    color: #302b27;
+    border-radius: 5px;
+    border: solid;
+}
 .logotip{
     display: flex;
     flex-direction: row;
