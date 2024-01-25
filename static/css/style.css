@@ -70,6 +70,14 @@ body{
     padding: 15px;
     border:none;
 }
+.blok1{
+    background-color: #ff8a5b;
+    border-radius: 17px;
+    margin-left: 15px;
+    margin-top: 15px;
+    padding: 15px;
+    border:none;
+}
 .zadnji{
     width: 100%;
 }

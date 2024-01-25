@@ -5,6 +5,33 @@
     <div class="kontejner">
 
         <div class="red">
+            <div class="blok col-3">
+                Naziv proizvoda
+            </div>
+
+            <div class="blok col-2">
+                Naziv proizvodjaca
+            </div>
+
+            <div class="blok col-2">
+                Cena
+            </div>
+            <div class="blok red">
+                Magacin
+            </div>
+            <div class="blok col-1">
+                Kolicina
+            </div>
+            <button class="blok1" type="submit">
+                <i class="fa-solid fa-cart-shopping" style="color: #ff8a5b;"></i>
+            </button>
+        </div>
+
+        <div class="zadnji">
+            <hr style="color: #fff; border: 10px;">
+        </div>
+
+        <div class="red">
 
             {% for proizvod in proizvod %}
             <div class="blok col-3">
@@ -19,7 +46,7 @@
                 {{ proizvod.cena }}
             </div>
             <form class="red" action="{{ url_for('poruci_proizvod', proizvod_id = proizvod.id) }}" method="post">
-                <select class="blok zadnji" name="skladiste" required  type="submit">
+                <select class="blok zadnji" name="skladiste_id" required>
                     <option selected disabled>Izaberi magacin</option>
                     {% for skladiste in skladista %}
                         <option value="{{ skladiste.id }}">{{ skladiste.logisticar_ime }} - {{ skladiste.lokacija }}</option>
@@ -33,9 +60,14 @@
                 <button class="blok"  type="submit">
                     <i class="fa-solid fa-cart-shopping"></i>
                 </button>
-            </form>
-            {% endfor %}
         </div>
+            <div>
+                <div class="red">
+                    <input for="napomena" class="blok zadnji" type="text" name="napomena" placeholder="Napomena">
+                </div>
+            </form>
+            </div>
+            {% endfor %}
     </div>
 </div>
 {% endblock %}

@@ -309,25 +309,29 @@ def postoji_porudzbina(korisnik_id):
         return True
     else:
         return False
+    
+from flask import request, redirect, url_for
 
-@app.route("/poruci_proizvod/<int:proizvod_id>", methods=['POST', 'POST'])
+@app.route('/kupac/poruci_proizvod/<int:proizvod_id>', methods=['POST', 'GET'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def poruci_proizvod(proizvod_id):
     if request.method == 'POST':
-
-        skladiste_id = request.form.get('skladiste')
+        skladiste_id = request.form.get('skladiste_id')
         kolicina = request.form.get('kolicina')
-        korisnik_id = session['korisnik_id']
+        korisnik_id = session.get('korisnik_id')
+        napomena = request.form.get('napomena')
 
         dodaj_porudzbinu = """
-            INSERT INTO porudzbina (datum, kolicina, isporuceno, kategorija, kupac_id, proizvod_id, skladiste_id)
-            VALUES (CURRENT_DATE(), %s, 0, (SELECT kategorija FROM proizvod WHERE id = %s), %s, %s, %s)
+        INSERT INTO porudzbina (datum, kolicina, isporuceno, napomena, kupac_id, proizvod_id, skladiste_id)
+        VALUES (CURDATE(), %s, 0, %s, %s, %s, %s)
         """
-        kursor.execute(dodaj_porudzbinu, (kolicina, proizvod_id, korisnik_id, proizvod_id, skladiste_id))
+        kursor.execute(dodaj_porudzbinu, (kolicina, napomena, korisnik_id, proizvod_id, skladiste_id))
         konekcija.commit()
-
-        return redirect(url_for('porudzbine'))
+        
+        return redirect(url_for('porudzbine_korisnik'))
+    else:
+        return redirect(url_for('pocetna'))
 #############################################################################
 @app.route("/proizvodjac/novi-proizvod", methods=['GET', 'POST'])
 @zahteva_ulogovanje
