@@ -158,7 +158,7 @@ def pocetna() -> html:
             WHERE kupac_id = %s
         """
         kursor.execute(upit_porudzbine, (korisnik_id,))
-        rezultat = kursor.fetchall()
+        rezultat = kursor.fetchone()
         ukupno_porudzbina = rezultat['ukupno_porudzbina']
         neisporuceno = rezultat['neisporuceno']
         return render_template("/pocetna.html", ukupno_porudzbina=ukupno_porudzbina, neisporuceno=neisporuceno)
@@ -171,7 +171,7 @@ def pocetna() -> html:
             WHERE p.proizvodjac_id = %s;
         """
         kursor.execute(upit_proizvoda, (korisnik_id,))
-        rezultat = kursor.fetchall()
+        rezultat = kursor.fetchone()
         ukupno_proizvoda = rezultat['ukupno_proizvoda']
         ukupno_kategorija = rezultat['ukupno_kategorija']
         return render_template("/pocetna.html", ukupno_proizvoda=ukupno_proizvoda, ukupno_kategorija=ukupno_kategorija)
@@ -185,7 +185,7 @@ def pocetna() -> html:
         WHERE s.logisticar_id = %s;
         """
         kursor.execute(upit_skladista, (korisnik_id,))
-        rezultat = kursor.fetchall()
+        rezultat = kursor.fetchone()
         ukupno_skladista = rezultat['ukupno_skladista']
         ukupno_gradova = rezultat['ukupno_gradova']
         return render_template("/pocetna.html", ukupno_gradova=ukupno_gradova, ukupno_skladista=ukupno_skladista)
