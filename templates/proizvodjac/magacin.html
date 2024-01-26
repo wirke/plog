@@ -5,18 +5,19 @@
     <div class="kontejner">
         <div class="pozadina" style="margin-bottom: 0px;">
             <div class="red col-12">
-        
+                {% for s in skladista %}
                 <div class="blok col-3">
-                    magacin.naziv
+                    {{ s.ime }}
                 </div>
         
                 <div class="blok col-3">
-                    magacin.lokacija
+                    {{ s.lokacija }}
                 </div>
     
                 <div class="blok col-3">
-                    magacin.kapacitet/slobodno
+                    {{ s.kapacitet }}
                 </div>
+                {% endfor %}
             </div>
         </div>
     </div>

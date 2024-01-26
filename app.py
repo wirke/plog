@@ -469,17 +469,23 @@ def proizvod(proizvod_id) -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def pregledaj_magacine() -> html:
-    upit = """SELECT ime, lokacija, kapacitet
+    upit = """SELECT id, ime, lokacija, kapacitet
     FROM skladiste"""
     kursor.execute(upit)
     skladista = kursor.fetchall()
     return render_template("/proizvodjac/magacini.html",skladista=skladista)
 
-@app.route("/proizvodjac/magacin", methods=['GET', 'POST'])
+@app.route("/proizvodjac/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
-def napuni_magacin() -> html:
-    return render_template("/proizvodjac/magacin.html")
+def napuni_magacin(skladiste_id: int) -> html:
+    upit = """SELECT s.id, s.ime, s.kapacitet, s.lokacija
+    FROM skladiste s
+    WHERE s.id = %s
+    """
+    kursor.execute(upit, (skladiste_id,))
+    skladiste = kursor.fetchall()
+    return render_template("/proizvodjac/magacin.html", skladiste=skladiste)
 
 @app.route("/proizvodjac/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
