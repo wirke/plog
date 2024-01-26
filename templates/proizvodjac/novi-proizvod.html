@@ -16,7 +16,7 @@
                 <input type="number" min="1" name="proizvodKolicina" placeholder="Kolicina"required>
             </div>
             <div class="blok zadnji">
-                <input type="number" min="1" name="proizvodCena" placeholder="Cena" required>
+                <input type="number" step="any" min="1" name="proizvodCena" placeholder="Cena" required>
             </div>
                 <button action="{{ url_for('novi_proizvod') }}" class="blok sabmit" type="submit">
                     <i class="fa-solid fa-plus"></i>
