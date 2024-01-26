@@ -3,6 +3,7 @@
 {% block content %}
 <div class="display">
     <div class="kontejner">
+      <div class="red">
         <div class="naslov-blok">
             {% if user_data %}
               <h1>Dobrodošli, {{ user_data['ime'] }}!</h1>
@@ -13,6 +14,39 @@
               <h1>Niste ulogovani.</p>
             {% endif %} 
         </div>
+
+        <div class="column">
+          {% if user_data['rola'] == 'Kupac' %}
+              <div class="blok" style="height: fit-content;">
+                  <h1>Broj porudžbina: {{ porudzbine }}</h1>
+              </div>
+              <div class="blok" style="height: fit-content;">
+                  <h1>Neisporučenih: {{ neisporuceno }}</h1>
+              </div>
+          {% elif user_data['rola'] == 'Proizvođač' %}
+              <div class="blok" style="height: fit-content;">
+                  <h1>Broj artikala: {{ ukupno_proizvoda }}</h1>
+              </div>
+              <div class="blok" style="height: fit-content;">
+                  <h1>U ukupno kategorija: {{ ukupno_kategorija }}</h1>
+              </div>
+          {% elif user_data['rola'] == 'Logističar' %}
+              <div class="blok" style="height: fit-content;">
+                  <h1>Ukupno magacina: {{ ukupno_skladista }}</h1>
+              </div>
+              <div class="blok" style="height: fit-content;">
+                  <h1>U ukupno gradova: {{ ukupno_gradova }}</h1>
+              </div>
+          {% elif user_data['rola'] == 'Admin' %}
+              <div class="blok" style="height: fit-content;">
+                  <h1>Ukupno korisnika: {{ ukupno_korisnika }}</h1>
+              </div>
+          {% endif %}
+          <div class="blok" style="height: fit-content;">
+            <a style="text-decoration:none;" href="#"><h1>Izmeni nalog</h1></a>
+          </div>
+        </div>
+      </div>
     </div>
 </div>
 {% endblock %}

@@ -24,6 +24,29 @@
     </div>
 
     <div class="kontejner">
+
+        <div class="red col-12" style="padding-right: 15px;">
+            <div class="blok col-3">
+                Naziv
+            </div>
+            <div class="blok col-3">
+                Proizvodljac
+            </div>
+            <div class="blok col-3">
+                Kategorija
+            </div>
+            <div class="blok zadnji">
+                Cena (RSD)
+            </div>
+            <div class="blok1">
+                <i lass="fa-solid fa-eye" style="color: #ff8a5b;"></i>
+            </div>
+        </div>
+
+        <div style="margin-left: 15px; margin-bottom: -15px;">
+            <hr class="zubor">
+         </div>
+
         {% for proizvod in proizvodi %}
         <div class="red col-12" style="padding-right: 15px;">
             <div class="blok col-3">
@@ -38,8 +61,8 @@
             <div class="blok zadnji">
                 {{ proizvod.cena }}
             </div>
-            <a class="blok sabmit" style="width: fit-content; margin-right: -15px;" href="{{ url_for('kupi_proizvod', proizvod_id = proizvod.id) }}" method="GET">
-                <i class="fa-solid fa-eye" style="color: #302b27;"></i>
+            <a class="blok2 sabmit" style="width: fit-content; margin-right: -15px;" href="{{ url_for('kupi_proizvod', proizvod_id = proizvod.id) }}" method="GET">
+                <i class="fa-solid fa-eye" style="color: #fff;"></i>
             </a>
         </div>
         {% endfor %}

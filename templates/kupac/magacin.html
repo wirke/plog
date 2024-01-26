@@ -4,7 +4,7 @@
 <div class="display">
 
     <div class="kontejner">
-        <form  method="GET" action="{{ url_for('prikaz_proizvoda') }}">
+        <form method="GET" action="{{ url_for('prikazi_magacin', skladiste_id=skladiste.id) }}">
             <select class="blok col-3" name="kategorija" id="kategorija">
                 <option value="">Sve kategorije</option>
 
@@ -13,7 +13,7 @@
                 {% endfor %}
                 
             </select>
-            
+
             <select class="blok col-2" name="odabrano_sortiranje" id="sortiranje">
                 <option value="asc">Cena - Rastuće</option>
                 <option value="desc">Cena - Opadajuće</option>
@@ -32,18 +32,20 @@
             <div class="blok col-3">
                 {{ p.proizvodjac_ime }}
             </div>
-            <div class="blok col-3">
+            <div class="blok col-2">
                 {{ p.kategorija }}
             </div>
             <div class="blok zadnji">
                 {{ p.cena }}
             </div>
             <div class="blok zadnji">
-                {{ broj_proizvoda['broj_proizvoda'] }}
+                {{ p.broj_proizvoda }}
             </div>
-            <a class="blok sabmit" href="{{ url_for('kupi_proizvod', proizvod_id=p.id, skladiste_id=s.id) }}">
-                <i class="fa-solid fa-eye"></i>
-            </a>            
+            <div class="blok2" style="margin-right: -15px;">
+                <a href="{{ url_for('kupi_proizvod', proizvod_id=p.id) }}">
+                    <i class="fa-solid fa-eye ikonica" style="color:#fff;"></i>
+                </a>
+            </div>
         </div>
         {% endfor %}
     </div>

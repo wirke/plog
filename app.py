@@ -74,6 +74,10 @@ def greska(poruka = None):
 
 def postoji(stranica):
     return True
+
+@app.route("/poruka")
+def poruka() -> html:
+    return("/poruka.html")
 #############################################################################
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -144,7 +148,61 @@ def test() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
 def pocetna() -> html:
-    return render_template("/pocetna.html")
+    
+    korisnik_id = session.get('korisnik_id')
+    if session['rola'] == 'Kupac':
+
+        upit_porudzbine = """
+            SELECT COUNT(*) AS ukupno_porudzbina, SUM(CASE WHEN isporuceno = 0 THEN 1 ELSE 0 END) AS neisporuceno
+            FROM porudzbina
+            WHERE kupac_id = %s
+        """
+        kursor.execute(upit_porudzbine, (korisnik_id,))
+        rezultat = kursor.fetchall()
+        ukupno_porudzbina = rezultat['ukupno_porudzbina']
+        neisporuceno = rezultat['neisporuceno']
+        return render_template("/pocetna.html", ukupno_porudzbina=ukupno_porudzbina, neisporuceno=neisporuceno)
+    
+    elif session['rola'] == 'Proizvođač':
+        
+        upit_proizvoda = """
+            SELECT COUNT(DISTINCT p.id) AS ukupno_proizvoda, COUNT(DISTINCT p.kategorija) AS ukupno_kategorija
+            FROM proizvod p
+            WHERE p.proizvodjac_id = %s;
+        """
+        kursor.execute(upit_proizvoda, (korisnik_id,))
+        rezultat = kursor.fetchall()
+        ukupno_proizvoda = rezultat['ukupno_proizvoda']
+        ukupno_kategorija = rezultat['ukupno_kategorija']
+        return render_template("/pocetna.html", ukupno_proizvoda=ukupno_proizvoda, ukupno_kategorija=ukupno_kategorija)
+    
+    elif session['rola'] == 'Logističar':
+        
+        upit_skladista = """
+        SELECT l.id AS logisticar_id, COUNT(DISTINCT s.id) AS ukupno_skladista, COUNT(DISTINCT s.lokacija) AS ukupno_gradova
+        FROM user l
+        JOIN skladiste s ON l.id = s.logisticar_id
+        WHERE s.logisticar_id = %s;
+        """
+        kursor.execute(upit_skladista, (korisnik_id,))
+        rezultat = kursor.fetchall()
+        ukupno_skladista = rezultat['ukupno_skladista']
+        ukupno_gradova = rezultat['ukupno_gradova']
+        return render_template("/pocetna.html", ukupno_gradova=ukupno_gradova, ukupno_skladista=ukupno_skladista)
+    
+    elif session['rola'] == 'Admin':
+        
+        upit = """
+            SELECT COUNT(*) AS ukupno_korisnika
+            FROM user;
+        """
+        kursor.execute(upit,)
+        rezultat = kursor.fetchone()
+        ukupno_korisnika = rezultat['ukupno_korisnika']
+        return render_template("/pocetna.html", ukupno_korisnika=ukupno_korisnika)
+
+    else:
+        return render_template("/greska.html", poruka="Nepostojeci korisnik")
 #############################################################################
 @app.route("/kupac/proizvodi", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -210,17 +268,23 @@ def prikaz_magacina() -> html:
 
     if odabrana_lokacija:
         upit_skladista = """
-            SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
+            SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime, 
+            COALESCE(SUM(sa.kolicina), 0) AS popunjenost
             FROM skladiste s
             JOIN user u ON s.logisticar_id = u.id
+            LEFT JOIN sadrzi sa ON s.id = sa.skladiste_id
             WHERE s.lokacija = %s
+            GROUP BY s.id
         """
         kursor.execute(upit_skladista, (odabrana_lokacija,))
     else:
         upit_skladista = """
-            SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
+            SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime, 
+            COALESCE(SUM(sa.kolicina), 0) AS popunjenost
             FROM skladiste s
             JOIN user u ON s.logisticar_id = u.id
+            LEFT JOIN sadrzi sa ON s.id = sa.skladiste_id
+            GROUP BY s.id
         """
         kursor.execute(upit_skladista)
 
@@ -228,13 +292,23 @@ def prikaz_magacina() -> html:
 
     return render_template("/kupac/magacini.html", skladiste=skladiste, sve_lokacije=sve_lokacije, odabrana_lokacija=odabrana_lokacija)
 
-@app.route("/kupac/magacini/<int:skladiste_id>", methods=['GET', 'POST'])
+
+@app.route("/kupac/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def prikazi_magacin(skladiste_id: int) -> html:
-    
+
     odabrano_sortiranje = request.args.get('sortiranje', 'asc')
     kategorija = request.args.get('kategorija', '')
+
+    upit_kategorije = """
+        SELECT DISTINCT p.kategorija 
+        FROM proizvod p 
+        JOIN sadrzi s ON p.id = s.proizvod_id 
+        WHERE s.skladiste_id = %s
+    """
+    kursor.execute(upit_kategorije, (skladiste_id,))
+    sve_kategorije = [red['kategorija'] for red in kursor.fetchall()]
 
     upit_skladista = """
         SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
@@ -246,27 +320,17 @@ def prikazi_magacin(skladiste_id: int) -> html:
     skladiste = kursor.fetchone()
 
     upit_proizvodi = """
-        SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
+        SELECT p.id, p.ime, p.kategorija, p.cena, proizvodjac.ime AS proizvodjac_ime, s.kolicina AS broj_proizvoda
         FROM proizvod p
-        JOIN sadrzi sa ON p.id = sa.proizvod_id
-        JOIN skladiste s ON sa.skladiste_id = s.id
-        JOIN user u ON p.proizvodjac_id = u.id
-        WHERE s.id = %s AND (%s = '' OR p.kategorija = %s)
+        JOIN sadrzi s ON p.id = s.proizvod_id
+        JOIN user proizvodjac ON p.proizvodjac_id = proizvodjac.id
+        WHERE s.skladiste_id = %s AND (%s = '' OR p.kategorija = %s)
         ORDER BY p.cena {0}
     """.format(odabrano_sortiranje)
     kursor.execute(upit_proizvodi, (skladiste_id, kategorija, kategorija,))
     proizvodi = kursor.fetchall()
 
-    upit_brojanje_proizvoda = """
-        SELECT COUNT(*) AS broj_proizvoda
-        FROM sadrzi
-        WHERE skladiste_id = %s
-        GROUP BY skladiste_id
-    """
-    kursor.execute(upit_brojanje_proizvoda, (skladiste_id,))
-    broj_proizvoda = kursor.fetchone()
-
-    return render_template("/kupac/magacini.html", proizvodi=proizvodi, skladiste=skladiste, odabrano_sortiranje=odabrano_sortiranje, kategorija=kategorija, broj_proizvoda=broj_proizvoda)
+    return render_template("/kupac/magacin.html", skladiste=skladiste, proizvodi=proizvodi, odabrano_sortiranje=odabrano_sortiranje, kategorija=kategorija, sve_kategorije=sve_kategorije)
 
 @app.route("/kupac/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -318,16 +382,28 @@ def poruci_proizvod(proizvod_id):
         korisnik_id = session.get('korisnik_id')
         napomena = request.form.get('napomena')
 
-        dodaj_porudzbinu = """
-        INSERT INTO porudzbina (datum, kolicina, isporuceno, napomena, kupac_id, proizvod_id, skladiste_id)
-        VALUES (CURDATE(), %s, 0, %s, %s, %s, %s)
-        """
-        kursor.execute(dodaj_porudzbinu, (kolicina, napomena, korisnik_id, proizvod_id, skladiste_id))
-        konekcija.commit()
-        
-        return redirect(url_for('porudzbine_korisnik'))
+        upit_kolicine = "SELECT kolicina FROM sadrzi WHERE skladiste_id = %s AND proizvod_id = %s"
+        kursor.execute(upit_kolicine, (skladiste_id, proizvod_id))
+        trenutna_kolicina = kursor.fetchone()
+
+        if trenutna_kolicina and int(kolicina) <= trenutna_kolicina['kolicina']:
+            dodaj_porudzbinu = """
+            INSERT INTO porudzbina (datum, kolicina, isporuceno, napomena, kupac_id, proizvod_id, skladiste_id)
+            VALUES (CURDATE(), %s, 0, %s, %s, %s, %s)
+            """
+            kursor.execute(dodaj_porudzbinu, (kolicina, napomena, korisnik_id, proizvod_id, skladiste_id))
+            konekcija.commit()
+
+            nova_kolicina = trenutna_kolicina['kolicina'] - int(kolicina)
+            azuriraj_kolicinu = "UPDATE sadrzi SET kolicina = %s WHERE skladiste_id = %s AND proizvod_id = %s"
+            kursor.execute(azuriraj_kolicinu, (nova_kolicina, skladiste_id, proizvod_id))
+            konekcija.commit()
+
+            return redirect(url_for('porudzbine_korisnik'))
+        else:
+            return redirect(url_for('greska', poruka='Proizvod nije dostupan!'))
     else:
-        return redirect(url_for('pocetna'))
+        return redirect(url_for('greska', poruka='Proizvod nije dostupan!'))
 #############################################################################
 @app.route("/proizvodjac/novi-proizvod", methods=['GET', 'POST'])
 @zahteva_ulogovanje
