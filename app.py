@@ -349,7 +349,7 @@ def novi_proizvod() -> html:
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def porudzbine_proizvoda() -> html:
     upit= """
-    SELECT ime, kategorija, cena, kolicina
+    SELECT id, ime, kategorija, cena, kolicina
     FROM proizvod
     WHERE proizvodjac_id = %s
     """
@@ -357,10 +357,14 @@ def porudzbine_proizvoda() -> html:
     proizvodi = kursor.fetchall()
     return render_template("/proizvodjac/moji-proizvodi.html", proizvodi=proizvodi)
 
-@app.route("/proizvodjac/proizvod", methods=['GET', 'POST'])
+@app.route("/proizvodjac/proizvod/<int:proizvod_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
-def proizvod() -> html:
+def proizvod(proizvod_id) -> html:
+    upit= """
+    
+
+    """
     return render_template("/proizvodjac/proizvod.html")
 
 @app.route("/proizvodjac/magacini", methods=['GET', 'POST'])

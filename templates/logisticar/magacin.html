@@ -4,14 +4,26 @@
 <div class="display">
     <div class="kontejner">
         <div class="red col-12">
-           {% for s in skladiste %}
+            <div class="blok col-4">
+                Ime skladista 
+            </div>
+            <div class="blok col-5">
+                Lokacija skladista
+            </div>
+            <div class="blok col-2">
+                Kapacitet
+            </div>
+        </div>
+        <div style="margin-left: 15px; margin-bottom: -15px;">
+            <hr class="zubor">
+         </div>
+        {% for s in skladiste %}
+        <div class="red col-12">
             <div class="blok zadnji">
                 {{ s.ime }} 
-        
             </div>
             <div class="blok zadnji">
                 {{ s.lokacija }} 
-               
             </div>
             <div class="blok col-2">
                 {{ s.kapacitet }} 
@@ -22,11 +34,13 @@
                     <i class="fa-solid fa-pen"></i>
                 </button>
             </form>
-         {% endfor %} 
         </div>
+        {% endfor %}
     </div>
+
+    {% for p in proizvodi %}
     <div class="kontejner">
-        {% for p in proizvodi %}
+
         <div class="red col-12">
             
             <form style="margin-left: 0; margin-right: 15px;" action="#" method="get" style="margin-left: 15px;">
