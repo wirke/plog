@@ -361,6 +361,16 @@ def porudzbine_proizvoda() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def proizvod(proizvod_id) -> html:
+    if request.method == "POST":
+        upit = """UPDATE proizvod
+        SET ime= %s, kategorija= %s, cena= %s, kolicina = %s
+        WHERE id = %s
+        """
+        vrednosti = (request.form['prIme'], request.form['prKategorija'],request.form['prCena'],request.form['prKolicina'], proizvod_id)
+        kursor.execute(upit, vrednosti)
+        konekcija.commit()
+        return redirect(url_for('porudzbine_proizvoda'))
+        
     upit_pr= """SELECT p.id, p.ime, p.kategorija, p.cena, p.kolicina
     FROM proizvod p
     WHERE p.id = %s
@@ -376,6 +386,8 @@ def proizvod(proizvod_id) -> html:
     kursor.execute(upit_mag, (proizvod_id,))
     skladiste = kursor.fetchall()
     return render_template("/proizvodjac/proizvod.html", proizvod=proizvod, skladiste=skladiste)
+
+
 
 @app.route("/proizvodjac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje

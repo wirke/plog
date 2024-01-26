@@ -5,29 +5,30 @@
     <div class="kontejner">
         <div class="pozadina">
             {% for pr in proizvod %}
+            <form method="POST">
             <div class="red col-12" style="padding-right: 15px; padding-bottom: 15px;">
-        
                 <div class="blok col-3">
-                   {{ pr.ime }}
+                   <input name="prIme" type="text" value=" {{ pr.ime }} ">
                 </div>
         
                 <div class="blok col-3">
-                    {{ pr.kategorija }}
+                    <input type="text" name="prKategorija" value=" {{ pr.kategorija }} ">
                 </div>
         
                 <div class="blok zadnji">
-                    {{ pr.cena }}
+                    <input type="text" name="prCena" value=" {{ pr.cena }} ">
                 </div>
                 <div class="blok zadnji">
-                    {{ pr.kolicina }}
+                    <input type="text" name="prKolicina" value=" {{ pr.kolicina }} ">
                 </div>
-                <form action="#" method="get" style="margin-right: 15px;">
+                    <div style="margin-right: 15px;">
                     <button class="blok sabmit" type="submit">
                         <i class="fa-solid fa-pen"></i>
                     </button>
-                </form>
+                    </div>
             </div>
             {% endfor %}
+            </form>
         </div>
     </div>
 
@@ -54,25 +55,6 @@
 
     </div>
     {% endfor %}
-    
-       <!-- <div style="width: 100%;">
-            <div class="blok upit">
-    
-                <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                    <i class="fas fa-minus"></i>
-                </button>
-        
-                <div>
-                    <input id="form1" min="1" name="quantity" value="1" type="number">
-                </div>
-        
-                <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-    
-            </div>
-        </div> -->
-    
        <!-- <form action="#" method="get" style="margin-right: 15px; margin-left: 15px;">
             <button class="blok sabmit" type="submit">
                 <i class="fa-solid fa-pen"></i>
@@ -88,7 +70,7 @@
             </button>
         </form>
         <div class="col-3 vlaga">
-            <select class="magacin-select blok col-12" aria-label="Default select example">
+            <select class="magacin-select blok col-12">
                 <option selected disabled>Dodajte u magacin</option>
                 <option value="1">magacin1(slobodno/lokacija)</option>
                 <option value="2">magacin2(slobodno/lokacija)</option>
