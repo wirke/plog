@@ -24,23 +24,26 @@
     </div>
 
     <div class="kontejner">
-        {% for proizvod in proizvodi %}
+        {% for p in proizvodi %}
         <div class="red col-12" style="padding-right: 15px;">
             <div class="blok col-3">
-                {{ proizvod.ime }}
+                {{ p.ime }}
             </div>
             <div class="blok col-3">
-                {{ proizvod.proizvodjac_ime }}
+                {{ p.proizvodjac_ime }}
             </div>
             <div class="blok col-3">
-                {{ proizvod.kategorija }}
+                {{ p.kategorija }}
             </div>
             <div class="blok zadnji">
-                {{ proizvod.cena }}
+                {{ p.cena }}
             </div>
-            <a class="blok sabmit" action="{{ url_for('kupi_proizvod' proizvod_id=proizvod.id) }}">
+            <div class="blok zadnji">
+                {{ broj_proizvoda['broj_proizvoda'] }}
+            </div>
+            <a class="blok sabmit" href="{{ url_for('kupi_proizvod', proizvod_id=p.id, skladiste_id=s.id) }}">
                 <i class="fa-solid fa-eye"></i>
-            </a>
+            </a>            
         </div>
         {% endfor %}
     </div>

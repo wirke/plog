@@ -1,28 +1,23 @@
 {% extends 'navbar.html' %}
 {% block title %}Plog - Greška{% endblock %}
-
+ 
 {% block content %}
-{% if ulogovan() %}
-    {% if poruka() %}
-    <div class="celo col-12">
-        <a href="/login" style="margin-bottom: 50px;">
-            <img src="/static/img/ico1.svg">
-        </a>
-        <h1 style="font-size: 50px;" class="bezista">{{ poruka }}</h1>
-    </div>
-    {% endif %}
-<div class="celo col-12">
-    <a href="/pocetna" style="margin-bottom: 50px;">
-        <img src="/static/img/ico1.svg">
-    </a>
-    <h1 style="font-size: 50px;" class="bezista">Nedozvoljen pristup!</h1>
-</div>
-{% elif ulogovan() == False %}
-<div class="celo col-12">
-    <a href="/login" style="margin-bottom: 50px;">
-        <img src="/static/img/ico1.svg">
-    </a>
-    <h1 style="font-size: 50px;" class="bezista">Niste ulogovani!</h1>
-</div>
-{% endif %}
+
+  {% if ulogovan() %}
+   <div class="celo col-12">
+     <a href="/pocetna" style="margin-bottom: 50px;">
+      <img src="/static/img/ico1.svg">
+     </a>
+     <h1 style="font-size: 50px;" class="bezista">Nedozvoljen pristup!</h1>
+   </div>
+
+  {% else %}
+   <div class="celo col-12">
+     <a href="/login" style="margin-bottom: 50px;">
+      <img src="/static/img/ico1.svg">
+     </a>
+     <h1 style="font-size: 50px;" class="bezista">Niste ulogovani!</h1>
+   </div>
+  {% endif %}
+
 {% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect, session
+from flask import Flask, render_template, url_for, request, redirect, session, abort
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 from functools import wraps
@@ -63,9 +63,17 @@ def zahteva_ulogovanje(f):
         return redirect(url_for('greska'))
     return omotana_funkcija
 
+@app.errorhandler(404)
+def not_found_error(error):
+    poruka = 'Nepostojeca stranica!'
+    return redirect(url_for('greska', poruka=poruka)), 404
+
 @app.route("/greska")
-def greska(poruka):
+def greska(poruka = None):
     return render_template("/greska.html", poruka=poruka)
+
+def postoji(stranica):
+    return True
 #############################################################################
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -108,6 +116,7 @@ def register():
 
         if existing_user:
             return render_template("register.html", error="Mejl je već u upotrebi.")
+        
         upit = """ INSERT INTO
         user(email, ime, sifra, rola, lokacija)
         VALUES (%s, %s, %s, %s, %s)
@@ -118,7 +127,7 @@ def register():
         kursor.execute(upit,forma)
         konekcija.commit()
         return redirect(url_for("login"))
-    
+
 @app.route("/logout")
 def logout():
     session.pop('korisnik_id', None)
@@ -219,56 +228,45 @@ def prikaz_magacina() -> html:
 
     return render_template("/kupac/magacini.html", skladiste=skladiste, sve_lokacije=sve_lokacije, odabrana_lokacija=odabrana_lokacija)
 
-@app.route("/kupac/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
+@app.route("/kupac/magacini/<int:skladiste_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
-def prikazi_magacin(skladiste_id) -> html:
-    upit_skladiste = """
+def prikazi_magacin(skladiste_id: int) -> html:
+    
+    odabrano_sortiranje = request.args.get('sortiranje', 'asc')
+    kategorija = request.args.get('kategorija', '')
+
+    upit_skladista = """
         SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
         FROM skladiste s
         JOIN user u ON s.logisticar_id = u.id
         WHERE s.id = %s
     """
-    kursor.execute(upit_skladiste, (skladiste_id,))
+    kursor.execute(upit_skladista, (skladiste_id,))
     skladiste = kursor.fetchone()
 
-    if skladiste:
-        cena_max = request.args.get('cena_max', '')
-        cena_min = request.args.get('cena_min', '')
-        odabrano_sortiranje = request.args.get('sortiranje', '')
-        kategorija = request.args.get('kategorija', '')
+    upit_proizvodi = """
+        SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
+        FROM proizvod p
+        JOIN sadrzi sa ON p.id = sa.proizvod_id
+        JOIN skladiste s ON sa.skladiste_id = s.id
+        JOIN user u ON p.proizvodjac_id = u.id
+        WHERE s.id = %s AND (%s = '' OR p.kategorija = %s)
+        ORDER BY p.cena {0}
+    """.format(odabrano_sortiranje)
+    kursor.execute(upit_proizvodi, (skladiste_id, kategorija, kategorija,))
+    proizvodi = kursor.fetchall()
 
-        if kategorija:
-            kategorija_filter = kategorija[0]
-        else:
-            kategorija_filter = ''
+    upit_brojanje_proizvoda = """
+        SELECT COUNT(*) AS broj_proizvoda
+        FROM sadrzi
+        WHERE skladiste_id = %s
+        GROUP BY skladiste_id
+    """
+    kursor.execute(upit_brojanje_proizvoda, (skladiste_id,))
+    broj_proizvoda = kursor.fetchone()
 
-        upit_kategorija = """
-            SELECT DISTINCT p.kategorija
-            FROM skladiste s
-            JOIN sadrzi sa ON s.id = sa.skladiste_id
-            JOIN proizvod p ON sa.proizvod_id = p.id
-            WHERE s.id = %s
-        """
-        kursor.execute(upit_kategorija, (skladiste_id,))
-        kategorija = [red['kategorija'] for red in kursor.fetchall()]
-
-        upit_proizvodi = """
-            SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
-            FROM skladiste s
-            JOIN sadrzi sa ON s.id = sa.skladiste_id
-            JOIN proizvod p ON sa.proizvod_id = p.id
-            JOIN user u ON p.proizvodjac_id = u.id
-            WHERE s.id = %s AND (%s = '' OR p.cena <= %s) AND (%s = '' OR p.cena >= %s) AND (%s = '' OR p.kategorija = %s)
-            ORDER BY p.cena %s
-        """
-        kursor.execute(upit_proizvodi, (skladiste_id, cena_max, cena_max, cena_min, cena_min, kategorija_filter, kategorija_filter, odabrano_sortiranje,))
-        proizvodi = kursor.fetchall()
-
-        return render_template("/kupac/magacin.html", skladiste=skladiste, kategorija=kategorija, proizvodi=proizvodi, cena_max=cena_max, cena_min=cena_min, odabrano_sortiranje=odabrano_sortiranje)
-    else:
-        return render_template("/error.html", poruka="Skladište nije pronađeno.")
-
+    return render_template("/kupac/magacini.html", proizvodi=proizvodi, skladiste=skladiste, odabrano_sortiranje=odabrano_sortiranje, kategorija=kategorija, broj_proizvoda=broj_proizvoda)
 
 @app.route("/kupac/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -309,8 +307,6 @@ def postoji_porudzbina(korisnik_id):
         return True
     else:
         return False
-    
-from flask import request, redirect, url_for
 
 @app.route('/kupac/poruci_proizvod/<int:proizvod_id>', methods=['POST', 'GET'])
 @zahteva_ulogovanje
