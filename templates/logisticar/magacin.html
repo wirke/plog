@@ -4,48 +4,48 @@
 <div class="display">
     <div class="kontejner">
         <div class="red col-12">
-            <div class="blok col-4">
+
+            <div class="blok zadnji">
                 Ime skladista 
             </div>
-            <div class="blok col-5">
+            <div class="blok zadnji">
                 Lokacija skladista
             </div>
             <div class="blok col-2">
                 Kapacitet
             </div>
+            <div class="blok1 sabmit" style="width:fit-content;">
+                <i class="fa-solid fa-pen ikonica" style="color: #ff8a5b;"></i>
+            </div>
+
         </div>
+
         <div style="margin-left: 15px; margin-bottom: -15px;">
             <hr class="zubor">
-         </div>
-        {% for s in skladiste %}
+        </div>
+
         <div class="red col-12">
-            <div class="blok zadnji">
-                {{ s.ime }} 
-            </div>
-            <div class="blok zadnji">
-                {{ s.lokacija }} 
-            </div>
-            <div class="blok col-2">
-                {{ s.kapacitet }} 
-               
-            </div>
+
+            <input class="blok zadnji" value="{{ skladiste.ime }}">
+            <input class="blok zadnji" value="{{ skladiste.lokacija }}">
+            <input class="blok col-2" value="{{ skladiste.kapacitet }}">
+
             <form action="#" method="get" style="margin-right: 15px;">
-                <button class="blok sabmit" type="submit">
-                    <i class="fa-solid fa-pen"></i>
+                <button class="blok2 sabmit zadnji" type="submit">
+                    <i class="fa-solid fa-pen" style="color: #fff;"></i>
                 </button>
             </form>
+
         </div>
-        {% endfor %}
     </div>
 
-    {% for p in proizvodi %}
     <div class="kontejner">
-
+        {% for p in proizvodi %}
         <div class="red col-12">
             
             <form style="margin-left: 0; margin-right: 15px;" action="#" method="get" style="margin-left: 15px;">
-                <button class="blok sabmit" type="submit">
-                    <i class="fa-solid fa-circle-xmark"></i>
+                <button class="blok2 sabmit" type="submit">
+                    <i class="fa-solid fa-trash" style="color: #fff;"></i>
                 </button>
             </form>
 
@@ -54,39 +54,29 @@
             </div>
 
             <div class="blok zadnji">
-               {{ p.kategorija }}
+                {{ p.kategorija }}
             </div>
 
             <div class="blok zadnji">
-                 {{ p.proizvodjac_naziv }}
+                {{ p.proizvodjac_ime }}
             </div>
 
-            <div class="col-1" style="margin-right: 15px;">
-                <div class="blok upit">
-
-                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                        <i class="fas fa-minus"></i>
-                    </button>
-            
+            <div class="col-2" style="margin-right: -25px;">
+                <div class="vlaga">
                     <div>
-                        <input id="form1" min="1" name="quantity" value="1" type="number">
+                        <input default:"{{proizvod_kolicina}}" class="blok" id="form1" min="1" name="quantity" value="1" type="number">
                     </div>
-            
-                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-
                 </div>
             </div>
 
             <form action="#" method="get" style="margin-right: 15px;">
-                <button class="blok sabmit zadnji" type="submit">
-                    <i class="fa-solid fa-pen"></i>
+                <button class="blok2 sabmit zadnji" type="submit">
+                    <i class="fa-solid fa-pen" style="color: #fff;"></i>
                 </button>
             </form>
 
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endblock %}

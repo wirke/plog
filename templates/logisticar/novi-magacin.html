@@ -15,30 +15,17 @@
                     <input class="magacin-select blok col-12" name="magacinLokacija" type="text" placeholder="Unesite lokaciju" required>
             </div>
 
-            <div class="upit">
-                <div class="blok upit">
-
-                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                        <i class="fas fa-minus"></i>
-                    </button>
-            
-                    <div>
-                        <input id="form1" name="magacinKapacitet" min="1" max="100000" name="quantity" value="1" type="number" required>
-                    </div>
-            
-                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-
+            <div class="zadnji vlaga" style="margin-right:-15px;">
+                <div>
+                    <input class="blok" id="form1" name="magacinKapacitet" min="1" max="100000" name="quantity" value="1" type="number" required>
                 </div>
             </div>
 
-            <div class="red slag" style="margin-right: -15px;">
-                    <button class="blok sabmit" type="submit">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-            </div>
+            <button class="blok2 sabmit" type="submit" class="red slag" style="margin-left:-2px; width:fit-content;">
+                <i class="fa-solid fa-plus ikonica" style="color:#fff;"></i>
+            </button>
         </form> 
+
     </div>
 </div>
 
