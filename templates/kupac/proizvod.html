@@ -51,9 +51,9 @@
                         <option value="{{ skladiste.id }}">{{ skladiste.logisticar_ime }} - {{ skladiste.lokacija }}</option>
                     {% endfor %}
                 </select>
-                
+
                 <div class="col-3" style="height: 55px;">
-                    <input name="kolicina" class="blok" required id="form1" min="1" value="1" type="number">
+                    <input name="kolicina" class="blok" required id="form1" min="1" max="{{ kolicina_proizvoda }}" value="1" type="number">
                 </div>
                 
                 <button class="blok2"  type="submit">
