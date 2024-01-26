@@ -4,23 +4,22 @@
 <div class="display">
     <div class="kontejner">
         <div class="pozadina">
+            {% for pr in proizvod %}
             <div class="red col-12" style="padding-right: 15px; padding-bottom: 15px;">
-
-                
         
                 <div class="blok col-3">
-                    proizvod.naziv
+                   {{ pr.ime }}
                 </div>
         
                 <div class="blok col-3">
-                    proizvod.kategorija
+                    {{ pr.kategorija }}
                 </div>
         
                 <div class="blok zadnji">
-                    proizvod.cena
+                    {{ pr.cena }}
                 </div>
                 <div class="blok zadnji">
-                    proizvod.preostalo
+                    {{ pr.kolicina }}
                 </div>
                 <form action="#" method="get" style="margin-right: 15px;">
                     <button class="blok sabmit" type="submit">
@@ -28,12 +27,13 @@
                     </button>
                 </form>
             </div>
+            {% endfor %}
         </div>
     </div>
 
     <div class="kontejner">
+        {% for sk in skladiste %}
     <div class="red col-12">
-                
         <form style="margin-left: 0; margin-right: 15px;" action="#" method="get" style="margin-left: 15px;">
             <button class="blok sabmit" type="submit">
                 <i class="fa-solid fa-circle-xmark"></i>
@@ -41,18 +41,21 @@
         </form>
     
         <div class="blok col-3">
-            magacin.naziv
+            {{ sk.ime }}
         </div>
     
         <div class="blok col-3">
-            magacin.lokacija
+            {{ sk.lokacija }}
         </div>
 
         <div class="blok col-3">
-            magacin.popunjenost/slobodno
+            {{ sk.kapacitet }}
         </div>
+
+    </div>
+    {% endfor %}
     
-        <div style="width: 100%;">
+       <!-- <div style="width: 100%;">
             <div class="blok upit">
     
                 <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
@@ -68,15 +71,15 @@
                 </button>
     
             </div>
-        </div>
+        </div> -->
     
-        <form action="#" method="get" style="margin-right: 15px; margin-left: 15px;">
+       <!-- <form action="#" method="get" style="margin-right: 15px; margin-left: 15px;">
             <button class="blok sabmit" type="submit">
                 <i class="fa-solid fa-pen"></i>
             </button>
         </form>
+    -->
 
-    </div>
 
     <div class="red col-12">
         <form action="#" method="get" style="margin-right: 15px;">
@@ -92,6 +95,23 @@
                 <option value="3">magacin3(slobodno/lokacija)</option>
                 <option value="4">magacin4(slobodno/lokacija)</option>
             </select>
+        </div>
+        <div>
+            <div class="blok upit">
+    
+                <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                    <i class="fas fa-minus"></i>
+                </button>
+        
+                <div>
+                    <input id="form1" min="1" name="quantity" value="1" type="number">
+                </div>
+        
+                <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+    
+            </div>
         </div>
     </div>
 </div>

@@ -361,11 +361,21 @@ def porudzbine_proizvoda() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def proizvod(proizvod_id) -> html:
-    upit= """
-    
-
+    upit_pr= """SELECT p.id, p.ime, p.kategorija, p.cena, p.kolicina
+    FROM proizvod p
+    WHERE p.id = %s
     """
-    return render_template("/proizvodjac/proizvod.html")
+    kursor.execute(upit_pr, (proizvod_id,))
+    proizvod = kursor.fetchall()
+
+    upit_mag = """SELECT s.id, s.ime, s.kapacitet, s.lokacija
+    FROM skladiste s
+    JOIN sadrzi sd ON s.id=sd.skladiste_id
+    WHERE sd.proizvod_id = %s
+    """
+    kursor.execute(upit_mag, (proizvod_id,))
+    skladiste = kursor.fetchall()
+    return render_template("/proizvodjac/proizvod.html", proizvod=proizvod, skladiste=skladiste)
 
 @app.route("/proizvodjac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
