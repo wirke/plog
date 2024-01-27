@@ -463,6 +463,13 @@ def proizvod(proizvod_id) -> html:
     skladiste = kursor.fetchall()
     return render_template("/proizvodjac/proizvod.html", proizvod=proizvod, skladiste=skladiste)
 
+@app.route("/proizvodjac/proizvod/<int:proizvod_id>/<int:skladiste_id>", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
+def proizvodjac_izbrisi_proizvod(proizvod_id: int,skladiste_id: int) -> html:
+    izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id)
+    return redirect(url_for('pregledaj_magacine'))
+
 @app.route("/proizvodjac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
@@ -477,7 +484,7 @@ def pregledaj_magacine() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def napuni_magacin(skladiste_id: int) -> html:
-    upit = """SELECT ime, kapacitet, lokacija
+    upit = """SELECT id, ime, kapacitet, lokacija
     FROM skladiste 
     WHERE id = %s
     """
@@ -571,9 +578,9 @@ def magacin(skladiste_id: int) -> html:
             else:
                 print("Greska prilikom azuriranja")
         
-        elif 'izbrisi_proizvod' in request.form:
-            proizvod_id_za_brisanje = request.form['izbrisi_proizvod']
-            izbrisi_proizvod_iz_skladista(proizvod_id_za_brisanje, skladiste_id)
+        #elif 'izbrisi_proizvod' in request.form:
+         #   proizvod_id_za_brisanje = request.form['izbrisi_proizvod']
+          #  izbrisi_proizvod_iz_skladista(proizvod_id_za_brisanje, skladiste_id)
 
         elif 'izmeni_kolicinu' in request.form:
             proizvod_id_za_izmenu = int(request.form['izmeni_kolicinu'])
