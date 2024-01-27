@@ -5,7 +5,7 @@
     <div class="kontejner">
         <div class="pozadina" style="margin-bottom: 0px;">
             <div class="red col-12">
-                {% for s in skladista %}
+                {% for s in skladiste %}
                 <div class="blok col-3">
                     {{ s.ime }}
                 </div>
@@ -24,8 +24,8 @@
 
     <div class="kontejner">
         <div class="pozadina" style="margin-right: 0px; margin-bottom: 0px;">
+            {% for p in proizvodi %}
         <div class="red col-12">
-                
             <form style="margin-left: 0; margin-right: 15px;" action="" method="get" style="margin-left: 15px;">
                 <button class="blok2 sabmit" type="submit">
                     <i class="fa-solid fa-trash" style="color: #fff;"></i>
@@ -33,42 +33,24 @@
             </form>
         
             <div class="blok col-3">
-                proizvod.naziv
+                {{ p.ime }}
             </div>
         
             <div class="blok col-3">
-                proizvod.kategorija
+                {{ p.kategorija }}
             </div>
     
             <div class="blok col-3">
-                proizvod.cena
+                {{ p.cena }}
             </div>
-        
-            <div style="width: 100%;">
-                <div class="blok upit">
-        
-                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                        <i class="fas fa-minus"></i>
-                    </button>
-            
-                    <div>
-                        <input id="form1" min="1" name="quantity" value="1" type="number">
-                    </div>
-            
-                    <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-        
-                </div>
-            </div>
-        
-            <form action="#" method="get" style="margin-right: 15px; margin-left: 15px;">
+            <!--<form action="#" method="get" style="margin-right: 15px; margin-left: 15px;">
                 <button class="blok2 sabmit" type="submit">
                     <i class="fa-solid fa-pen" style="color:#fff;"></i>
                 </button>
-            </form>
+            </form> -->
     
         </div>
+        {% endfor %}
     
         <div class="red col-12">
             <form action="#" method="get" style="margin-right: 15px;">
@@ -85,7 +67,11 @@
                     <option value="4">proizvod4</option>
                 </select>
             </div>
-        </div>
+           
+                <div class="blok">
+                        <input id="form1" min="1" name="quantity" value="1" type="number">
+                </div>
+            </div>
     </div>
     </div>
 </div>

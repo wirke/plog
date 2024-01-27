@@ -4,45 +4,51 @@
 <div class="display">
     <div class="kontejner">
         <div class="red col-12">
-            <div class="blok">
-                <i class="fa-solid fa-hourglass-start ikonica"></i>
-            </div>
             <div class="blok col-1">
-                kolicina
+                Kolicina
             </div>
             <div class="blok zadnji">
-                proizvod.naziv
+                Ime proizvoda
             </div>
             <div class="blok zadnji">
-                porudzbina.cena
+                Cena porudzbine
             </div>
             <div class="blok zadnji">
-                korisnik.ime
+                Ime kupca
             </div>
             <div class="blok zadnji">
-                korisnik.lokacija
+                Lokacija kupca
             </div>
         </div>
+        <div style="margin-left: 15px; margin-bottom: -15px;">
+            <hr class="zubor">
+         </div>
+         {% for p in porudzbine %}
         <div class="red col-12">
-            <div class="blok">
-                <i class="fa-solid fa-truck-fast ikonica"></i>
-            </div>
             <div class="blok col-1">
-                kolicina
+                {{ p.kolicina }}
             </div>
             <div class="blok zadnji">
-                proizvod.naziv
+                {{ p.ime_proizvoda }}
             </div>
             <div class="blok zadnji">
-                porudzbina.cena
+                {{ p.cena }}
             </div>
             <div class="blok zadnji">
-                korisnik.ime
+                {{ p.ime }}
             </div>
             <div class="blok zadnji">
-                korisnik.lokacija
+                {{ p.lokacija }}
+            </div>
+            <div class="blok vlaga">
+                {% if p.isporuceno == 0 %}
+                 <i class="fa-solid fa-hourglass-start ikonica"></i>
+             {% else %}
+                 <i class="fa-solid fa-truck-fast"></i>
+             {% endif %}
             </div>
         </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
