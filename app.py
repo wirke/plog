@@ -572,7 +572,7 @@ def magacin(skladiste_id: int) -> html:
                 print("Greska prilikom azuriranja")
         
         elif 'izbrisi_proizvod' in request.form:
-            proizvod_id_za_brisanje = int(request.form['izbrisi_proizvod'])
+            proizvod_id_za_brisanje = request.form['izbrisi_proizvod']
             izbrisi_proizvod_iz_skladista(proizvod_id_za_brisanje, skladiste_id)
 
         elif 'izmeni_kolicinu' in request.form:
@@ -580,6 +580,13 @@ def magacin(skladiste_id: int) -> html:
             nova_kolicina = int(request.form['nova_kolicina'])
             azuriraj_kolicinu_proizvoda_u_skladistu(proizvod_id_za_izmenu, skladiste_id, nova_kolicina)
     return render_template("/logisticar/magacin.html", skladiste=skladiste, proizvodi=proizvodi)
+
+@app.route("/logisticar/magacin/<int:skladiste_id>/<int:proizvod_id>", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Logističar'])
+def magacin_brisanje(skladiste_id: int, proizvod_id: int) -> html:
+    izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id)
+    return redirect(url_for('moji_magacini'))
 
 def azuriraj_kolicinu_proizvoda_u_skladistu(proizvod_id, skladiste_id, nova_kolicina):
     dostupna_kolicina = proveri_dostupnost_kolicine(proizvod_id, skladiste_id, nova_kolicina)

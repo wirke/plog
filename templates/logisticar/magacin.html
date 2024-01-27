@@ -38,12 +38,10 @@
 
         </div>
     </div>
-
+    {% for p in proizvodi %}
     <div class="kontejner">
-        {% for p in proizvodi %}
         <div class="red col-12">
-            
-            <form style="margin-left: 0; margin-right: 15px;" action="#" method="get" style="margin-left: 15px;">
+            <form style="margin-left: 0; margin-right: 15px;" action="{{ url_for('magacin_brisanje', proizvod_id=p.id, skladiste_id=skladiste.id) }}" style="margin-left: 15px;">
                 <button class="blok2 sabmit" type="submit">
                     <i class="fa-solid fa-trash" style="color: #fff;"></i>
                 </button>
@@ -64,7 +62,7 @@
             <div class="col-2" style="margin-right: -25px;">
                 <div class="vlaga">
                     <div>
-                        <input default:"{{proizvod_kolicina}}" class="blok" id="form1" min="1" name="quantity" value="1" type="number">
+                        <input class="blok" id="form1" min="1" name="quantity" value="1" type="number">
                     </div>
                 </div>
             </div>
@@ -76,7 +74,7 @@
             </form>
 
         </div>
-        {% endfor %}
     </div>
+    {% endfor %}
 </div>
 {% endblock %}
