@@ -463,12 +463,18 @@ def proizvod(proizvod_id) -> html:
     skladiste = kursor.fetchall()
     return render_template("/proizvodjac/proizvod.html", proizvod=proizvod, skladiste=skladiste)
 
+
 @app.route("/proizvodjac/proizvod/<int:proizvod_id>/<int:skladiste_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def proizvodjac_izbrisi_proizvod(proizvod_id: int,skladiste_id: int) -> html:
-    izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id)
-    return redirect(url_for('pregledaj_magacine'))
+    upit_izbrisi = """
+        DELETE FROM sadrzi
+        WHERE proizvod_id = %s AND skladiste_id = %s
+    """
+    kursor.execute(upit_izbrisi, (proizvod_id, skladiste_id))
+    konekcija.commit()
+    return redirect(url_for('porudzbine_proizvoda'))
 
 @app.route("/proizvodjac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -485,7 +491,7 @@ def pregledaj_magacine() -> html:
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def napuni_magacin(skladiste_id: int) -> html:
     upit = """SELECT id, ime, kapacitet, lokacija
-    FROM skladiste 
+    FROM skladiste s
     WHERE id = %s
     """
     kursor.execute(upit, (skladiste_id,))
