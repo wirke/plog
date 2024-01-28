@@ -440,6 +440,17 @@ def porudzbine_proizvoda() -> html:
     proizvodi = kursor.fetchall()
     return render_template("/proizvodjac/moji-proizvodi.html", proizvodi=proizvodi)
 
+@app.route("/proizvodjac/moji-proizvodi/<int:id>", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
+def brisanje_proizvoda(id) -> html:
+    upit = """
+    DELETE FROM proizvod
+    WHERE id = %s
+    """
+    kursor.execute(upit, (id,))
+    return redirect(url_for('porudzbine_proizvoda'))
+
 @app.route("/proizvodjac/proizvod/<int:proizvod_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
@@ -497,13 +508,13 @@ def pregledaj_magacine() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def napuni_magacin(skladiste_id: int) -> html:
-    upit = """SELECT id, ime, kapacitet, lokacija
+    upit = """SELECT s.id, s.ime, s.kapacitet, s.lokacija
     FROM skladiste s
     WHERE id = %s
     """
     kursor.execute(upit, (skladiste_id,))
 
-    skladiste = kursor.fetchall()
+    skladiste = kursor.fetchone()
 
     upit_pro = """SELECT p.id, p.ime, p.cena, p.kategorija
     FROM proizvod p
@@ -513,6 +524,16 @@ def napuni_magacin(skladiste_id: int) -> html:
     kursor.execute(upit_pro, (skladiste_id,))
     proizvodi = kursor.fetchall()
     return render_template("/proizvodjac/magacin.html", skladiste=skladiste, proizvodi=proizvodi)
+
+@app.route("/proizvodjac/magacin/<int:skladiste_id>/<int:proizvod_id>", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Logističar'])
+def magacin_brisanje_pr(skladiste_id: int, proizvod_id: int) -> html:
+    upit = """DELETE FROM sadrzi
+    WHERE skladiste_id = %s AND proizvod_id = %s
+    """
+    kursor.execute(upit, (skladiste_id, proizvod_id))
+    return redirect(url_for('pregledaj_magacine'))
 
 @app.route("/proizvodjac/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
