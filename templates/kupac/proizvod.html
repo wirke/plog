@@ -43,9 +43,8 @@
             <div class="blok col-2">
                 {{ proizvod.cena }}
             </div>
-            <form class="red" action="{{ url_for('poruci_proizvod', proizvod_id = proizvod.id) }}" method="post">
-                <select class="blok zadnji" name="skladiste_id" required>
-
+            <form class="red" action="{{ url_for('poruci_proizvod', proizvod_id = proizvod.id) }}" required method="post">
+                <select class="blok zadnji" id="skladiste_id" name="skladiste_id" required>
                     <option selected disabled>Izaberi magacin</option>
                     {% for skladiste in skladista %}
                         <option value="{{ skladiste.id }}">{{ skladiste.logisticar_ime }} - {{ skladiste.lokacija }}</option>
@@ -56,7 +55,7 @@
                     <input name="kolicina" class="blok" required id="form1" min="1" max="{{ kolicina_proizvoda }}" value="1" type="number">
                 </div>
                 
-                <button class="blok2"  type="submit">
+                <button class="blok2"  type="submit" {% if not skladista %}disabled{% endif %}>
                     <i class="fa-solid fa-cart-shopping" style="color:#fff"></i>
                 </button>
         </div>
@@ -69,4 +68,7 @@
             {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block skripte %}
 {% endblock %}

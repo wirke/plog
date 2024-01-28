@@ -8,7 +8,7 @@
 
                 <img style="margin: 0;" class="logo" src="{{ url_for('static', filename='../static/img/ico1.svg') }}">
             </a>
-            <h1 style="margin-left: 15px; margin-top: 7px;" class="tekst">Paket Hub</h1>
+            <a {% if user_data%}href="/pocetna"{% endif %} style="margin-left: 15px; margin-top: 7px; text-decoration:none;" class="tekst"><h1>Paket Hub</h1></a>
         </div>
         <div>
             {% if user_data %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect, session, abort
+from flask import Flask, render_template, url_for, request, redirect, session, abort, flash
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 from functools import wraps
@@ -64,20 +64,13 @@ def zahteva_ulogovanje(f):
     return omotana_funkcija
 
 @app.errorhandler(404)
-def not_found_error(error):
-    poruka = 'Nepostojeca stranica!'
-    return redirect(url_for('greska', poruka=poruka)), 404
+def not_found(error):
+    flash('Nepostojeća stranica!')
+    return redirect(url_for('greska')), 404
 
-@app.route("/greska")
-def greska(poruka = None):
-    return render_template("/greska.html", poruka=poruka)
-
-def postoji(stranica):
-    return True
-
-@app.route("/poruka")
-def poruka() -> html:
-    return("/poruka.html")
+@app.route("/greska", methods=['GET', 'POST'])
+def greska():
+    return render_template('greska.html')
 #############################################################################
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -94,17 +87,15 @@ def login():
             user = kursor.fetchone()
 
             if user and bcrypt.check_password_hash(user['sifra'], sifra):
-                print(f"Uspesno logovanje. Email: {user['email']}")
                 session['korisnik_id'] = user['id']
                 session['rola'] = user['rola']
                 return redirect(url_for('pocetna'))
             else:
-                print("Neuspelo logovanje. Email:", forma['emailPolje'])
-                print("Hash iz baze:", user['sifra'])
+                flash('Pogrešni kredencijali')
                 return redirect(url_for('greska'))
             
         except Exception as e:
-            print(f"Error: {e}")
+            flash('Došlo je do greške!')
             return redirect(url_for('greska'))
 
 @app.route("/register", methods=["GET","POST"])
@@ -119,7 +110,8 @@ def register():
         existing_user = kursor.fetchone()
 
         if existing_user:
-            return render_template("register.html", error="Mejl je već u upotrebi.")
+            flash('Kredencijali koje ste uneli su zauzeti!')
+            return render_template("register.html")
         
         upit = """ INSERT INTO
         user(email, ime, sifra, rola, lokacija)
@@ -202,7 +194,8 @@ def pocetna() -> html:
         return render_template("/pocetna.html", ukupno_korisnika=ukupno_korisnika)
 
     else:
-        return render_template("/greska.html", poruka="Nepostojeci korisnik")
+        flash('KAKO?')
+        return render_template("/greska.html")
 #############################################################################
 @app.route("/kupac/proizvodi", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -234,6 +227,7 @@ def prikaz_proizvoda() -> html:
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def kupi_proizvod(proizvod_id: int) -> html:
     
+    skladiste_id = request.form.get('skladiste_id')
     upit_skladista = """
         SELECT s.id, s.ime, s.lokacija, u.ime AS logisticar_ime, ps.kolicina AS kolicina_proizvoda
         FROM skladiste s
@@ -292,7 +286,6 @@ def prikaz_magacina() -> html:
 
     return render_template("/kupac/magacini.html", skladiste=skladiste, sve_lokacije=sve_lokacije, odabrana_lokacija=odabrana_lokacija)
 
-
 @app.route("/kupac/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
@@ -336,19 +329,28 @@ def prikazi_magacin(skladiste_id: int) -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def porudzbine_korisnik() -> html:
+    
     korisnik_id = session.get('korisnik_id')
+    isporuceno = request.args.get('isporuceno')
+    datum = request.args.get('datum', 'desc')
 
-    prikaz_porudzbina = """
-        SELECT p.id AS porudzbina_id, p.datum, p.kolicina, p.isporuceno, pr.cena, pr.kategorija AS proizvod_kategorija, pr.ime AS proizvod_ime,u_proizvodjac.ime AS proizvodjac_ime, s.ime AS skladiste_ime, u_kupac.ime AS kupac_ime
+    if isporuceno is None:
+        isporuceno = None
+
+    upit_porudzbina = """
+        SELECT p.id AS porudzbina_id, DATE_FORMAT(p.datum, '%d-%m-%Y') AS d_datum, p.kolicina, p.isporuceno, pr.cena, pr.kategorija AS proizvod_kategorija, 
+        pr.ime AS proizvod_ime,u_proizvodjac.ime AS proizvodjac_ime, s.ime AS skladiste_ime, u_kupac.ime AS kupac_ime
         FROM porudzbina p
         JOIN user u_kupac ON p.kupac_id = u_kupac.id
         JOIN proizvod pr ON p.proizvod_id = pr.id
         JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
         JOIN skladiste s ON p.skladiste_id = s.id
-        WHERE p.kupac_id = %s
-    """
-    kursor.execute(prikaz_porudzbina, (korisnik_id,))
+        WHERE p.kupac_id = %s AND (p.isporuceno = %s OR %s IS NULL)
+        ORDER BY p.datum {0}
+    """.format(datum)
+    kursor.execute(upit_porudzbina, (korisnik_id, isporuceno, isporuceno))
     porudzbine = kursor.fetchall()
+        
     if postoji_porudzbina(korisnik_id):
         return render_template("/kupac/porudzbine.html", porudzbine=porudzbine)
     else:
@@ -376,6 +378,7 @@ def postoji_porudzbina(korisnik_id):
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def poruci_proizvod(proizvod_id):
+    
     if request.method == 'POST':
         skladiste_id = request.form.get('skladiste_id')
         kolicina = request.form.get('kolicina')
@@ -401,7 +404,8 @@ def poruci_proizvod(proizvod_id):
 
             return redirect(url_for('porudzbine_korisnik'))
         else:
-            return redirect(url_for('greska', poruka='Proizvod nije dostupan!'))
+            flash('Niste popunili sve parametre!')
+            return redirect(url_for('greska'))
     else:
         return redirect(url_for('greska', poruka='Proizvod nije dostupan!'))
 #############################################################################
@@ -585,8 +589,8 @@ def magacin(skladiste_id: int) -> html:
                 print("Greska prilikom azuriranja")
         
         #elif 'izbrisi_proizvod' in request.form:
-         #   proizvod_id_za_brisanje = request.form['izbrisi_proizvod']
-          #  izbrisi_proizvod_iz_skladista(proizvod_id_za_brisanje, skladiste_id)
+        #    proizvod_id_za_brisanje = request.form['izbrisi_proizvod']
+        #    izbrisi_proizvod_iz_skladista(proizvod_id_za_brisanje, skladiste_id)
 
         elif 'izmeni_kolicinu' in request.form:
             proizvod_id_za_izmenu = int(request.form['izmeni_kolicinu'])
@@ -679,30 +683,45 @@ def proveri_dostupnost_kolicine(proizvod_id, skladiste_id, kolicina):
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def porudzbina_magacin() -> html:
-    upit_broj_porudzbina = """
-    SELECT COUNT(*) AS broj_porudzbina
-    FROM porudzbina p
-    JOIN skladiste s ON p.skladiste_id = s.id
-    WHERE s.logisticar_id = %s
-    """
-    kursor.execute(upit_broj_porudzbina, (session['korisnik_id'],))
-    rezultat = kursor.fetchone()
     
-    if rezultat['broj_porudzbina'] > 0:
-        upit_porudzbina = """
-        SELECT p.kolicina, pr.ime AS proizvod_ime, uk.ime AS kupac_ime, uk.lokacija AS kupac_lokacija, p.isporuceno, p.napomena, u_proizvodjac.ime AS proizvodjac_ime
-        FROM porudzbina p
-        JOIN proizvod pr ON p.proizvod_id = pr.id
-        JOIN user uk ON p.kupac_id = uk.id
-        JOIN skladiste s ON p.skladiste_id = s.id
-        JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
-        WHERE s.logisticar_id = %s
-        """
-        kursor.execute(upit_porudzbina, (session['korisnik_id'],))
-        porudzbina = kursor.fetchall()
-        return render_template("/logisticar/porudzbine.html", porudzbina=porudzbina)
-    else:
-        return render_template("/logisticar/porudzbine.html")
+    isporuceno = request.args.get('isporuceno', None)
+    datum = request.args.get('datum', None)
+    korisnik_id = session.get('korisnik_id')
+    isporuceno = request.args.get('isporuceno')
+    datum = request.args.get('datum', 'desc')
+    
+    if isporuceno is None:
+        isporuceno = None
+
+    upit_porudzbina = """
+    SELECT p.id AS porudzbina_id, DATE_FORMAT(p.datum, '%d-%m-%Y') AS d_datum, p.kolicina, p.isporuceno, pr.cena, pr.kategorija AS proizvod_kategorija, 
+    pr.ime AS proizvod_ime,u_proizvodjac.ime AS proizvodjac_ime, s.ime AS skladiste_ime, u_kupac.ime AS kupac_ime
+    FROM porudzbina p
+    JOIN user u_kupac ON p.kupac_id = u_kupac.id
+    JOIN proizvod pr ON p.proizvod_id = pr.id
+    JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
+    JOIN skladiste s ON p.skladiste_id = s.id
+    WHERE s.logisticar_id = %s AND (p.isporuceno = %s OR %s IS NULL)
+    ORDER BY p.datum {0}
+    """.format(datum)
+    kursor.execute(upit_porudzbina, (korisnik_id, isporuceno, isporuceno))
+    porudzbina = kursor.fetchall()
+    
+    return render_template("/logisticar/porudzbine.html", porudzbina=porudzbina)
+
+@app.route("/logisticar/isporuci/<int:porudzbina_id>", methods=['POST'])
+def isporuci(porudzbina_id):
+
+    isporuceno = request.form.get('isporuceno')
+    upit_azuriranja = """
+    UPDATE porudzbina
+    SET isporuceno = %s
+    WHERE id = %s
+    """
+    kursor.execute(upit_azuriranja, (isporuceno, porudzbina_id))
+    konekcija.commit()
+
+    return redirect(url_for('porudzbina_magacin'))
 
 if __name__ == "__main__":
     app.run(debug=True)
