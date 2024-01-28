@@ -583,8 +583,8 @@ def magacin(skladiste_id: int) -> html:
                 print("Greska prilikom azuriranja")
         
         #elif 'izbrisi_proizvod' in request.form:
-         #   proizvod_id_za_brisanje = request.form['izbrisi_proizvod']
-          #  izbrisi_proizvod_iz_skladista(proizvod_id_za_brisanje, skladiste_id)
+        #    proizvod_id_za_brisanje = request.form['izbrisi_proizvod']
+        #    izbrisi_proizvod_iz_skladista(proizvod_id_za_brisanje, skladiste_id)
 
         elif 'izmeni_kolicinu' in request.form:
             proizvod_id_za_izmenu = int(request.form['izmeni_kolicinu'])
@@ -700,7 +700,6 @@ def porudzbina_magacin() -> html:
     """.format(datum)
     kursor.execute(upit_porudzbina, (korisnik_id, isporuceno, isporuceno))
     porudzbina = kursor.fetchall()
-    
     
     return render_template("/logisticar/porudzbine.html", porudzbina=porudzbina)
 
