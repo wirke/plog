@@ -7,3 +7,5 @@
 </div>
 
 flash('Poruka koju želite da prikažete.')
+
+href="{{url_for('isporuci', porudzbina_id=p.id)}}"
