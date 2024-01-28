@@ -559,7 +559,6 @@ def novi_magacin() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def magacin(skladiste_id: int) -> html:
-
     upit_skladiste = """
         SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
         FROM skladiste s
