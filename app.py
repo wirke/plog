@@ -204,30 +204,33 @@ def prikaz_proizvoda() -> html:
 
     odabrana_kategorija = request.args.get('kategorija', '')
     odabrano_sortiranje = request.args.get('sortiranje', 'asc')
+    odabrani_proizvodjac = request.args.get('proizvodjac', '')
 
     upit_kategorije = "SELECT DISTINCT kategorija FROM proizvod"
     kursor.execute(upit_kategorije)
     sve_kategorije = [red['kategorija'] for red in kursor.fetchall()]
 
+    upit_proizvodjaci = "SELECT id, ime FROM user WHERE rola = 'Proizvođač'"
+    kursor.execute(upit_proizvodjaci)
+    svi_proizvodjaci = kursor.fetchall()
+
     upit_proizvoda = """
         SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
         FROM proizvod p
         JOIN user u ON p.proizvodjac_id = u.id
-        WHERE (%s = '' OR p.kategorija = %s)
+        WHERE (%s = '' OR p.kategorija = %s) AND (%s = '' OR p.proizvodjac_id = %s)
         ORDER BY p.cena {0}
     """.format(odabrano_sortiranje)
-
-    kursor.execute(upit_proizvoda, (odabrana_kategorija, odabrana_kategorija))
+    kursor.execute(upit_proizvoda, (odabrana_kategorija, odabrana_kategorija, odabrani_proizvodjac, odabrani_proizvodjac))
     proizvodi = kursor.fetchall()
 
-    return render_template("/kupac/proizvodi.html", proizvodi=proizvodi, sve_kategorije=sve_kategorije, odabrana_kategorija=odabrana_kategorija, odabrano_sortiranje=odabrano_sortiranje)
+    return render_template("/kupac/proizvodi.html", proizvodi=proizvodi, sve_kategorije=sve_kategorije, svi_proizvodjaci=svi_proizvodjaci, odabrana_kategorija=odabrana_kategorija, odabrano_sortiranje=odabrano_sortiranje)
 
 @app.route("/kupac/proizvod/<int:proizvod_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
 def kupi_proizvod(proizvod_id: int) -> html:
     
-    skladiste_id = request.form.get('skladiste_id')
     upit_skladista = """
         SELECT s.id, s.ime, s.lokacija, u.ime AS logisticar_ime, ps.kolicina AS kolicina_proizvoda
         FROM skladiste s
@@ -687,7 +690,7 @@ def azuriraj_kapacitet_skladista(skladiste_id, nova_vrednost):
         return True
     else:
         return False
-    
+
 def proveri_dostupnost_kolicine(proizvod_id, skladiste_id, kolicina):
     upit_dostupnost = """
         SELECT ps.kolicina
@@ -702,36 +705,34 @@ def proveri_dostupnost_kolicine(proizvod_id, skladiste_id, kolicina):
 @app.route("/logisticar/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
-def porudzbina_magacin() -> html:
-    
-    isporuceno = request.args.get('isporuceno', None)
-    datum = request.args.get('datum', None)
+def porudzbina_magacin():
     korisnik_id = session.get('korisnik_id')
     isporuceno = request.args.get('isporuceno')
-    datum = request.args.get('datum', 'desc')
-    
-    if isporuceno is None:
-        isporuceno = None
+    datum = request.args.get('datum', 'asc')
 
-    upit_porudzbina = """
-    SELECT p.id AS porudzbina_id, DATE_FORMAT(p.datum, '%d-%m-%Y') AS d_datum, p.kolicina, p.isporuceno, pr.cena, pr.kategorija AS proizvod_kategorija, 
-    pr.ime AS proizvod_ime,u_proizvodjac.ime AS proizvodjac_ime, s.ime AS skladiste_ime, u_kupac.ime AS kupac_ime
-    FROM porudzbina p
-    JOIN user u_kupac ON p.kupac_id = u_kupac.id
-    JOIN proizvod pr ON p.proizvod_id = pr.id
-    JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
-    JOIN skladiste s ON p.skladiste_id = s.id
-    WHERE s.logisticar_id = %s AND (p.isporuceno = %s OR %s IS NULL)
-    ORDER BY p.datum {0}
+    if isporuceno is None:
+        isporuceno = ''
+
+        upit_porudzbina = """
+        SELECT p.id AS porudzbina_id, DATE_FORMAT(p.datum, '%d-%m-%Y') AS d_datum, p.kolicina, p.napomena, p.isporuceno, pr.cena, pr.kategorija AS proizvod_kategorija, 
+        pr.ime AS proizvod_ime, u_proizvodjac.ime AS proizvodjac_ime, s.ime AS skladiste_ime, s.lokacija AS skladiste_lokacija, u_kupac.ime AS kupac_ime, uk.lokacija AS kupac_lokacija
+        FROM porudzbina p
+        JOIN user u_kupac ON p.kupac_id = u_kupac.id
+        JOIN proizvod pr ON p.proizvod_id = pr.id
+        JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
+        JOIN skladiste s ON p.skladiste_id = s.id
+        JOIN user uk ON p.kupac_id = uk.id
+        WHERE s.logisticar_id = %s AND (p.isporuceno = %s OR %s = '')
+        ORDER BY p.datum {0}
     """.format(datum)
+    
     kursor.execute(upit_porudzbina, (korisnik_id, isporuceno, isporuceno))
     porudzbina = kursor.fetchall()
-    
+
     return render_template("/logisticar/porudzbine.html", porudzbina=porudzbina)
 
 @app.route("/logisticar/isporuci/<int:porudzbina_id>", methods=['POST'])
 def isporuci(porudzbina_id):
-
     isporuceno = request.form.get('isporuceno')
     upit_azuriranja = """
     UPDATE porudzbina
@@ -742,6 +743,7 @@ def isporuci(porudzbina_id):
     konekcija.commit()
 
     return redirect(url_for('porudzbina_magacin'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

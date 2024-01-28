@@ -5,13 +5,19 @@
 
     <div class="kontejner">
         <form  method="GET" action="{{ url_for('prikaz_proizvoda') }}">
+
             <select class="blok col-3" name="kategorija" id="kategorija">
                 <option value="">Sve kategorije</option>
-
                 {% for kategorija in sve_kategorije %}
                     <option value="{{ kategorija }}">{{ kategorija }}</option>
                 {% endfor %}
-                
+            </select>
+
+            <select class="blok col-3" name="proizvodjac" id="proizvodjac">
+                <option value="">Svi proizvodjaci</option>
+                {% for proizvodjac in svi_proizvodjaci %}
+                    <option value="{{ proizvodjac.id }}">{{ proizvodjac.ime }}</option>
+                {% endfor %}
             </select>
             
             <select class="blok col-2" name="sortiranje" id="sortiranje">
@@ -45,7 +51,7 @@
 
         <div style="margin-left: 15px; margin-bottom: -15px;">
             <hr class="zubor">
-         </div>
+        </div>
 
         {% for proizvod in proizvodi %}
         <div class="red col-12" style="padding-right: 15px;">

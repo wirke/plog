@@ -26,62 +26,63 @@
                 <i class="fa-solid fa-hourglass-start ikonica" style="color: #ff8a5b;"></i>
             </div>
             <div class="blok zadnji">
-                Naziv proizvoda
+                <strong>kol.</strong> x Naziv proizvoda (Proizvodjac)
             </div>
             <div class="blok col-2">
                 Kupac
             </div>
             <div class="blok col-2">
+                Datum
+            </div>
+            <div class="blok col-2">
                 Lokacija kupca
             </div>
             <div class="blok col-2">
-                Proizvođač
-            </div>
-            <div class="blok col-1">
-                Ispravi
+                Skladiste
             </div>
         </div>
     </div>
-        
+
     {% for p in porudzbina %}
-    <div class="kontejner">
-        <div class="red col-12">
-            <div class="blok">
-                {% if p.isporuceno == 0 %}
-                <i class="fa-solid fa-hourglass-start ikonica"></i>
-                {% else %}
-                <i class="fa-solid fa-check-circle"></i>
+        <div class="kontejner">
+            <form method="POST" action="{{ url_for('isporuci', porudzbina_id=p['porudzbina_id']) }}">
+                <div class="red col-12">
+                    <div>
+                        {% if p['isporuceno'] == 0 %}
+                        <button class="blok" type="submit" name="isporuceno" value="1">
+                            <i class="fa-solid fa-paper-plane ikonica"></i>
+                        </button>
+                        {% else %}
+                        <div class="blok">
+                            <i class="fa-solid fa-check ikonica"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="blok zadnji">
+                        <strong>{{ p['kolicina'] }}</strong> x {{ p['proizvod_ime'] }} ( {{p['proizvodjac_ime']}} )
+                    </div>
+                    <div class="blok col-2">
+                        {{ p['kupac_ime'] }}
+                    </div>
+                    <div class="blok col-2">
+                        {{ p['d_datum'] }}
+                    </div>
+                    <div class="blok col-2">
+                        {{ p['kupac_lokacija'] }}
+                    </div>
+                    <div class="blok col-2">
+                        {{ p['skladiste_ime'] }} - {{p['skladiste_lokacija']}}
+                    </div>
+                </div>
+                {% if p['napomena'] != '' %}
+                <div class="red">
+                    <div class="blok zadnji">
+                        {{ p['napomena'] }}
+                    </div>
+                </div>
                 {% endif %}
-            </div>
-            <div class="blok zadnji">
-                {{ p.proizvod_ime }}
-            </div>
-            <div class="blok col-2">
-                {{ p.kupac_ime }}
-            </div>
-            <div class="blok col-2">
-                {{ p.kupac_lokacija }}
-            </div>
-            <div class="blok col-2">
-                {{ p.proizvodjac_ime }}
-            </div>
-            {% if p.isporuceno == 0 %}
-            <form method="POST" href="{{url_for('isporuci', porudzbina_id=p.id)}}">
-                <div class="blok">
-                    <a type="submit"><i class="fa-solid fa-paper-plane ikonica"></i></a>
-                </div>
+                <input type="hidden" name="porudzbina_id" value="{{ p['porudzbina_id'] }}">
             </form>
-            {% endif %}
-        </div>
-
-        {% if p.napomena != '' %}
-            <div class="red">
-                <div class="blok zadnji">
-                    {{ p.napomena }}
-                </div>
-            </div>
-        {% endif %}
-
         </div>
         {% endfor %}
     </div>
