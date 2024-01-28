@@ -692,19 +692,19 @@ def porudzbina_magacin():
     if isporuceno is None:
         isporuceno = ''
 
-        upit_porudzbina = """
-        SELECT p.id AS porudzbina_id, DATE_FORMAT(p.datum, '%d-%m-%Y') AS d_datum, p.kolicina, p.napomena, p.isporuceno, pr.cena, pr.kategorija AS proizvod_kategorija, 
-        pr.ime AS proizvod_ime, u_proizvodjac.ime AS proizvodjac_ime, s.ime AS skladiste_ime, s.lokacija AS skladiste_lokacija, u_kupac.ime AS kupac_ime, uk.lokacija AS kupac_lokacija
-        FROM porudzbina p
-        JOIN user u_kupac ON p.kupac_id = u_kupac.id
-        JOIN proizvod pr ON p.proizvod_id = pr.id
-        JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
-        JOIN skladiste s ON p.skladiste_id = s.id
-        JOIN user uk ON p.kupac_id = uk.id
-        WHERE s.logisticar_id = %s AND (p.isporuceno = %s OR %s = '')
-        ORDER BY p.datum {0}
+    upit_porudzbina = """
+    SELECT p.id AS porudzbina_id, DATE_FORMAT(p.datum, '%d-%m-%Y') AS d_datum, p.kolicina, p.napomena, p.isporuceno, pr.cena, pr.kategorija AS proizvod_kategorija, 
+    pr.ime AS proizvod_ime, u_proizvodjac.ime AS proizvodjac_ime, s.ime AS skladiste_ime, s.lokacija AS skladiste_lokacija, u_kupac.ime AS kupac_ime, uk.lokacija AS kupac_lokacija
+    FROM porudzbina p
+    JOIN user u_kupac ON p.kupac_id = u_kupac.id
+    JOIN proizvod pr ON p.proizvod_id = pr.id
+    JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
+    JOIN skladiste s ON p.skladiste_id = s.id
+    JOIN user uk ON p.kupac_id = uk.id
+    WHERE s.logisticar_id = %s AND (p.isporuceno = %s OR %s = '')
+    ORDER BY p.datum {0}
     """.format(datum)
-    
+
     kursor.execute(upit_porudzbina, (korisnik_id, isporuceno, isporuceno))
     porudzbina = kursor.fetchall()
 
@@ -722,7 +722,6 @@ def isporuci(porudzbina_id):
     konekcija.commit()
 
     return redirect(url_for('porudzbina_magacin'))
-
 
 if __name__ == "__main__":
     app.run(debug=True)
