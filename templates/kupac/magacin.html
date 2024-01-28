@@ -2,6 +2,14 @@
 {% block title %}Plog - Magacin{% endblock %}
 {% block content %}
 <div class="display">
+    
+    <div class="kontejner">
+        <div class="red">
+            <div class="naslov-blok">
+                <h1>Logisticar: {{skladiste.logisticar_ime}}</h1>
+            </div>
+        </div>
+    </div>
 
     <div class="kontejner">
         <form method="GET" action="{{ url_for('prikazi_magacin', skladiste_id=skladiste.id) }}">
@@ -14,7 +22,7 @@
                 
             </select>
 
-            <select class="blok col-2" name="odabrano_sortiranje" id="sortiranje">
+            <select class="blok col-2" name="sortiranje" id="sortiranje">
                 <option value="asc">Cena - Rastuće</option>
                 <option value="desc">Cena - Opadajuće</option>
             </select>
@@ -24,6 +32,34 @@
     </div>
 
     <div class="kontejner">
+
+        <div class="red" style="padding-right:15px;">
+            <div class="blok col-3">
+                Naziv
+            </div>
+            <div class="blok col-3">
+                Proizvodjac
+            </div>
+            <div class="blok col-2">
+                Kategorija
+            </div>
+            <div class="blok zadnji">
+                Cena
+            </div>
+            <div class="blok zadnji">
+                Na stanju
+            </div>
+            <div class="blok1" style="margin-right: -15px;">
+                <a>
+                    <i class="fa-solid fa-eye ikonica" style="color:#ff8a5b;"></i>
+                </a>
+            </div>
+        </div>
+
+        <div style="margin-left: 15px; margin-bottom: -15px;">
+            <hr class="zubor">
+         </div>
+
         {% for p in proizvodi %}
         <div class="red col-12" style="padding-right: 15px;">
             <div class="blok col-3">

@@ -6,22 +6,33 @@
   {% if ulogovan() %}
    <div class="celo col-12">
      <a href="/pocetna" style="margin-bottom: 50px;">
-      <img src="/static/img/ico1.svg">
+      <img src="{{ url_for('static', filename='../static/img/ico1.svg') }}">
      </a>
      <h1 style="font-size: 50px;" class="bezista">
-      {% if poruka %}{{ poruka }}
-      {% else %}Nedozvoljen Pristup!
-      {% endif %}
+      {% with messages = get_flashed_messages() %}
+       {% if messages %}
+        {% for message in messages %}{{ message }}{% endfor %}
+       {% else %}Nedozvoljen Pristup!{% endif %}
+      {% endwith %}
      </h1>
    </div>
 
   {% else %}
    <div class="celo col-12">
      <a href="/login" style="margin-bottom: 50px;">
-      <img src="/static/img/ico1.svg">
+      <img src="{{ url_for('static', filename='../static/img/ico1.svg') }}">
      </a>
-     <h1 style="font-size: 50px;" class="bezista">Niste ulogovani!</h1>
+     <h1 style="font-size: 50px;" class="bezista">
+     {% with messages = get_flashed_messages() %}
+      {% if messages %}
+       {%for message in messages%}
+        {{ message }}
+       {%endfor%}
+      {% else %}nzm kako si uspeo da dobijes ovu gresku{% endif %}
+     {% endwith %}
+     </h1>
    </div>
+   
   {% endif %}
 
 {% endblock %}

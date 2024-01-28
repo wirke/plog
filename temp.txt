@@ -5,3 +5,5 @@
 <div style="margin-left: 15px; margin-bottom: -15px;">
    <hr class="zubor">
 </div>
+
+flash('Poruka koju želite da prikažete.')

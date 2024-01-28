@@ -2,6 +2,24 @@
 {% block title %}Plog - Porudzbine{% endblock %}
 {% block content %}
 <div class="display">
+
+    <div class="kontejner">
+        <form method="GET" action="{{ url_for('porudzbine_korisnik') }}">
+
+            <select class="blok col-2" name="isporuceno" id="isporuceno">
+                <option value="0">Na čekanju</option>
+                <option value="1">Isporučeno</option>
+            </select>
+
+            <select class="blok col-2" name="datum" id="datum">
+                <option value="asc">Datum - Stariji</option>
+                <option value="desc">Datum - Noviji</option>
+            </select>
+            
+            <button class="blok col-1" type="submit">Primeni</button>
+        </form>
+    </div>
+
     <div class="kontejner">
         {% if porudzbine %}
         <div class="red col-12">
@@ -34,6 +52,7 @@
         <div style="margin-left: 15px; margin-bottom: -15px;">
             <hr class="zubor">
          </div>
+
          {% for p in porudzbine %}
           <div class="red col-12">
 
@@ -58,10 +77,10 @@
                 {{ p.proizvod_kategorija }}
             </div>
             <div class="blok col-1">
-                {{ p.datum }}
+                {{ p.d_datum }}
             </div>
             <div class="blok col-1">
-                {{ p.cena * p.kolicina}}
+                {{ p.cena * p.kolicina }}
             </div>
             <div class="blok col-1">
                 {{ p.kolicina }}
@@ -69,7 +88,7 @@
         </div>
         {% endfor %}
         {% else %} 
-        <div class="blok zadnji" style="margin-right: 15px;">
+        <div class="blok zadnji" style="margin-right: 50px;">
             <h style="font-size: 50px;">Prazno za sada</h>
         </div>
        {% endif %}

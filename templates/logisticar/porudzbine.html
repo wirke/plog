@@ -1,79 +1,89 @@
 {% extends 'navbar.html' %}
-{% block title %}Plog - Porudzbine{% endblock %}
+{% block title %}Plog - Porudžbine{% endblock %}
 {% block content %}
 <div class="display">
 
-    {% if porudzbina %}
     <div class="kontejner">
-        <div class="red">
-            <div class="blok col-1">
-                Kolicina
+        <form method="GET" action="{{ url_for('porudzbine_korisnik') }}">
+
+            <select class="blok col-2" name="isporuceno" id="isporuceno">
+                <option value="0">Na čekanju</option>
+                <option value="1">Isporučeno</option>
+            </select>
+
+            <select class="blok col-2" name="datum" id="datum">
+                <option value="asc">Datum - Stariji</option>
+                <option value="desc">Datum - Noviji</option>
+            </select>
+            
+            <button class="blok col-1" type="submit">Primeni</button>
+        </form>
+    </div>
+
+    <div class="kontejner">
+        <div class="red col-12">
+            <div class="blok1">
+                <i class="fa-solid fa-hourglass-start ikonica" style="color: #ff8a5b;"></i>
             </div>
             <div class="blok zadnji">
                 Naziv proizvoda
             </div>
-            <div class="blok zadnji">
-                Naziv proizvodjaca
+            <div class="blok col-2">
+                Kupac
             </div>
             <div class="blok col-2">
-                Naziv kupca
+                Lokacija kupca
             </div>
             <div class="blok col-2">
-                Lokacija
+                Proizvođač
             </div>
-            <form style="margin-right: 15px;" method="post">
-                <button class="blok zadnji" style="background-color:#ff8a5b;" type="submit">
-                    <i style="color: #ff8a5b;" class="fa-solid fa-paper-plane ikonica"></i>
-                </button>
-            </form>
+            <div class="blok col-1">
+                Ispravi
+            </div>
         </div>
     </div>
         
-        {% for por in porudzbina %}
-        <div class="kontejner">
+    {% for p in porudzbina %}
+    <div class="kontejner">
         <div class="red col-12">
-            
-            <div class="blok col-1">
-                {{ por.kolicina }}
+            <div class="blok">
+                {% if p.isporuceno == 0 %}
+                <i class="fa-solid fa-hourglass-start ikonica"></i>
+                {% else %}
+                <i class="fa-solid fa-check-circle"></i>
+                {% endif %}
             </div>
             <div class="blok zadnji">
-                {{ por.proizvod_ime }}
-            </div>
-            <div class="blok zadnji">
-                {{ por.proizvodjac_ime }}
+                {{ p.proizvod_ime }}
             </div>
             <div class="blok col-2">
-                {{ por.kupac_ime }}
+                {{ p.kupac_ime }}
             </div>
             <div class="blok col-2">
-                {{ por.kupac_lokacija }}
+                {{ p.kupac_lokacija }}
             </div>
-
-           <form style="margin-right: 15px;" method="post">
-               <button class="blok2 zadnji" type="submit">
-                  {% if por.isporuceno == 0 %}
-                      <i class="fa-solid fa-paper-plane ikonica" style="color:#fff;"></i>
-                  {% else %}
-                      <i class="fa-solid fa-truck-fast" style="color:#fff;"></i>
-                  {% endif %}
-              </button>
-           </form>
-        </div>
-            {% if por.napomena != '' %}
-            <div class="red col-12">
-               <div class="blok zadnji">
-                   {{ por.napomena }}
-               </div>
+            <div class="blok col-2">
+                {{ p.proizvodjac_ime }}
             </div>
+            {% if p.isporuceno == 0 %}
+            <form method="POST" href="{{url_for('isporuci', porudzbina_id=p.id)}}">
+                <div class="blok">
+                    <a type="submit"><i class="fa-solid fa-paper-plane ikonica"></i></a>
+                </div>
+            </form>
             {% endif %}
         </div>
+
+        {% if p.napomena != '' %}
+            <div class="red">
+                <div class="blok zadnji">
+                    {{ p.napomena }}
+                </div>
+            </div>
+        {% endif %}
+
+        </div>
         {% endfor %}
-        {% else %} 
-
-
-    <div class="blok zadnji" style="align-items: center;">
-        <h style="font-size: 50px;">Prazno za sada</h>
     </div>
-   {% endif %}
 </div>
 {% endblock %}
