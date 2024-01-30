@@ -1,10 +1,6 @@
-function proveriSkladiste() {
-    var skladisteSelect = document.getElementById('skladiste_id');
-    var dugmePoruci = document.getElementById('dugmePoruci');
-    if (skladisteSelect.value == '') {
-        dugmePoruci.disabled = true;
-    }
-    else {
-        dugmePoruci.disabled = false;
-    }
-}
+const myModal = document.getElementById('myModal')
+const myInput = document.getElementById('myInput')
+
+myModal.addEventListener('shown.bs.modal', () => {
+  myInput.focus()
+})
