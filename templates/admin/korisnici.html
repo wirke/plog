@@ -3,46 +3,48 @@
 {% block content %}
 <div class="display">
     <div class="kontejner">
-      <div class="red col-12">
-        <div class="blok zadnji">
-            Email korisnika
+
+        <div class="red col-12">
+            <div class="blok zadnji">Email korisnika</div>
+            <div class="blok zadnji">Ime korisnika</div>
+            <div class="blok col-1">Rola</div>
+            <div class="blok zadnji">Lokacija</div>
+            <div class="blok col-1">Funkcija</div>
+
+            <form>
+                <button class="blok1" type="submit">
+                    <i class="ikonica fa-solid fa-trash ikonica" style="color: #ff8a5b;"></i>
+                </button>
+            </form>
         </div>
 
-        <div class="blok col-3">
-            Ime korisnika
-        </div>
-
-        <div class="blok col-1">
-            Rola
-        </div>
-        <div class="blok col-3">
-            Lokacija
-        </div>
-        </div>
         <div style="margin-left: 15px; margin-bottom: -15px;">
             <hr class="zubor">
-         </div>
-         {% for k in korisnici %}
-         <div class="red col-12">
-            <div class="blok zadnji">
-                {{k.email}}
-            </div>
-    
-            <div class="blok col-3">
-                {{k.ime}}
-            </div>
-    
-            <div class="blok col-1">
-                {{k.rola}}
-            </div>
-            <div class="blok col-3">
-                {{k.lokacija}}
-            </div>
-            <button class="blok2 sabmit" type="submit">
-                <i class="ikonica fa-solid fa-trash" style="color: #fff;"></i>
-            </button>
-         </div>
-         {% endfor %}
-        {% endblock %}
+        </div>
 
-    
+        {% for k in korisnici %}
+        {% if k.rola != 'Admin' %}
+        <div class="red col-12">
+            <div class="blok zadnji">{{k.email}}</div>
+            <div class="blok zadnji">{{k.ime}}</div>
+            <div class="blok col-1">{{k.rola}}</div>
+            <div class="blok zadnji">{{k.lokacija}}</div>
+
+            {% if k.rola == 'Proizvođač' %}
+                <div class="blok col-1">Broj.proizvoda</div>
+            {% elif k.rola == 'Logističar' %}
+                <div class="blok col-1">Broj.magacina</div>
+            {% elif k.rola == 'Kupac' %}
+                <div class="blok col-1">Broj.porudzbina</div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('pregled_korisnika') }}">
+                <button class="blok2" name="izbrisi_korisnika" value="{{ k.id }}" type="submit">
+                    <i class="ikonica fa-solid fa-trash ikonica" style="color: #fff;"></i>
+                </button>
+            </form>
+
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

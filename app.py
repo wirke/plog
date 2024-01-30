@@ -123,24 +123,6 @@ def register():
         kursor.execute(upit,forma)
         konekcija.commit()
         return redirect(url_for("login"))
-    
-@app.route("/izmena-naloga", methods=["GET","POST"])
-@zahteva_ulogovanje
-@zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
-def izmena_korisnika():
-    if request.method == "GET":
-        return render_template("/izmeni_korisnika.html")
-    
-    upit = """UPDATE user
-        SET ime= %s, sifra= %s, lokacija = %s
-        WHERE id = %s
-    """
-    password = request.form.get('pwNoviPolje')
-    pw_hash = bcrypt.generate_password_hash(password)
-    forma = (request.form['imePolje'], pw_hash, request.form['lokacijaPolje'], session['korisnik_id'])
-    kursor.execute(upit,forma)
-    konekcija.commit()
-    return redirect(url_for('pocetna'))
 
 @app.route("/logout")
 def logout():
@@ -152,12 +134,27 @@ def logout():
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin'])
 def pregled_korisnika() -> html:
-    upit = """SELECT email, ime, rola, lokacija
-    FROM user"""
-    kursor.execute(upit)
-    korisnici = kursor.fetchall()
+    
+    if request.method == 'GET':
+        upit = """SELECT id, email, ime, rola, lokacija
+                  FROM user"""
+        kursor.execute(upit)
+        korisnici = kursor.fetchall()
+        
+    elif request.method == 'POST':
+        if 'izbrisi_korisnika' in request.form:
+            korisnik_id = request.form['izbrisi_korisnika']
+            izbrisi = """
+                DELETE FROM user
+                WHERE id = %s
+            """
+            kursor.execute(izbrisi, (korisnik_id,))
+            konekcija.commit()
+            flash("Korisnik uspešno izbrisan!")
+            return redirect(url_for('pregled_korisnika'))
+        
     return render_template("/admin/korisnici.html", korisnici=korisnici)
-
+#############################################################################
 @app.route("/pocetna", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
@@ -218,6 +215,24 @@ def pocetna() -> html:
     else:
         flash('KAKO?')
         return render_template("/greska.html")
+    
+@app.route("/izmena-naloga", methods=["GET","POST"])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
+def izmena_korisnika():
+    if request.method == "GET":
+        return render_template("/izmeni_korisnika.html")
+    
+    upit = """UPDATE user
+        SET ime= %s, sifra= %s, lokacija = %s
+        WHERE id = %s
+    """
+    password = request.form.get('pwNoviPolje')
+    pw_hash = bcrypt.generate_password_hash(password)
+    forma = (request.form['imePolje'], pw_hash, request.form['lokacijaPolje'], session['korisnik_id'])
+    kursor.execute(upit,forma)
+    konekcija.commit()
+    return redirect(url_for('pocetna'))
 #############################################################################
 def izbrisi_proizvod_iz_skladista(proizvod_id:int, skladiste_id:int, kursor, konekcija):
     upit_brisanja = """
