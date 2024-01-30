@@ -5,23 +5,27 @@
     <div class="kontejner">
         <div class="red col-12">
 
-            <form class="red" method="POST">
-                <div class="vlaga col-4">
-                    <input class="magacin-select blok col-12" type="text" name="proizvodIme" placeholder="Ime proizvoda" required>
+            <form class="column col-12" method="POST" action="{{ url_for('novi_proizvod') }}">
+                <div class="red">
+                    <div class="vlaga zadnji">
+                        <input class="magacin-select blok col-12" type="text" name="proizvodIme" placeholder="Ime proizvoda" required>
+                    </div>
+                    <div class="col-3 vlaga">
+                        <input class="magacin-select blok col-12" type="text" name="kategorijaIme" placeholder="Kategorija" required>
+                    </div>
+                    <div class="col-2 vlaga">
+                        <input class="blok col-12" type="number" step="any" min="1" name="proizvodCena" placeholder="Cena" required>
+                    </div>
+                    <button class="blok2" type="submit">
+                        <i class="fa-solid fa-plus ikonica" style="color:#fff;"></i>
+                    </button>
                 </div>
-                <div class="col-3 vlaga">
-                    <input class="magacin-select blok col-12" type="text" name="kategorijaIme" placeholder="Kategorija" required>
+                <div class="red">
+                    <div class="zadnji vlaga">
+                        <input class="blok col-12" type="text" name="proizvodOpis" placeholder="Opis" required>
+                    </div>
                 </div>
-                <div class="zadnji vlaga">
-                    <input class="blok col-12" type="number" min="1" name="proizvodKolicina" placeholder="Kolicina"required>
-                </div>
-                <div class="zadnji vlaga">
-                    <input class="blok col-12" type="number" step="any" min="1" name="proizvodCena" placeholder="Cena" required>
-                </div>
-                <button action="{{ url_for('novi_proizvod') }}" class="blok2" type="submit">
-                    <i class="fa-solid fa-plus ikonica" style="color:#fff;"></i>
-                </button>
-            </form>
+            </form>            
 
         </div>
     </div>
