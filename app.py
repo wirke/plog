@@ -111,7 +111,7 @@ def register():
 
         if existing_user:
             flash('Kredencijali koje ste uneli su zauzeti!')
-            return render_template("register.html")
+            return render_template("greska.html")
         
         upit = """ INSERT INTO
         user(email, ime, sifra, rola, lokacija)
@@ -124,31 +124,23 @@ def register():
         konekcija.commit()
         return redirect(url_for("login"))
     
-@app.route("/izmena", methods=["GET","POST"])
-def izmeni_korisnika():
+@app.route("/izmena-naloga", methods=["GET","POST"])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
+def izmena_korisnika():
     if request.method == "GET":
-        return render_template("izmeni_korisnika.html")
+        return render_template("/izmeni_korisnika.html")
     
-    elif request.method == "POST":
-        existing_email_check = "SELECT * FROM user WHERE email=%s"
-        existing_email = (request.form['emailPolje'],)
-        kursor.execute(existing_email_check, existing_email)
-        existing_user = kursor.fetchone()
-
-        if existing_user:
-            flash('Kredencijali koje ste uneli su zauzeti!')
-            return render_template("register.html")
-        
-        upit = """ INSERT INTO
-        user(email, ime, sifra, rola, lokacija)
-        VALUES (%s, %s, %s, %s, %s)
-        """
-        password = request.form['passwordPolje']
-        pw_hash = bcrypt.generate_password_hash(password)
-        forma = (request.form['emailPolje'], request.form['imePolje'], pw_hash, request.form['rola'], request.form['lokacijaPolje'])
-        kursor.execute(upit,forma)
-        konekcija.commit()
-        return redirect(url_for("pocetna"))
+    upit = """UPDATE user
+        SET ime= %s, sifra= %s, lokacija = %s
+        WHERE id = %s
+    """
+    password = request.form.get('pwPolje')
+    pw_hash = bcrypt.generate_password_hash(password)
+    forma = (request.form['imePolje'], pw_hash, request.form['lokacijaPolje'], session['korisnik_id'])
+    kursor.execute(upit,forma)
+    konekcija.commit()
+    return redirect(url_for('pocetna'))
 
 @app.route("/logout")
 def logout():
