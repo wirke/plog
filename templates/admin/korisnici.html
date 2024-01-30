@@ -1,0 +1,48 @@
+{% extends 'navbar.html' %}
+{% block title %}Plog - Korisnici{% endblock %}
+{% block content %}
+<div class="display">
+    <div class="kontejner">
+      <div class="red col-12">
+        <div class="blok zadnji">
+            Email korisnika
+        </div>
+
+        <div class="blok col-3">
+            Ime korisnika
+        </div>
+
+        <div class="blok col-1">
+            Rola
+        </div>
+        <div class="blok col-3">
+            Lokacija
+        </div>
+        </div>
+        <div style="margin-left: 15px; margin-bottom: -15px;">
+            <hr class="zubor">
+         </div>
+         {% for k in korisnici %}
+         <div class="red col-12">
+            <div class="blok zadnji">
+                {{k.email}}
+            </div>
+    
+            <div class="blok col-3">
+                {{k.ime}}
+            </div>
+    
+            <div class="blok col-1">
+                {{k.rola}}
+            </div>
+            <div class="blok col-3">
+                {{k.lokacija}}
+            </div>
+            <button class="blok2 sabmit" type="submit">
+                <i class="ikonica fa-solid fa-trash" style="color: #fff;"></i>
+            </button>
+         </div>
+         {% endfor %}
+        {% endblock %}
+
+    

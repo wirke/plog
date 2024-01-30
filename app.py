@@ -148,11 +148,15 @@ def logout():
     session.pop('rola', None)
     return redirect(url_for('login'))
 #############################################################################
-@app.route("/test", methods=['GET', 'POST'])
+@app.route("/admin/korisnici", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin'])
-def test() -> html:
-    return render_template("/test.html")
+def pregled_korisnika() -> html:
+    upit = """SELECT email, ime, rola, lokacija
+    FROM user"""
+    kursor.execute(upit)
+    korisnici = kursor.fetchall()
+    return render_template("/admin/korisnici.html", korisnici=korisnici)
 
 @app.route("/pocetna", methods=['GET', 'POST'])
 @zahteva_ulogovanje
