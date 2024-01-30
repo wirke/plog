@@ -546,6 +546,7 @@ def napuni_magacin(skladiste_id: int) -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def pregledaj_porudzbine() -> html:
+    
     upit = """SELECT po.kolicina AS kolicina, pr.ime AS ime_proizvoda, pr.cena AS cena, po.isporuceno AS isporuceno, u.ime AS ime, u.lokacija AS lokacija
     FROM porudzbina po
     JOIN proizvod pr ON pr.id=po.proizvod_id
@@ -560,6 +561,7 @@ def pregledaj_porudzbine() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def moji_magacini() -> html:
+    
     upit = """
     SELECT id, ime, lokacija, kapacitet
     FROM skladiste
@@ -590,6 +592,7 @@ def novi_magacin() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def magacin(skladiste_id: int) -> html:
+    
     upit_skladiste = """
         SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
         FROM skladiste s
@@ -606,7 +609,6 @@ def magacin(skladiste_id: int) -> html:
         JOIN user u ON p.proizvodjac_id = u.id
         WHERE ps.skladiste_id = %s
     """
-
     kursor.execute(upit_proizvoda, (skladiste_id,))
     proizvodi = kursor.fetchall()
 
@@ -614,10 +616,11 @@ def magacin(skladiste_id: int) -> html:
         if 'azuriraj_kapacitet' in request.form:
             nova_vrednost = int(request.form['nova_vrednost'])
             if azuriraj_kapacitet_skladista(skladiste_id, nova_vrednost):
-                print("Uspesno azuriranje")
+                flash('Uspešno ste ažurirali!')
             else:
-                print("Greska prilikom azuriranja")
-        
+                flash("Greska prilikom azuriranja")
+                return redirect(url_for('greska'))
+
         #elif 'izbrisi_proizvod' in request.form:
         #    proizvod_id_za_brisanje = request.form['izbrisi_proizvod']
         #    izbrisi_proizvod_iz_skladista(proizvod_id_za_brisanje, skladiste_id)
@@ -635,79 +638,62 @@ def magacin_brisanje(skladiste_id: int, proizvod_id: int) -> html:
     izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id)
     return redirect(url_for('moji_magacini'))
 
-def azuriraj_kolicinu_proizvoda_u_skladistu(proizvod_id, skladiste_id, nova_kolicina):
-    dostupna_kolicina = proveri_dostupnost_kolicine(proizvod_id, skladiste_id, nova_kolicina)
-    if nova_kolicina >= dostupna_kolicina:
-        upit = """
-            UPDATE sadrzi
-            SET kolicina = %s
-            WHERE proizvod_id = %s AND skladiste_id = %s
-        """
-        kursor.execute(upit, (nova_kolicina, proizvod_id, skladiste_id))
-        konekcija.commit()
-        return True
-    else:
-        return False
+def izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id, kursor, konekcija):
 
-def izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id):
-    upit_izbrisi = """
+    upit_brisanja = """
         DELETE FROM sadrzi
         WHERE proizvod_id = %s AND skladiste_id = %s
     """
-    kursor.execute(upit_izbrisi, (proizvod_id, skladiste_id))
+    kursor.execute(upit_brisanja, (proizvod_id, skladiste_id))
     konekcija.commit()
 
-def azuriraj_kapacitet_skladista(skladiste_id, nova_vrednost):
-    upit_azuriraj_kapacitet = """
-        UPDATE skladiste
-        SET kapacitet = %s
-        WHERE id = %s
+def azuriraj_kolicinu_proizvoda_u_skladistu(proizvod_id, skladiste_id, nova_kolicina, kursor, konekcija):
+
+    upit_dostupnosti = """
+        SELECT SUM(ps.kolicina) AS popunjenost, s.kapacitet
+        FROM sadrzi ps
+        JOIN skladiste s ON ps.skladiste_id = s.id
+        WHERE ps.skladiste_id = %s
+        GROUP BY s.kapacitet
     """
-    kursor.execute(upit_azuriraj_kapacitet, (nova_vrednost, skladiste_id))
-    konekcija.commit()
+    kursor.execute(upit_dostupnosti, (skladiste_id,))
+    dostupnost = kursor.fetchone()
 
-def proveri_kapacitet_skladista(skladiste_id: int) -> bool:
-    upit_popunjenost = """
+    if dostupnost:
+        trenutni_kapacitet = dostupnost['kapacitet']
+        trenutna_popunjenost = dostupnost['popunjenost'] or 0
+
+        if nova_kolicina <= trenutni_kapacitet - trenutna_popunjenost:
+            upit_azuriranja = """
+                UPDATE sadrzi
+                SET kolicina = %s
+                WHERE proizvod_id = %s AND skladiste_id = %s
+            """
+            kursor.execute(upit_azuriranja, (nova_kolicina, proizvod_id, skladiste_id))
+            konekcija.commit()
+            return True
+    return False
+
+def azuriraj_kapacitet_skladista(skladiste_id, nova_vrednost, kursor, konekcija):
+
+    upit_popunjenosti = """
         SELECT SUM(ps.kolicina) AS popunjenost
         FROM sadrzi ps
         WHERE ps.skladiste_id = %s
     """
-    kursor.execute(upit_popunjenost, (skladiste_id,))
-    popunjenost = kursor.fetchone()['popunjenost'] or 0
-    
-    upit_kapacitet = """
-        SELECT kapacitet
-        FROM skladiste
-        WHERE id = %s
-    """
-    kursor.execute(upit_kapacitet, (skladiste_id,))
-    kapacitet = kursor.fetchone()['kapacitet']
+    kursor.execute(upit_popunjenosti, (skladiste_id,))
+    trenutna_popunjenost = kursor.fetchone()['popunjenost'] or 0
 
-    return popunjenost <= kapacitet
-
-def azuriraj_kapacitet_skladista(skladiste_id, nova_vrednost):
-    if proveri_kapacitet_skladista(skladiste_id):
-        upit_azuriraj_kapacitet = """
+    if nova_vrednost >= trenutna_popunjenost:
+        upit_azuriranja = """
             UPDATE skladiste
             SET kapacitet = %s
             WHERE id = %s
         """
-        kursor.execute(upit_azuriraj_kapacitet, (nova_vrednost, skladiste_id))
+        kursor.execute(upit_azuriranja, (nova_vrednost, skladiste_id))
         konekcija.commit()
         return True
-    else:
-        return False
-
-def proveri_dostupnost_kolicine(proizvod_id, skladiste_id, kolicina):
-    upit_dostupnost = """
-        SELECT ps.kolicina
-        FROM sadrzi ps
-        WHERE ps.proizvod_id = %s AND ps.skladiste_id = %s
-    """
-    kursor.execute(upit_dostupnost, (proizvod_id, skladiste_id))
-    dostupna_kolicina = kursor.fetchone()
-
-    return dostupna_kolicina['kolicina'] if dostupna_kolicina else 0
+    return False
 
 @app.route("/logisticar/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
