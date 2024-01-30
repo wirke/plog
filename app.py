@@ -553,15 +553,18 @@ def pregledaj_porudzbine() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def moji_magacini() -> html:
-    
+
     upit = """
-    SELECT id, ime, lokacija, kapacitet
-    FROM skladiste
-    WHERE logisticar_id = %s
+    SELECT s.id, s.ime, s.lokacija, s.kapacitet, SUM(ps.kolicina) AS popunjenost
+    FROM skladiste s
+    LEFT JOIN sadrzi ps ON s.id = ps.skladiste_id
+    WHERE s.logisticar_id = %s
+    GROUP BY s.id
     """
     kursor.execute(upit, (session['korisnik_id'],))
     skladiste = kursor.fetchall()
-    return render_template("/logisticar/moji-magacini.html",skladiste=skladiste)
+
+    return render_template("/logisticar/moji-magacini.html", skladiste=skladiste)
 
 @app.route("/logisticar/novi-magacin", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -586,9 +589,10 @@ def novi_magacin() -> html:
 def magacin(skladiste_id: int) -> html:
     
     upit_skladiste = """
-        SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime
+        SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime, SUM(ps.kolicina) AS popunjenost
         FROM skladiste s
         JOIN user u ON s.logisticar_id = u.id
+        LEFT JOIN sadrzi ps ON s.id = ps.skladiste_id
         WHERE s.id = %s
     """
     kursor.execute(upit_skladiste, (skladiste_id,))
@@ -607,30 +611,24 @@ def magacin(skladiste_id: int) -> html:
     if request.method == "POST":
         if 'azuriraj_kapacitet' in request.form:
             nova_vrednost = int(request.form['nova_vrednost'])
-            if azuriraj_kapacitet_skladista(skladiste_id, nova_vrednost):
+            if azuriraj_kapacitet(skladiste_id, nova_vrednost):
                 flash('Uspešno ste ažurirali!')
             else:
                 flash("Greska prilikom azuriranja")
                 return redirect(url_for('greska'))
 
-        #elif 'izbrisi_proizvod' in request.form:
-        #    proizvod_id_za_brisanje = request.form['izbrisi_proizvod']
-        #    izbrisi_proizvod_iz_skladista(proizvod_id_za_brisanje, skladiste_id)
+        elif 'izbrisi_proizvod' in request.form:
+            proizvod_id = request.form['izbrisi_proizvod']
+            izbrisi_proizvod(proizvod_id, skladiste_id)
 
         elif 'izmeni_kolicinu' in request.form:
             proizvod_id_za_izmenu = int(request.form['izmeni_kolicinu'])
             nova_kolicina = int(request.form['nova_kolicina'])
-            azuriraj_kolicinu_proizvoda_u_skladistu(proizvod_id_za_izmenu, skladiste_id, nova_kolicina)
+            azuriraj_kolicinu_proizvoda(proizvod_id_za_izmenu, skladiste_id, nova_kolicina)
+
     return render_template("/logisticar/magacin.html", skladiste=skladiste, proizvodi=proizvodi)
 
-@app.route("/logisticar/magacin/<int:skladiste_id>/<int:proizvod_id>", methods=['GET', 'POST'])
-@zahteva_ulogovanje
-@zahteva_dozvolu(roles=['Admin', 'Logističar'])
-def magacin_brisanje(skladiste_id: int, proizvod_id: int) -> html:
-    izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id)
-    return redirect(url_for('moji_magacini'))
-
-def izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id, kursor, konekcija):
+def izbrisi_proizvod(proizvod_id, skladiste_id, kursor, konekcija):
 
     upit_brisanja = """
         DELETE FROM sadrzi
@@ -639,7 +637,7 @@ def izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id, kursor, konekcija):
     kursor.execute(upit_brisanja, (proizvod_id, skladiste_id))
     konekcija.commit()
 
-def azuriraj_kolicinu_proizvoda_u_skladistu(proizvod_id, skladiste_id, nova_kolicina, kursor, konekcija):
+def azuriraj_kolicinu_proizvoda(proizvod_id, skladiste_id, nova_kolicina, kursor, konekcija):
 
     upit_dostupnosti = """
         SELECT SUM(ps.kolicina) AS popunjenost, s.kapacitet
@@ -664,9 +662,9 @@ def azuriraj_kolicinu_proizvoda_u_skladistu(proizvod_id, skladiste_id, nova_koli
             kursor.execute(upit_azuriranja, (nova_kolicina, proizvod_id, skladiste_id))
             konekcija.commit()
             return True
-    return False
+    return redirect(url_for('greska')), flash("Nova kolicina proizvoda premašuje trenutni kapacitet"), False
 
-def azuriraj_kapacitet_skladista(skladiste_id, nova_vrednost, kursor, konekcija):
+def azuriraj_kapacitet(skladiste_id, nova_vrednost, kursor, konekcija):
 
     upit_popunjenosti = """
         SELECT SUM(ps.kolicina) AS popunjenost
@@ -685,7 +683,7 @@ def azuriraj_kapacitet_skladista(skladiste_id, nova_vrednost, kursor, konekcija)
         kursor.execute(upit_azuriranja, (nova_vrednost, skladiste_id))
         konekcija.commit()
         return True
-    return False
+    return redirect(url_for('greska')), flash("Uneti kapacitet manji od trenutne popunjenosti!")
 
 @app.route("/logisticar/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
