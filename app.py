@@ -434,7 +434,6 @@ def poruci_proizvod(proizvod_id):
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def novi_proizvod() -> html:
-
     if request.method == "GET":
         return render_template("/proizvodjac/novi-proizvod.html")
     upit = """INSERT INTO proizvod(proizvodjac_id, ime, kategorija, cena, kolicina)
@@ -474,14 +473,23 @@ def brisanje_proizvoda(id) -> html:
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def proizvod(proizvod_id) -> html:
     if request.method == "POST":
-        upit = """UPDATE proizvod
-        SET ime= %s, kategorija= %s, cena= %s, kolicina = %s
-        WHERE id = %s
-        """
-        vrednosti = (request.form['prIme'], request.form['prKategorija'],request.form['prCena'],request.form['prKolicina'], proizvod_id)
-        kursor.execute(upit, vrednosti)
-        konekcija.commit()
-        return redirect(url_for('porudzbine_proizvoda'))
+        if 'azuriraj_proizvod' in request.form:
+            upit = """UPDATE proizvod
+            SET ime= %s, kategorija= %s, cena= %s, kolicina = %s
+            WHERE id = %s
+            """
+            vrednosti = (request.form['prIme'], request.form['prKategorija'],request.form['prCena'],request.form['prKolicina'], proizvod_id)
+            kursor.execute(upit, vrednosti)
+            konekcija.commit()
+            return redirect(url_for('porudzbine_proizvoda'))
+        elif 'dodavanje' in request.form:
+            upit = """INSERT INTO
+            sadrzi (proizvod_id, skladiste_id, kolicina)
+            VALUES (%s, %s, %s)
+            """
+            kursor.execute(upit, (proizvod_id, request.form.get('izabrano_skl'), request.form.get('quantity'),))
+            konekcija.commit()
+            return redirect(url_for('porudzbine_proizvoda'))
         
     upit_pr= """SELECT p.id, p.ime, p.kategorija, p.cena, p.kolicina
     FROM proizvod p
@@ -498,7 +506,7 @@ def proizvod(proizvod_id) -> html:
     kursor.execute(upit_mag, (proizvod_id,))
     skladiste = kursor.fetchall()
 
-    upit_sva_skladista= """SELECT * FROM skladiste"""
+    upit_sva_skladista = """SELECT * FROM skladiste"""
     kursor.execute(upit_sva_skladista)
     sva_skladista= kursor.fetchall()
     return render_template("/proizvodjac/proizvod.html", proizvod=proizvod, skladiste=skladiste, sva_skladista=sva_skladista)
