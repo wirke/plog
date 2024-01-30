@@ -7,6 +7,7 @@
         <form method="GET" action="{{ url_for('porudzbina_magacin') }}">
 
             <select class="blok col-2" name="isporuceno" id="isporuceno">
+                <option value="">Sve porudžbine</option>
                 <option value="0">Na čekanju</option>
                 <option value="1">Isporučeno</option>
             </select>
@@ -19,6 +20,8 @@
             <button class="blok col-1" type="submit">Primeni</button>
         </form>
     </div>
+
+    {%if porudzbina%}
 
     <div class="kontejner">
         <div class="red col-12">
@@ -41,10 +44,12 @@
                 Skladiste
             </div>
         </div>
-    </div>
 
-    {% for p in porudzbina %}
-        <div class="kontejner">
+        <div style="margin-left: 15px; margin-bottom: -15px;">
+            <hr class="zubor">
+         </div>
+
+        {% for p in porudzbina %}
             <form method="POST" action="{{ url_for('isporuci', porudzbina_id=p['porudzbina_id']) }}">
                 <div class="red col-12">
                     <div>
@@ -81,10 +86,20 @@
                     </div>
                 </div>
                 {% endif %}
-                <input type="hidden" name="porudzbina_id" value="{{ p['porudzbina_id'] }}">
+                
+        
+
+
             </form>
-        </div>
         {% endfor %}
     </div>
-</div>
+
+    {%else%}
+    <div class="kontejner">
+        <div class="blok">
+            <h1>Prazno za sada</h1>
+        </div>
+    </div>
+    {% endif %}
+
 {% endblock %}
