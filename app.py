@@ -495,20 +495,22 @@ def poruci_proizvod(proizvod_id):
 def novi_proizvod() -> html:
     if request.method == "GET":
         return render_template("/proizvodjac/novi-proizvod.html")
-    upit = """INSERT INTO proizvod(proizvodjac_id, ime, kategorija, cena, kolicina)
-    VALUES (%s, %s, %s, %s, %s)
-    """
-    forma = (session['korisnik_id'], request.form['proizvodIme'], request.form['kategorijaIme'], request.form['proizvodCena'], request.form['proizvodKolicina'])
-    kursor.execute(upit, forma)
-    konekcija.commit()
-    return redirect(url_for("novi_proizvod"))
+    
+    if request.method == "POST":
+        upit = """INSERT INTO proizvod(proizvodjac_id, ime, kategorija, opis, cena)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        forma = (session['korisnik_id'], request.form['proizvodIme'], request.form['kategorijaIme'], request.form['proizvodOpis'], request.form['proizvodCena'])
+        kursor.execute(upit, forma)
+        konekcija.commit()
+        return redirect(url_for("moji_proizvodi"))
 
 @app.route("/proizvodjac/moji-proizvodi", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
-def porudzbine_proizvoda() -> html:
+def moji_proizvodi() -> html:
     upit= """
-    SELECT id, ime, kategorija, cena, kolicina
+    SELECT id, ime, kategorija, cena, opis
     FROM proizvod
     WHERE proizvodjac_id = %s
     """
@@ -516,16 +518,34 @@ def porudzbine_proizvoda() -> html:
     proizvodi = kursor.fetchall()
     return render_template("/proizvodjac/moji-proizvodi.html", proizvodi=proizvodi)
 
-@app.route("/proizvodjac/moji-proizvodi/<int:id>", methods=['GET', 'POST'])
+@app.route("/proizvodjac/brisanje-proizvoda/<int:proizvod_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
-def brisanje_proizvoda(id) -> html:
+def brisanje_proizvoda(proizvod_id) -> html:
+    
     upit = """
     DELETE FROM proizvod
     WHERE id = %s
     """
-    kursor.execute(upit, (id,))
-    return redirect(url_for('porudzbine_proizvoda'))
+    kursor.execute(upit, (proizvod_id,))
+    konekcija.commit()
+    return redirect(url_for('moji_proizvodi'))
+
+def postoji_proizvod(korisnik_id):
+    
+    korisnik_id = (session['korisnik_id'])
+    upit = """
+        SELECT COUNT(*) AS broj_proizvoda
+        FROM proizvod p
+        JOIN user u ON p.proizvodjac_id = u.id
+        WHERE proizvodjac_id = %s
+    """
+    kursor.execute(upit, (korisnik_id,))
+    rezultat = kursor.fetchone()
+    if rezultat['broj_proizvoda'] > 0:
+        return True
+    else:
+        return False
 
 @app.route("/proizvodjac/proizvod/<int:proizvod_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje

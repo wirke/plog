@@ -54,40 +54,7 @@
                 </a>
 
                 {% elif user_data['rola'] == 'Admin' %}
-                <a href="/kupac/proizvodi" class="bezista link" type="submit">
-                    <i class="fa-solid fa-user-tie"></i> Pro</a>
-
-                <a href="/kupac/magacini" class="bezista link" type="submit">
-                    <i class="fa-solid fa-user-tie"></i> Mag</a>
-
-                <a href="/kupac/porudzbine" class="bezista link" type="submit">
-                    <i class="fa-solid fa-user-tie"></i> Por</a>
-
-                <a href="/proizvodjac/novi-proizvod" class="bezista link" type="submit">
-                    <i class="fa-solid fa-industry"></i> Novp</a>
-
-                <a href="/proizvodjac/moji-proizvodi" class="bezista link" type="submit">
-                    <i class="fa-solid fa-industry"></i> Mojp</a>
-
-                <a href="/proizvodjac/magacini" class="bezista link" type="submit">
-                    <i class="fa-solid fa-industry"></i> Magp</a>
-
-                <a href="/proizvodjac/porudzbine" class="bezista link" type="submit">
-                    <i class="fa-solid fa-industry"></i> Porp</a>
-
-                <a href="/logisticar/novi-magacin" class="bezista link" type="submit">
-                    <i class="fa-solid fa-box"></i> Novm</a>
-
-                <a href="/logisticar/moji-magacini" class="bezista link" type="submit">
-                    <i class="fa-solid fa-box"></i> Mojm</a>
-
-                <a href="/logisticar/porudzbine" class="bezista link" type="submit">
-                    <i class="fa-solid fa-box"></i> Por</a>
-
-                <a href="/logout" class="bezista link" type="submit">
-                    <i class="fa-solid fa-right-from-bracket bezista"></i>
-                </a>
-                
+                <a href="/admin/korisnici" class="bezista link" type="submit"></a>
                 {% else %}{% endif %}{% endif %}
                 {% block forma %}{% endblock %}
         </div>

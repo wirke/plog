@@ -19,6 +19,9 @@
             <div class="blok zadnji">
                 Lokacija kupca
             </div>
+            <div class="blok1">
+                 <i class="fa-solid fa-hourglass-start ikonica" style="color: #ff8a5b;"></i>
+            </div>
         </div>
         <div style="margin-left: 15px; margin-bottom: -15px;">
             <hr class="zubor">
@@ -26,13 +29,13 @@
          {% for p in porudzbine %}
         <div class="red col-12">
             <div class="blok col-1">
-                {{ p.kolicina }}
+                <strong>{{ p.kolicina }}</strong>
             </div>
             <div class="blok zadnji">
                 {{ p.ime_proizvoda }}
             </div>
             <div class="blok zadnji">
-                {{ p.cena }}
+                {{ p.cena * p.kolicina }}
             </div>
             <div class="blok zadnji">
                 {{ p.ime }}
@@ -40,11 +43,11 @@
             <div class="blok zadnji">
                 {{ p.lokacija }}
             </div>
-            <div class="blok vlaga">
+            <div class="blok">
                 {% if p.isporuceno == 0 %}
                  <i class="fa-solid fa-hourglass-start ikonica"></i>
              {% else %}
-                 <i class="fa-solid fa-truck-fast"></i>
+                 <i class="fa-solid fa-truck-fast ikonica"></i>
              {% endif %}
             </div>
         </div>
