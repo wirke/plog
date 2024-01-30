@@ -610,15 +610,11 @@ def magacin(skladiste_id: int) -> html:
     if request.method == "POST":
         if 'azuriraj_kapacitet' in request.form:
             nova_vrednost = int(request.form['nova_vrednost'])
-            if azuriraj_kapacitet(skladiste_id, nova_vrednost):
-                flash('Uspešno ste ažurirali!')
-            else:
-                flash("Greska prilikom azuriranja")
-                return redirect(url_for('greska'))
+            azuriraj_kapacitet(skladiste_id, nova_vrednost)
 
         elif 'izbrisi_proizvod' in request.form:
             proizvod_id = request.form['izbrisi_proizvod']
-            izbrisi_proizvod(proizvod_id, skladiste_id)
+            izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id)
 
         elif 'izmeni_kolicinu' in request.form:
             proizvod_id_za_izmenu = int(request.form['izmeni_kolicinu'])
@@ -627,7 +623,7 @@ def magacin(skladiste_id: int) -> html:
 
     return render_template("/logisticar/magacin.html", skladiste=skladiste, proizvodi=proizvodi)
 
-def izbrisi_proizvod(proizvod_id, skladiste_id, kursor, konekcija):
+def izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id):
 
     upit_brisanja = """
         DELETE FROM sadrzi
@@ -635,6 +631,7 @@ def izbrisi_proizvod(proizvod_id, skladiste_id, kursor, konekcija):
     """
     kursor.execute(upit_brisanja, (proizvod_id, skladiste_id))
     konekcija.commit()
+    return redirect(url_for('magacin'))
 
 def azuriraj_kolicinu_proizvoda(proizvod_id, skladiste_id, nova_kolicina, kursor, konekcija):
 
@@ -660,7 +657,7 @@ def azuriraj_kolicinu_proizvoda(proizvod_id, skladiste_id, nova_kolicina, kursor
             """
             kursor.execute(upit_azuriranja, (nova_kolicina, proizvod_id, skladiste_id))
             konekcija.commit()
-            return True
+            return redirect(url_for('magacin')), True
     return redirect(url_for('greska')), flash("Nova kolicina proizvoda premašuje trenutni kapacitet"), False
 
 def azuriraj_kapacitet(skladiste_id, nova_vrednost, kursor, konekcija):
@@ -681,8 +678,19 @@ def azuriraj_kapacitet(skladiste_id, nova_vrednost, kursor, konekcija):
         """
         kursor.execute(upit_azuriranja, (nova_vrednost, skladiste_id))
         konekcija.commit()
-        return True
-    return redirect(url_for('greska')), flash("Uneti kapacitet manji od trenutne popunjenosti!")
+        return redirect(url_for('magacin')), True
+    return redirect(url_for('greska')), flash("Uneti kapacitet je manji od trenutne popunjenosti!")
+
+@app.route("/logisticar/brisanje-skladista/<int:id>", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Logističar'])
+def brisanje_magacina(id) -> html:
+    upit = """
+    DELETE FROM skladiste
+    WHERE id = %s
+    """
+    kursor.execute(upit, (id,))
+    return redirect(url_for('porudzbine_proizvoda'))
 
 @app.route("/logisticar/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
