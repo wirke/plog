@@ -14,6 +14,9 @@
             <div class="blok col-2">
                 Kapacitet
             </div>
+            <div class="blok col-1">
+                Popunjenost
+            </div>
             <div class="blok1 sabmit" style="width:fit-content;">
                 <i class="fa-solid fa-pen ikonica" style="color: #ff8a5b;"></i>
             </div>
@@ -29,6 +32,7 @@
             <input class="blok zadnji" value="{{ skladiste.ime }}">
             <input class="blok zadnji" value="{{ skladiste.lokacija }}">
             <input class="blok col-2" value="{{ skladiste.kapacitet }}">
+            <div class="blok col-1">{%if skladiste.popunjenost == None%} Prazan {%else%} {{skladiste.popunjenost}} {%endif%} </div>
 
             <form action="#" method="get" style="margin-right: 15px;">
                 <button class="blok2 sabmit zadnji" type="submit">
@@ -41,7 +45,7 @@
     {% for p in proizvodi %}
     <div class="kontejner">
         <div class="red col-12">
-            <form style="margin-left: 0; margin-right: 15px;" action="{{ url_for('magacin_brisanje', proizvod_id=p.id, skladiste_id=skladiste.id) }}" style="margin-left: 15px;">
+            <form style="margin-left: 0; margin-right: 15px;" action="{{ url_for('magacin_brisanje_pr', proizvod_id=p.id, skladiste_id=skladiste.id) }}" style="margin-left: 15px;">
                 <button class="blok2 sabmit" type="submit">
                     <i class="fa-solid fa-trash" style="color: #fff;"></i>
                 </button>
@@ -62,7 +66,7 @@
             <div class="col-2" style="margin-right: -25px;">
                 <div class="vlaga">
                     <div>
-                        <input class="blok" id="form1" min="1" name="quantity" value="1" type="number">
+                        <input class="blok" id="form1" min="1" name="quantity" value="{{p.kolicina}}" type="number">
                     </div>
                 </div>
             </div>
