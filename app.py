@@ -479,20 +479,11 @@ def proizvod(proizvod_id) -> html:
     """
     kursor.execute(upit_mag, (proizvod_id,))
     skladiste = kursor.fetchall()
-    return render_template("/proizvodjac/proizvod.html", proizvod=proizvod, skladiste=skladiste)
 
-
-@app.route("/proizvodjac/proizvod/<int:proizvod_id>/<int:skladiste_id>", methods=['GET', 'POST'])
-@zahteva_ulogovanje
-@zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
-def proizvodjac_izbrisi_proizvod(proizvod_id: int,skladiste_id: int) -> html:
-    upit_izbrisi = """
-        DELETE FROM sadrzi
-        WHERE proizvod_id = %s AND skladiste_id = %s
-    """
-    kursor.execute(upit_izbrisi, (proizvod_id, skladiste_id))
-    konekcija.commit()
-    return redirect(url_for('porudzbine_proizvoda'))
+    upit_sva_skladista= """SELECT * FROM skladiste"""
+    kursor.execute(upit_sva_skladista)
+    sva_skladista= kursor.fetchall()
+    return render_template("/proizvodjac/proizvod.html", proizvod=proizvod, skladiste=skladiste, sva_skladista=sva_skladista)
 
 @app.route("/proizvodjac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
