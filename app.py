@@ -215,7 +215,7 @@ def pocetna() -> html:
         flash('KAKO?')
         return render_template("/greska.html")
 #############################################################################
-def izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id:int, kursor, konekcija):
+def izbrisi_proizvod_iz_skladista(proizvod_id:int, skladiste_id:int, kursor, konekcija):
     upit_brisanja = """
         DELETE FROM sadrzi
         WHERE proizvod_id = %s AND skladiste_id = %s
@@ -246,10 +246,10 @@ def azuriraj_kolicinu_proizvoda(proizvod_id, skladiste_id:int, nova_kolicina, ku
             """
             kursor.execute(upit_azuriranja, (nova_kolicina, proizvod_id, skladiste_id))
             konekcija.commit()
-            return redirect(url_for('magacin', skladiste_id=skladiste_id))
+            return redirect(url_for('magacin', skladiste_id=skladiste_id)), True
         else:
             flash("Nova količina proizvoda premašuje trenutni kapacitet")
-            return redirect(url_for('greska'))
+            return redirect(url_for('greska')), False
 
 def azuriraj_kapacitet(skladiste_id:int, nova_vrednost:int, kursor, konekcija):
     upit_popunjenosti = """
@@ -268,10 +268,10 @@ def azuriraj_kapacitet(skladiste_id:int, nova_vrednost:int, kursor, konekcija):
         """
         kursor.execute(upit_azuriranja, (nova_vrednost, skladiste_id))
         konekcija.commit()
-        return redirect(url_for('magacin', skladiste_id=skladiste_id))
+        return redirect(url_for('magacin', skladiste_id=skladiste_id)), True
     else:
         flash("Uneti kapacitet je manji od trenutne popunjenosti!")
-        return redirect(url_for('greska'))
+        return redirect(url_for('greska')), False
 #############################################################################
 @app.route("/kupac/proizvodi", methods=['GET', 'POST'])
 @zahteva_ulogovanje
