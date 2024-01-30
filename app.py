@@ -509,14 +509,16 @@ def novi_proizvod() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def moji_proizvodi() -> html:
-    upit= """
-    SELECT id, ime, kategorija, cena, opis
-    FROM proizvod
-    WHERE proizvodjac_id = %s
-    """
-    kursor.execute(upit, (session['korisnik_id'],))
-    proizvodi = kursor.fetchall()
-    return render_template("/proizvodjac/moji-proizvodi.html", proizvodi=proizvodi)
+    
+    if(postoji_proizvod):
+        upit= """
+        SELECT id, ime, kategorija, cena, opis
+        FROM proizvod
+        WHERE proizvodjac_id = %s
+        """
+        kursor.execute(upit, (session['korisnik_id'],))
+        proizvodi = kursor.fetchall()
+        return render_template("/proizvodjac/moji-proizvodi.html", proizvodi=proizvodi)
 
 @app.route("/proizvodjac/brisanje-proizvoda/<int:proizvod_id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje
