@@ -223,7 +223,7 @@ def izbrisi_proizvod_iz_skladista(proizvod_id:int, skladiste_id:int, kursor, kon
     kursor.execute(upit_brisanja, (proizvod_id, skladiste_id))
     konekcija.commit()
 
-def azuriraj_kolicinu_proizvoda(proizvod_id, skladiste_id:int, nova_kolicina, kursor, konekcija):
+def azuriraj_kolicinu_proizvoda(proizvod_id:int, skladiste_id:int, nova_kolicina, kursor, konekcija):
     upit_dostupnosti = """
         SELECT SUM(ps.kolicina) AS popunjenost, s.kapacitet
         FROM sadrzi ps
@@ -246,6 +246,7 @@ def azuriraj_kolicinu_proizvoda(proizvod_id, skladiste_id:int, nova_kolicina, ku
             """
             kursor.execute(upit_azuriranja, (nova_kolicina, proizvod_id, skladiste_id))
             konekcija.commit()
+            print('uspesno')
             return redirect(url_for('magacin', skladiste_id=skladiste_id)), True
         else:
             flash("Nova količina proizvoda premašuje trenutni kapacitet")

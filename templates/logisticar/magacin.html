@@ -43,8 +43,9 @@
 
         <div class="red col-12">
 
-            <form action="{{ url_for('magacin',proizvod_id = p.id, skladiste_id=skladiste.id) }}" method="post" style="margin-left: 0; margin-right: 15px;">
-                <button class="blok2 sabmit" name="izbrisi_proizvod" type="submit">
+            <form action="{{ url_for('magacin', skladiste_id=skladiste.id) }}" method="post" style="margin-left: 0; margin-right: 15px;">
+                <input type="hidden" name="izbrisi_proizvod" value="{{ p.id }}">
+                <button class="blok2 sabmit" type="submit">
                     <i class="fa-solid fa-trash" style="color: #fff;"></i>
                 </button>
             </form>
@@ -53,9 +54,9 @@
             <div class="blok zadnji">{{ p.kategorija }}</div>
             <div class="blok zadnji">{{ p.proizvodjac_ime }}</div>
 
-            <form action="{{ url_for('magacin',proizvod_id = p.id, skladiste_id=skladiste.id) }}" method="post" class="red">
-                <input class="blok" id="nova_kolicina" min="1" name="nova_kolicina" value="{{p.kolicina}}" type="number">
-                <button class="blok2 sabmit" name="azuriraj_kolicinu_proizvoda" type="submit">
+            <form action="{{ url_for('magacin', skladiste_id=skladiste.id) }}" method="post" class="red">
+                <input class="blok" id="nova_kolicina" min="1" name="nova_kolicina" value="{{ p.kolicina }}" type="number">
+                <button class="blok2 sabmit" type="submit" name="azuriraj_kolicinu_proizvoda">
                     <i class="fa-solid fa-pen ikonica" style="color: #fff;"></i>
                 </button>
             </form>
