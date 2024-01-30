@@ -45,7 +45,7 @@
     {% for p in proizvodi %}
     <div class="kontejner">
         <div class="red col-12">
-            <form style="margin-left: 0; margin-right: 15px;" action="{{ url_for('magacin_brisanje_pr', proizvod_id=p.id, skladiste_id=skladiste.id) }}" style="margin-left: 15px;">
+            <form style="margin-left: 0; margin-right: 15px;" action="{{ url_for('izbrisi_proizvod', proizvod_id=p.id, skladiste_id=skladiste.id) }}" style="margin-left: 15px;">
                 <button class="blok2 sabmit" type="submit">
                     <i class="fa-solid fa-trash" style="color: #fff;"></i>
                 </button>

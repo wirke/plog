@@ -530,7 +530,6 @@ def napuni_magacin(skladiste_id: int) -> html:
     WHERE id = %s
     """
     kursor.execute(upit, (skladiste_id,))
-
     skladiste = kursor.fetchone()
 
     upit_pro = """SELECT p.id, p.ime, p.cena, p.kategorija
