@@ -55,8 +55,13 @@
 
                 {% elif user_data['rola'] == 'Admin' %}
                 <a href="/admin/korisnici" class="bezista link" type="submit"></a>
+
+                <a href="/logout" class="bezista link" type="submit">
+                    <i class="fa-solid fa-right-from-bracket bezista"></i>
+                </a>
                 {% else %}{% endif %}{% endif %}
                 {% block forma %}{% endblock %}
+
         </div>
     </div>
 {% endblock %}
