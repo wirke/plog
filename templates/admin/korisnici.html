@@ -38,9 +38,28 @@
             <div class="blok col-3">
                 {{k.lokacija}}
             </div>
-            <button class="blok2 sabmit" type="submit">
+            <button class="blok2 sabmit" data-bs-toggle="modal" data-bs-target="#brisanjeModal">
                 <i class="ikonica fa-solid fa-trash" style="color: #fff;"></i>
             </button>
+            <!-- Modal -->
+            <div class="modal" tabindex="-1" id="brisanjeModal">
+                <div class="modal-dialog modal-dialog-centered" data-bs-backdrop="static">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Upozorenje</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
+                    </div>
+                    <div class="modal-body">
+                      <p>Idi nazad ako si pametan 🤠.</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                      <a href="#" role="button" class="btn btn-danger">Obriši</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Kraj modala -->
          </div>
          {% endfor %}
         {% endblock %}
