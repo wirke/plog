@@ -135,7 +135,7 @@ def izmena_korisnika():
         SET ime= %s, sifra= %s, lokacija = %s
         WHERE id = %s
     """
-    password = request.form.get('pwPolje')
+    password = request.form.get('pwNoviPolje')
     pw_hash = bcrypt.generate_password_hash(password)
     forma = (request.form['imePolje'], pw_hash, request.form['lokacijaPolje'], session['korisnik_id'])
     kursor.execute(upit,forma)
