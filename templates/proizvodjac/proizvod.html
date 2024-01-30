@@ -35,12 +35,6 @@
     <div class="kontejner">
         {% for sk in skladiste %}
     <div class="red col-12">
-        <form style="margin-left: 0; margin-right: 15px;" style="margin-left: 15px;">
-            <button class="blok2 sabmit" type="submit">
-                <i class="fa-solid fa-trash" style="color: #fff;"></i>
-            </button>
-        </form>
-    
         <div class="blok col-3">
             {{ sk.ime }}
         </div>
@@ -56,37 +50,22 @@
     </div>
     {% endfor %}
     <div class="red col-12">
-        <form action="#" method="get"  action="{{ url_for('napuni_magacin') }}" style="margin-right: 15px;">
-            <button class="blok2 sabmit" type="submit">
+        <form method="POST" style="margin-right: 15px;">
+            <button class="blok2 sabmit" type="submit" name="dodavanje">
                 <i class="fa-solid fa-plus" style="color: #fff;"></i>
             </button>
-        </form>
         <div class="col-3 vlaga">
-            <select class="magacin-select blok col-12">
+            <select class="magacin-select blok" name="izabrano_skl">
                 <option selected disabled>Dodajte u magacin</option>
-                <option value="1">magacin1(slobodno/lokacija)</option>
-                <option value="2">magacin2(slobodno/lokacija)</option>
-                <option value="3">magacin3(slobodno/lokacija)</option>
-                <option value="4">magacin4(slobodno/lokacija)</option>
+                {% for skl in sva_skladista %}
+                <option value="{{skl.id}}"> {{skl.ime}}({{skl.kapacitet}}/{{skl.lokacija}})</option>
+                {% endfor %}
             </select>
         </div>
-        <div>
-            <div class="blok upit">
-    
-                <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                    <i class="fas fa-minus"></i>
-                </button>
-        
-                <div>
-                    <input id="form1" min="1" name="quantity" value="1" type="number">
-                </div>
-        
-                <button class="dugmic" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-    
+            <div class="blok col-2">
+                    <input id="form1" min="1" name="quantity"  type="number">
             </div>
-        </div>
+        </form>
     </div>
 </div>
 </div>
