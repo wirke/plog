@@ -3,24 +3,15 @@
 {% block content %}
 <div class="display">
     <div class="kontejner">
-        <div class="red col-12">
 
-            <div class="blok zadnji">
-                Ime skladista 
-            </div>
-            <div class="blok zadnji">
-                Lokacija skladista
-            </div>
-            <div class="blok col-2">
-                Kapacitet
-            </div>
-            <div class="blok col-1">
-                Popunjenost
-            </div>
+        <div class="red col-12">
+            <div class="blok zadnji">Ime skladista </div>
+            <div class="blok zadnji">Lokacija skladista</div>
+            <div class="blok col-2">Kapacitet</div>
+            <div class="blok col-1">Popunjenost</div>
             <div class="blok1 sabmit" style="width:fit-content;">
                 <i class="fa-solid fa-pen ikonica" style="color: #ff8a5b;"></i>
             </div>
-
         </div>
 
         <div style="margin-left: 15px; margin-bottom: -15px;">
@@ -28,24 +19,24 @@
         </div>
 
         <div class="red col-12">
-
-            <input class="blok zadnji" value="{{ skladiste.ime }}">
-            <input class="blok zadnji" value="{{ skladiste.lokacija }}">
-            <input class="blok col-2" value="{{ skladiste.kapacitet }}">
-            <div class="blok col-1">{%if skladiste.popunjenost == None%} Prazan {%else%} {{skladiste.popunjenost}} {%endif%} </div>
-
-            <form action="azuriraj_kapacitet" method="get" style="margin-right: 15px;">
-                <button class="blok2 sabmit zadnji" type="submit">
+            <div class="blok zadnji">{{ skladiste.ime }}</div>
+            <div class="blok zadnji">{{ skladiste.lokacija }}</div>
+            <div class="blok col-1">{% if skladiste.popunjenost == None %}Prazan{% else %}{{ skladiste.popunjenost }}{% endif %}</div>
+        
+            <form action="{{ url_for('magacin', skladiste_id=skladiste.id) }}" method="post" class="red" style="margin-right: 15px;">
+                <input class="blok" name="nova_vrednost" id="nova_vrednost" value="{{ skladiste.kapacitet }}">
+                <button class="blok2 sabmit zadnji" type="submit" name="azuriraj_kapacitet">
                     <i class="fa-solid fa-pen" style="color: #fff;"></i>
                 </button>
             </form>
+        </div>        
 
-        </div>
     </div>
+
     {% for p in proizvodi %}
     <div class="kontejner">
         <div class="red col-12">
-            <form style="margin-left: 0; margin-right: 15px;" action="izbrisi_proizvod_iz_skladista, proizvod_id=p.id, skladiste_id=skladiste['id'])" style="margin-left: 15px;">
+            <form style="margin-left: 0; margin-right: 15px;" method="post" action="izbrisi_proizvod_iz_skladista, proizvod_id=p.id, skladiste_id=skladiste['id'])" style="margin-left: 15px;">
                 <button class="blok2 sabmit" type="submit">
                     <i class="fa-solid fa-trash" style="color: #fff;"></i>
                 </button>
@@ -64,7 +55,7 @@
             </div>
 
             <form action="izmeni_kolicinu" method="get" class="red">
-                    <input class="blok" id="izmeni_kolicinu" min="1" name="izmeni_kolicinu" value="{{p.kolicina}}" type="number">
+                    <input class="blok" id="nova_kolicina" min="1" name="nova_kolicina" value="{{p.kolicina}}" type="number">
 
                 <button class="blok2 sabmit" type="submit">
                     <i class="fa-solid fa-pen ikonica" style="color: #fff;"></i>
@@ -74,5 +65,6 @@
         </div>
     </div>
     {% endfor %}
+    
 </div>
 {% endblock %}
