@@ -4,7 +4,7 @@
 <div class="display">
     <div class="kontejner">
 
-        {% if postoji_proizvod() %} 
+        {% if proizvodi %} 
             <div class="red col-12">
                 <div class="blok zadnji">Ime proizvoda</div>
                 <div class="blok col-3">Kategorija</div>
@@ -52,7 +52,7 @@
                 </div>
                 {%if p.opis%}
                 <div class="red">
-                    <div class="blok">
+                    <div class="blok zadnji">
                         {{ p.opis }}
                     </div>
                 </div>
