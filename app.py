@@ -140,7 +140,7 @@ def pregled_korisnika() -> html:
                   FROM user"""
         kursor.execute(upit)
         korisnici = kursor.fetchall()
-        
+
     elif request.method == 'POST':
         if 'izbrisi_korisnika' in request.form:
             korisnik_id = request.form['izbrisi_korisnika']

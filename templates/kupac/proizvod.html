@@ -47,7 +47,7 @@
                 <select class="blok zadnji" id="skladiste_id" name="skladiste_id" required>
                     <option selected disabled>Izaberi magacin</option>
                     {% for skladiste in skladista %}
-                        <option value="{{ skladiste.id }}">{{ skladiste.logisticar_ime }} - {{ skladiste.lokacija }}</option>
+                        <option value="{{ skladiste.id }}">{{ skladiste.logisticar_ime }} - {{ skladiste.lokacija }} ({{skladiste.kolicina_proizvoda}})</option>
                     {% endfor %}
                 </select>
 
