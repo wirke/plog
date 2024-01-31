@@ -500,7 +500,7 @@ def postoji_proizvod(korisnik_id):
         SELECT COUNT(*) AS broj_proizvoda
         FROM proizvod p
         JOIN user u ON p.proizvodjac_id = u.id
-        WHERE proizvodjac_id = %s
+        WHERE p.proizvodjac_id = %s
     """
     kursor.execute(upit, (korisnik_id,))
     rezultat = kursor.fetchone()
