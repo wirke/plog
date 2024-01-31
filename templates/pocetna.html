@@ -10,36 +10,34 @@
               <h1>Email: {{ user_data['email'] }}</h1>
               <h1>Lokacija: {{ user_data['lokacija'] }}</h1>
               <h1>Rola: {{ user_data['rola'] }}</h1>
-            {% else %}
-              <h1>Niste ulogovani.</p>
             {% endif %} 
         </div>
 
         <div class="column">
           {% if user_data['rola'] == 'Kupac' %}
               <div class="blok" style="height: fit-content;">
-                  <h1>Broj porudžbina: {{ ukupno_porudzbina }}</h1>
+                  <h1>Broj porudžbina: {%if ukupno_porudzbina == None%}0{%else%}{{ ukupno_porudzbina }}{%endif%}</h1>
               </div>
               <div class="blok" style="height: fit-content;">
-                  <h1>Neisporučenih: {{ neisporuceno }}</h1>
+                  <h1>Neisporučenih: {%if neisporuceno == None%}0{%else%}{{ neisporuceno }}{%endif%}</h1>
               </div>
           {% elif user_data['rola'] == 'Proizvođač' %}
               <div class="blok" style="height: fit-content;">
-                  <h1>Broj artikala: {{ ukupno_proizvoda }}</h1>
+                  <h1>Broj artikala: {%if ukupno_proizvoda == None%}0{%else%}{{ ukupno_proizvoda }}{%endif%}</h1>
               </div>
               <div class="blok" style="height: fit-content;">
-                  <h1>U ukupno kategorija: {{ ukupno_kategorija }}</h1>
+                  <h1>U ukupno kategorija: {%if ukupno_kategorija == None%}0{%else%}{{ ukupno_kategorija }}{%endif%}</h1>
               </div>
           {% elif user_data['rola'] == 'Logističar' %}
               <div class="blok" style="height: fit-content;">
-                  <h1>Ukupno magacina: {{ ukupno_skladista }}</h1>
+                  <h1>Ukupno magacina: {%if ukupno_skladista == None%}0{%else%}{{ ukupno_skladista }}{%endif%}</h1>
               </div>
               <div class="blok" style="height: fit-content;">
-                  <h1>U ukupno gradova: {{ ukupno_gradova }}</h1>
+                  <h1>U ukupno gradova: {%if ukupno_gradova == None%}0{%else%}{{ ukupno_gradova }}{%endif%}</h1>
               </div>
           {% elif user_data['rola'] == 'Admin' %}
               <div class="blok" style="height: fit-content;">
-                  <h1>Ukupno korisnika: {{ ukupno_korisnika }}</h1>
+                  <h1>Ukupno korisnika: {%if ukupno_korisnika == None%}0{%else%}{{ ukupno_korisnika }}{%endif%}</h1>
               </div>
           {% endif %}
             <a style="height: fit-content; text-decoration:none;" href="{{ url_for('izmena_korisnika') }}">
