@@ -7,6 +7,7 @@
         <form method="GET" action="{{ url_for('porudzbine_korisnik') }}">
 
             <select class="blok col-2" name="isporuceno" id="isporuceno">
+                <option value="" selected>Sve porudzbine</option>
                 <option value="0">Na čekanju</option>
                 <option value="1">Isporučeno</option>
             </select>
@@ -15,7 +16,7 @@
                 <option value="asc">Datum - Stariji</option>
                 <option value="desc">Datum - Noviji</option>
             </select>
-            
+
             <button class="blok col-1" type="submit">Primeni</button>
         </form>
     </div>
@@ -88,9 +89,9 @@
         </div>
         {% endfor %}
         {% else %} 
-        <div class="blok zadnji" style="margin-right: 50px;">
-            <h style="font-size: 50px;">Prazno za sada</h>
-        </div>
+            <div class="blok">
+                <h1>Prazno za sada</h1>
+            </div>
        {% endif %}
     </div>
 </div>

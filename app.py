@@ -159,7 +159,7 @@ def pregled_korisnika() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
 def pocetna() -> html:
-    
+
     korisnik_id = session.get('korisnik_id')
     if session['rola'] == 'Kupac':
 
@@ -173,9 +173,9 @@ def pocetna() -> html:
         ukupno_porudzbina = rezultat['ukupno_porudzbina']
         neisporuceno = rezultat['neisporuceno']
         return render_template("/pocetna.html", ukupno_porudzbina=ukupno_porudzbina, neisporuceno=neisporuceno)
-    
+
     elif session['rola'] == 'Proizvođač':
-        
+
         upit_proizvoda = """
             SELECT COUNT(DISTINCT p.id) AS ukupno_proizvoda, COUNT(DISTINCT p.kategorija) AS ukupno_kategorija
             FROM proizvod p
@@ -382,11 +382,11 @@ def prikazi_magacin(skladiste_id: int) -> html:
 def porudzbine_korisnik() -> html:
     
     korisnik_id = session.get('korisnik_id')
-    isporuceno = request.args.get('isporuceno')
+    isporuceno = request.args.get('isporuceno', '')
     datum = request.args.get('datum', 'desc')
 
     if isporuceno is None:
-        isporuceno = None
+        isporuceno = ''
 
     upit_porudzbina = """
         SELECT p.id AS porudzbina_id, DATE_FORMAT(p.datum, '%d-%m-%Y') AS d_datum, p.kolicina, p.isporuceno, pr.cena, pr.kategorija AS proizvod_kategorija, 
@@ -396,7 +396,7 @@ def porudzbine_korisnik() -> html:
         JOIN proizvod pr ON p.proizvod_id = pr.id
         JOIN user u_proizvodjac ON pr.proizvodjac_id = u_proizvodjac.id
         JOIN skladiste s ON p.skladiste_id = s.id
-        WHERE p.kupac_id = %s AND (p.isporuceno = %s OR %s IS NULL)
+        WHERE p.kupac_id = %s AND (p.isporuceno = %s OR %s = '')
         ORDER BY p.datum {0}
     """.format(datum)
     kursor.execute(upit_porudzbina, (korisnik_id, isporuceno, isporuceno))
