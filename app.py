@@ -234,65 +234,6 @@ def izmena_korisnika():
     konekcija.commit()
     return redirect(url_for('pocetna'))
 #############################################################################
-def izbrisi_proizvod_iz_skladista(proizvod_id:int, skladiste_id:int, kursor, konekcija):
-    upit_brisanja = """
-        DELETE FROM sadrzi
-        WHERE proizvod_id = %s AND skladiste_id = %s
-    """
-    kursor.execute(upit_brisanja, (proizvod_id, skladiste_id))
-    konekcija.commit()
-
-def azuriraj_kolicinu_proizvoda(proizvod_id:int, skladiste_id:int, nova_kolicina, kursor, konekcija):
-    upit_dostupnosti = """
-        SELECT SUM(ps.kolicina) AS popunjenost, s.kapacitet
-        FROM sadrzi ps
-        JOIN skladiste s ON ps.skladiste_id = s.id
-        WHERE ps.skladiste_id = %s
-        GROUP BY s.kapacitet
-    """
-    kursor.execute(upit_dostupnosti, (skladiste_id,))
-    dostupnost = kursor.fetchone()
-
-    if dostupnost:
-        trenutni_kapacitet = dostupnost['kapacitet']
-        trenutna_popunjenost = dostupnost['popunjenost'] or 0
-
-        if nova_kolicina <= trenutni_kapacitet - trenutna_popunjenost:
-            upit_azuriranja = """
-                UPDATE sadrzi
-                SET kolicina = %s
-                WHERE proizvod_id = %s AND skladiste_id = %s
-            """
-            kursor.execute(upit_azuriranja, (nova_kolicina, proizvod_id, skladiste_id))
-            konekcija.commit()
-            print('uspesno')
-            return redirect(url_for('magacin', skladiste_id=skladiste_id)), True
-        else:
-            flash("Nova količina proizvoda premašuje trenutni kapacitet")
-            return redirect(url_for('greska')), False
-
-def azuriraj_kapacitet(skladiste_id:int, nova_vrednost:int, kursor, konekcija):
-    upit_popunjenosti = """
-        SELECT SUM(ps.kolicina) AS popunjenost
-        FROM sadrzi ps
-        WHERE ps.skladiste_id = %s
-    """
-    kursor.execute(upit_popunjenosti, (skladiste_id,))
-    trenutna_popunjenost = kursor.fetchone()['popunjenost'] or 0
-
-    if nova_vrednost >= trenutna_popunjenost:
-        upit_azuriranja = """
-            UPDATE skladiste
-            SET kapacitet = %s
-            WHERE id = %s
-        """
-        kursor.execute(upit_azuriranja, (nova_vrednost, skladiste_id))
-        konekcija.commit()
-        return redirect(url_for('magacin', skladiste_id=skladiste_id)), True
-    else:
-        flash("Uneti kapacitet je manji od trenutne popunjenosti!")
-        return redirect(url_for('greska')), False
-#############################################################################
 @app.route("/kupac/proizvodi", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Kupac'])
@@ -572,6 +513,7 @@ def postoji_proizvod(korisnik_id):
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def proizvod(proizvod_id) -> html:
+    
     if request.method == "POST":
         if 'azuriraj_proizvod' in request.form:
             upit = """UPDATE proizvod
@@ -661,17 +603,30 @@ def pregledaj_porudzbine() -> html:
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
 def moji_magacini() -> html:
 
-    upit = """
-    SELECT s.id, s.ime, s.lokacija, s.kapacitet, SUM(ps.kolicina) AS popunjenost
-    FROM skladiste s
-    LEFT JOIN sadrzi ps ON s.id = ps.skladiste_id
-    WHERE s.logisticar_id = %s
-    GROUP BY s.id
-    """
-    kursor.execute(upit, (session['korisnik_id'],))
-    skladiste = kursor.fetchall()
+    if request.method == 'POST':
+        if 'izbrisi' in request.form:
+            skladiste_id = request.form['izbrisi_magacin']
+            izbrisi_magacin(skladiste_id, kursor, konekcija)
+            return redirect(url_for('magacin', skladiste_id=skladiste_id))
+
+    if request.method == 'GET':
+        upit = """
+        SELECT s.id, s.ime, s.lokacija, s.kapacitet, SUM(ps.kolicina) AS popunjenost
+        FROM skladiste s
+        LEFT JOIN sadrzi ps ON s.id = ps.skladiste_id
+        WHERE s.logisticar_id = %s
+        GROUP BY s.id
+        """
+        kursor.execute(upit, (session['korisnik_id'],))
+        skladiste = kursor.fetchall()
 
     return render_template("/logisticar/moji-magacini.html", skladiste=skladiste)
+
+def izbrisi_magacin(skladiste_id:int, kursor, konekcija):
+    obrisi_skladiste = """DELETE FROM skladiste s WHERE s.id=%s"""
+    kursor.execute(obrisi_skladiste, (skladiste_id,))
+    konekcija.commit()
+    return redirect(url_for('magacin', skladiste_id=skladiste_id))
 
 @app.route("/logisticar/novi-magacin", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -719,17 +674,82 @@ def magacin(skladiste_id: int) -> html:
         if 'azuriraj_kapacitet' in request.form:
             nova_vrednost = int(request.form['nova_vrednost'])
             azuriraj_kapacitet(skladiste_id, nova_vrednost, kursor, konekcija)
+            return redirect(url_for('magacin', skladiste_id=skladiste_id))
 
         elif 'izbrisi_proizvod' in request.form:
             proizvod_id = request.form['izbrisi_proizvod']
             izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id, kursor, konekcija)
+            return redirect(url_for('magacin', skladiste_id=skladiste_id))
 
         elif 'izmeni_kolicinu' in request.form:
             proizvod_id_za_izmenu = int(request.form['proizvod_id'])
             nova_kolicina = int(request.form['nova_kolicina'])
             azuriraj_kolicinu_proizvoda(proizvod_id_za_izmenu, skladiste_id, nova_kolicina, kursor, konekcija)
+            return redirect(url_for('magacin', skladiste_id=skladiste_id))
+        else:
+            flash('Kako si uspeo da dobijes ovu poruku?')
+            return redirect(url_for('greska'))
 
     return render_template("/logisticar/magacin.html", skladiste=skladiste, proizvodi=proizvodi)
+
+def azuriraj_kolicinu_proizvoda(proizvod_id:int, skladiste_id:int, nova_kolicina, kursor, konekcija):
+    upit_dostupnosti = """
+        SELECT SUM(ps.kolicina) AS popunjenost, s.kapacitet
+        FROM sadrzi ps
+        JOIN skladiste s ON ps.skladiste_id = s.id
+        WHERE ps.skladiste_id = %s
+        GROUP BY s.kapacitet
+    """
+    kursor.execute(upit_dostupnosti, (skladiste_id,))
+    dostupnost = kursor.fetchone()
+
+    if dostupnost:
+        trenutni_kapacitet = dostupnost['kapacitet']
+        trenutna_popunjenost = dostupnost['popunjenost']
+
+        if nova_kolicina <= trenutni_kapacitet - trenutna_popunjenost:
+            upit_azuriranja = """
+                UPDATE sadrzi
+                SET kolicina = %s
+                WHERE proizvod_id = %s AND skladiste_id = %s
+            """
+            kursor.execute(upit_azuriranja, (nova_kolicina, proizvod_id, skladiste_id))
+            konekcija.commit()
+            print('uspesno')
+            return redirect(url_for('magacin', skladiste_id=skladiste_id)), True
+        else:
+            flash("Nova količina proizvoda premašuje trenutni kapacitet")
+            return redirect(url_for('greska'))
+
+def izbrisi_proizvod_iz_skladista(proizvod_id:int, skladiste_id:int, kursor, konekcija):
+    upit_brisanja = """
+        DELETE FROM sadrzi
+        WHERE proizvod_id = %s AND skladiste_id = %s
+    """
+    kursor.execute(upit_brisanja, (proizvod_id, skladiste_id))
+    konekcija.commit()
+
+def azuriraj_kapacitet(skladiste_id:int, nova_vrednost:int, kursor, konekcija):
+    upit_popunjenosti = """
+        SELECT SUM(ps.kolicina) AS popunjenost
+        FROM sadrzi ps
+        WHERE ps.skladiste_id = %s
+    """
+    kursor.execute(upit_popunjenosti, (skladiste_id,))
+    trenutna_popunjenost = kursor.fetchone()['popunjenost'] or 0
+
+    if nova_vrednost >= trenutna_popunjenost:
+        upit_azuriranja = """
+            UPDATE skladiste
+            SET kapacitet = %s
+            WHERE id = %s
+        """
+        kursor.execute(upit_azuriranja, (nova_vrednost, skladiste_id))
+        konekcija.commit()
+        return redirect(url_for('magacin', skladiste_id=skladiste_id))
+    else:
+        flash("Uneti kapacitet je manji od trenutne popunjenosti!")
+        return redirect(url_for('greska'))
 
 @app.route("/logisticar/brisanje-skladista/<int:id>", methods=['GET', 'POST'])
 @zahteva_ulogovanje

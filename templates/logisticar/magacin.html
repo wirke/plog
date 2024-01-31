@@ -7,8 +7,9 @@
         <div class="red col-12">
             <div class="blok zadnji">Ime skladista </div>
             <div class="blok zadnji">Lokacija skladista</div>
-            <div class="blok col-1">Popunjenost</div>
-                <div class="red zadnji">
+            <div class="blok col-1">Zauzeto</div>
+            <div class="blok col-1">Dostupno</div>
+                <div class="red">
                     <div class="blok zadnji">Kapacitet</div>
                     <div class="blok1 sabmit" style="width:fit-content;">
                     <i class="fa-solid fa-pen ikonica" style="color: #ff8a5b;"></i>
@@ -24,10 +25,12 @@
             <div class="blok zadnji">{{ skladiste.ime }}</div>
             <div class="blok zadnji">{{ skladiste.lokacija }}</div>
             <div class="blok col-1">{% if skladiste.popunjenost == None %}Prazan{% else %}{{ skladiste.popunjenost }}{% endif %}</div>
+            <div class="blok col-1">{{ skladiste.kapacitet - skladiste.popunjenost }}</div>
         
             <form action="{{ url_for('magacin', skladiste_id=skladiste.id) }}" method="post" class="red zadnji">
 
-                <input class="blok zadnji" name="nova_vrednost" id="nova_vrednost" value="{{ skladiste.kapacitet }}">
+                <input class="blok zadnji" name="nova_vrednost" id="nova_vrednost" min="{{ skladiste.popunjenost }}" max="100000"
+                oninvalid="this.setCustomValidity('Uneta kolicina je manja od trenutnog stanja')" value="{{ skladiste.kapacitet }}">
 
                 <button class="blok2" type="submit" name="azuriraj_kapacitet">
                     <i class="fa-solid fa-pen ikonica" style="color: #fff;"></i>
@@ -55,8 +58,10 @@
             <div class="blok zadnji">{{ p.proizvodjac_ime }}</div>
 
             <form action="{{ url_for('magacin', skladiste_id=skladiste.id) }}" method="post" class="red">
-                <input class="blok" id="nova_kolicina" min="1" name="nova_kolicina" value="{{ p.kolicina }}" type="number">
-                <button class="blok2 sabmit" type="submit" name="azuriraj_kolicinu_proizvoda">
+                <input class="blok zadnji" id="nova_kolicina" name="nova_kolicina" min="0" max="{{ skladiste.kapacitet - skladiste.popunjenost }}"
+                oninvalid="this.setCustomValidity('Uneta kolicina je veca od dostupne')"  value="{{ p.kolicina }}" type="number">
+                <input name="proizvod_id" type="number" value="{{p.id}}" hidden>
+                <button class="blok2" type="submit" name="izmeni_kolicinu">
                     <i class="fa-solid fa-pen ikonica" style="color: #fff;"></i>
                 </button>
             </form>
