@@ -13,7 +13,7 @@
                 <button class="blok1 sabmit">
                     <i class="fa-solid fa-eye ikonica" style="color:#ff8a5b;"></i>
                 </button>
-                <button class="blok1 sabmit" type="submit">
+                <button class="blok1 sabmit">
                     <i class="fa-solid fa-trash ikonica" style="color: #ff8a5b;"></i>
                 </button>
                 </div>
@@ -43,11 +43,29 @@
                                 <i class="fa-solid fa-eye" style="color:#fff;"></i>
                             </button>
                         </form>
-                        <form style="margin-left: 10px" method="POST" action="{{ url_for('brisanje_proizvoda', proizvod_id=p.id) }}">
-                            <button class="blok2 sabmit" type="submit">
-                                <i class="fa-solid fa-trash" style="color: #fff;"></i>
-                            </button>
-                        </form>
+                        <button class="blok2" data-bs-toggle="modal" data-bs-target="#brisanjeModal{{p.id}}">
+                            <i class="ikonica fa-solid fa-trash ikonica" style="color: #fff;"></i>
+                        </button>
+                        <!-- Modal -->
+            <div class="modal" tabindex="-1" id="brisanjeModal{{p.id}}">
+                <div class="modal-dialog modal-dialog-centered" data-bs-backdrop="static">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Upozorenje</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
+                    </div>
+                    <div class="modal-body">
+                      <p>Da li ste sigurni da zelite da obrisete proizvod {{p.ime}}?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="POST" action="{{ url_for('brisanje_proizvoda', proizvod_id=p.id) }}">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                      <button type="submit" class="btn btn-danger">Obriši</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
                     </div>
                 </div>
                 {%if p.opis%}
@@ -65,9 +83,11 @@
         {% endfor %}
 
         {% else %}
-            <div class="blok zadnji" style="margin-right: 15px;">
-                <h style="font-size: 50px;">Prazno za sada</h>
+        <div class="kontejner">
+            <div class="blok">
+                <h1>Trenutno nemate proizvode</h1>
             </div>
+        </div>
         {% endif %} 
 
     </div>

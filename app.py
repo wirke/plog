@@ -517,13 +517,13 @@ def proizvod(proizvod_id) -> html:
     if request.method == "POST":
         if 'azuriraj_proizvod' in request.form:
             upit = """UPDATE proizvod
-            SET ime= %s, kategorija= %s, cena= %s, kolicina = %s
+            SET ime= %s, kategorija= %s, cena= %s, opis = %s
             WHERE id = %s
             """
-            vrednosti = (request.form['prIme'], request.form['prKategorija'],request.form['prCena'],request.form['prKolicina'], proizvod_id)
+            vrednosti = (request.form['prIme'], request.form['prKategorija'],request.form['prCena'],request.form['prOpis'], proizvod_id)
             kursor.execute(upit, vrednosti)
             konekcija.commit()
-            return redirect(url_for('porudzbine_proizvoda'))
+            return redirect(url_for('moji_proizvodi'))
         elif 'dodavanje' in request.form:
             upit = """INSERT INTO
             sadrzi (proizvod_id, skladiste_id, kolicina)
@@ -531,9 +531,9 @@ def proizvod(proizvod_id) -> html:
             """
             kursor.execute(upit, (proizvod_id, request.form.get('izabrano_skl'), request.form.get('quantity'),))
             konekcija.commit()
-            return redirect(url_for('porudzbine_proizvoda'))
+            return redirect(url_for('pregledaj_magacine'))
         
-    upit_pr= """SELECT p.id, p.ime, p.kategorija, p.cena, p.kolicina
+    upit_pr= """SELECT p.id, p.ime, p.kategorija, p.cena, p.opis
     FROM proizvod p
     WHERE p.id = %s
     """

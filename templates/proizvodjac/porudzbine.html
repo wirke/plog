@@ -3,6 +3,7 @@
 {% block content %}
 <div class="display">
     <div class="kontejner">
+        {% if porudzbine %}
         <div class="red col-12">
             <div class="blok col-1">
                 Kolicina
@@ -52,6 +53,13 @@
             </div>
         </div>
         {% endfor %}
+        {% else %}
+        <div class="kontejner">
+            <div class="blok">
+                <h1>Trenutno nema dostupnih porudžbina</h1>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
