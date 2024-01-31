@@ -25,7 +25,7 @@
             <div class="blok zadnji">{{ skladiste.ime }}</div>
             <div class="blok zadnji">{{ skladiste.lokacija }}</div>
             <div class="blok col-1">{% if skladiste.popunjenost == None %}Prazan{% else %}{{ skladiste.popunjenost }}{% endif %}</div>
-            <div class="blok col-1">{{ skladiste.kapacitet - skladiste.popunjenost }}</div>
+            <div class="blok col-1">{%if skladiste.popunjenost == None%}{{skladiste.kapacitet}}{%else%}{{ skladiste.kapacitet - skladiste.popunjenost }}{%endif%}</div>
         
             <form action="{{ url_for('magacin', skladiste_id=skladiste.id) }}" method="post" class="red zadnji">
 

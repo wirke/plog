@@ -48,14 +48,13 @@
             </div>
 
             <div style="margin-right: 15px;">
-                <form method="POST" action="{{ url_for('moji_magacini', skladiste_id=s.id ) }}">
-                    <input hidden name="izbrisi_magacin" value="s.id">
-                    <button class="blok2 zadnji" name="izbrisi_magacin" type="submit">
+                <form method="POST" action="{{ url_for('brisanje_magacina', id=s.id) }}">
+                    <button class="blok2 zadnji" name="izbrisi" type="submit">
                         <i class="fa-solid fa-trash" style="color: #fff;"></i>
                     </button>
-                </form>
-            </div>
-            
+                </form>                               
+            </div>            
+
         </div>
     {% endfor %}
     </div>

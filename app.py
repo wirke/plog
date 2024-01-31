@@ -598,36 +598,6 @@ def pregledaj_porudzbine() -> html:
     porudzbine = kursor.fetchall()
     return render_template("/proizvodjac/porudzbine.html", porudzbine=porudzbine)
 #############################################################################
-@app.route("/logisticar/moji-magacini", methods=['GET', 'POST'])
-@zahteva_ulogovanje
-@zahteva_dozvolu(roles=['Admin', 'Logističar'])
-def moji_magacini() -> html:
-
-    if request.method == 'POST':
-        if 'izbrisi' in request.form:
-            skladiste_id = request.form['izbrisi_magacin']
-            izbrisi_magacin(skladiste_id, kursor, konekcija)
-            return redirect(url_for('magacin', skladiste_id=skladiste_id))
-
-    if request.method == 'GET':
-        upit = """
-        SELECT s.id, s.ime, s.lokacija, s.kapacitet, SUM(ps.kolicina) AS popunjenost
-        FROM skladiste s
-        LEFT JOIN sadrzi ps ON s.id = ps.skladiste_id
-        WHERE s.logisticar_id = %s
-        GROUP BY s.id
-        """
-        kursor.execute(upit, (session['korisnik_id'],))
-        skladiste = kursor.fetchall()
-
-    return render_template("/logisticar/moji-magacini.html", skladiste=skladiste)
-
-def izbrisi_magacin(skladiste_id:int, kursor, konekcija):
-    obrisi_skladiste = """DELETE FROM skladiste s WHERE s.id=%s"""
-    kursor.execute(obrisi_skladiste, (skladiste_id,))
-    konekcija.commit()
-    return redirect(url_for('magacin', skladiste_id=skladiste_id))
-
 @app.route("/logisticar/novi-magacin", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
@@ -644,12 +614,49 @@ def novi_magacin() -> html:
         kursor.execute(upit, forma)
         konekcija.commit()
         return redirect(url_for("novi_magacin"))
-    
-@app.route("/logisticar/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
+
+@app.route("/logisticar/moji-magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Logističar'])
-def magacin(skladiste_id: int) -> html:
+def moji_magacini() -> html:
+
+    if request.method == 'POST':
+        if 'izbrisi' in request.form:
+            skladiste_id = request.form['izbrisi_magacin']
+            brisanje_magacina(skladiste_id, kursor, konekcija)
+            return redirect(url_for('magacin', skladiste_id=skladiste_id))
+
+    if request.method == 'GET':
+        upit = """
+        SELECT s.id, s.ime, s.lokacija, s.kapacitet, SUM(ps.kolicina) AS popunjenost
+        FROM skladiste s
+        LEFT JOIN sadrzi ps ON s.id = ps.skladiste_id
+        WHERE s.logisticar_id = %s
+        GROUP BY s.id
+        """
+        kursor.execute(upit, (session['korisnik_id'],))
+        skladiste = kursor.fetchall()
+
+    return render_template("/logisticar/moji-magacini.html", skladiste=skladiste)
+
+@app.route("/logisticar/brisanje-skladista/<int:id>", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Logističar'])
+def brisanje_magacina(id) -> html:
     
+    upit = """
+    DELETE FROM skladiste
+    WHERE id = %s
+    """
+    kursor.execute(upit, (id,))
+    konekcija.commit()
+    return redirect(url_for('moji_magacini'))
+
+@app.route("/logisticar/magacin/<int:skladiste_id>", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Logističar'])
+def magacin(skladiste_id: int) -> html:
+
     upit_skladiste = """
         SELECT s.id, s.ime, s.kapacitet, s.lokacija, u.ime AS logisticar_ime, SUM(ps.kolicina) AS popunjenost
         FROM skladiste s
@@ -659,7 +666,7 @@ def magacin(skladiste_id: int) -> html:
     """
     kursor.execute(upit_skladiste, (skladiste_id,))
     skladiste = kursor.fetchone()
-
+        
     upit_proizvoda = """
         SELECT p.id, p.ime, p.kategorija, p.cena, ps.kolicina, u.ime AS proizvodjac_ime
         FROM proizvod p
@@ -686,11 +693,8 @@ def magacin(skladiste_id: int) -> html:
             nova_kolicina = int(request.form['nova_kolicina'])
             azuriraj_kolicinu_proizvoda(proizvod_id_za_izmenu, skladiste_id, nova_kolicina, kursor, konekcija)
             return redirect(url_for('magacin', skladiste_id=skladiste_id))
-        else:
-            flash('Kako si uspeo da dobijes ovu poruku?')
-            return redirect(url_for('greska'))
 
-    return render_template("/logisticar/magacin.html", skladiste=skladiste, proizvodi=proizvodi)
+    return render_template("/logisticar/magacin.html", skladiste_id=skladiste_id, skladiste=skladiste, proizvodi=proizvodi)
 
 def azuriraj_kolicinu_proizvoda(proizvod_id:int, skladiste_id:int, nova_kolicina, kursor, konekcija):
     upit_dostupnosti = """
@@ -751,20 +755,9 @@ def azuriraj_kapacitet(skladiste_id:int, nova_vrednost:int, kursor, konekcija):
         flash("Uneti kapacitet je manji od trenutne popunjenosti!")
         return redirect(url_for('greska'))
 
-@app.route("/logisticar/brisanje-skladista/<int:id>", methods=['GET', 'POST'])
-@zahteva_ulogovanje
-@zahteva_dozvolu(roles=['Admin', 'Logističar'])
-def brisanje_magacina(id) -> html:
-    upit = """
-    DELETE FROM skladiste
-    WHERE id = %s
-    """
-    kursor.execute(upit, (id,))
-    return redirect(url_for('porudzbine_proizvoda'))
-
 @app.route("/logisticar/porudzbine", methods=['GET', 'POST'])
 @zahteva_ulogovanje
-@zahteva_dozvolu(roles=['Admin', 'Logističar'])
+@zahteva_dozvolu(roles=['Logističar'])
 def porudzbina_magacin():
     korisnik_id = session.get('korisnik_id')
     isporuceno = request.args.get('isporuceno')
@@ -793,6 +786,7 @@ def porudzbina_magacin():
 
 @app.route("/logisticar/isporuci/<int:porudzbina_id>", methods=['POST'])
 def isporuci(porudzbina_id):
+    
     isporuceno = request.form.get('isporuceno')
     upit_azuriranja = """
     UPDATE porudzbina
