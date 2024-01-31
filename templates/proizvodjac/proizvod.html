@@ -54,15 +54,15 @@
                 <i class="fa-solid fa-plus ikonica" style="color: #fff;"></i>
             </button>
         <div class="col-2 vlaga">
-            <select class="magacin-select blok" name="izabrano_skl">
+            <select class="magacin-select blok" name="izabrano_skl" required>
                 <option selected disabled>Dodajte u magacin</option>
                 {% for skl in sva_skladista %}
                 <option value="{{skl.id}}"> {{skl.ime}}({{skl.kapacitet}}/{{skl.lokacija}})</option>
                 {% endfor %}
             </select>
         </div>
-            <div class="blok col-2" style="margin-inline: 180px;">
-                    <input id="form1" min="1" name="quantity"  type="number">
+            <div class="blok col-2" style="margin-inline: 2%;">
+                    <input id="form1" min="1" name="quantity" type="number" required>
             </div>
         </form>
     
