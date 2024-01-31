@@ -38,14 +38,12 @@
                 <div class="blok col-1">Broj.porudzbina</div>
             {% endif %}
 
-            <form method="POST" action="{{ url_for('pregled_korisnika') }}">
-                <button class="blok2" name="izbrisi_korisnika" value="{{ k.id }}" data-bs-toggle="modal" data-bs-target="#brisanjeModal">
-                    <i class="ikonica fa-solid fa-trash ikonica" style="color: #fff;"></i>
-                </button>
-            </form>
-            <!-- NAMESTI OVO JER PETRE, MODAL NI NE STIGNE NISTA DA URADI JER SI KAKA!!!! UPISAJ SE!!-->
-            <!-- Modal -->
-            <div class="modal" tabindex="-1" id="brisanjeModal">
+            <button class="blok2" data-bs-toggle="modal" data-bs-target="#brisanjeModal{{k.id}}">
+                <i class="ikonica fa-solid fa-trash ikonica" style="color: #fff;"></i>
+            </button>
+
+                <!-- Modal -->
+            <div class="modal" tabindex="-1" id="brisanjeModal{{k.id}}">
                 <div class="modal-dialog modal-dialog-centered" data-bs-backdrop="static">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -53,18 +51,21 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
                     </div>
                     <div class="modal-body">
-                      <p>Idi nazad ako si pametan 🤠.</p>
+                      <p>Da li ste sigurni da zelite da obrisete korisnika {{k.ime}}?</p>
                     </div>
                     <div class="modal-footer">
+                        <form method="POST" action="{{ url_for('pregled_korisnika') }}">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
-                      <a href="#" role="button" class="btn btn-danger">Obriši</a>
+                      <button type="submit" class="btn btn-danger" name="izbrisi_korisnika" value="{{ k.id }}">Obriši</button>
+                      </form>
                     </div>
                   </div>
                 </div>
               </div>
               <!-- Kraj modala -->
-
         </div>
         {% endif %}
     {% endfor %}
+    </div>
+    </div>
 {% endblock %}
