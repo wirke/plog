@@ -613,7 +613,7 @@ def novi_magacin() -> html:
         forma = (session['korisnik_id'], request.form['magacinNaziv'], request.form['magacinKapacitet'], request.form['magacinLokacija'])
         kursor.execute(upit, forma)
         konekcija.commit()
-        return redirect(url_for("novi_magacin"))
+        return redirect(url_for("moji_magacini"))
 
 @app.route("/logisticar/moji-magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
