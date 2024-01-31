@@ -22,6 +22,7 @@
 
     <div class="kontejner">
         <div class="pozadina" style="margin-right: 0px; margin-bottom: 0px;">
+            {% if proizvodi %}
             {% for p in proizvodi %}
         <div class="red col-12">
             <div class="blok col-3">
@@ -37,6 +38,13 @@
             </div>
         </div>
         {% endfor %}
+        {% else %}
+        <div class="kontejner">
+            <div class="blok">
+                <h1>Trenutno nemate proizvode u skladištu</h1>
+            </div>
+        </div>
+        {% endif %}
     </div>
     </div>
 </div>
