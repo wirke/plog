@@ -6,10 +6,10 @@
         {% if skladiste %}
         <div class="red col-12">
             <div class="blok col-4">
-                Ime skladista 
+                Ime skladišta 
             </div>
             <div class="blok col-4">
-                Lokacija skladista
+                Lokacija skladišta
             </div>
             <div class="blok zadnji">
                 Kapacitet
@@ -59,7 +59,7 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
                     </div>
                     <div class="modal-body">
-                      <p>Da li ste sigurni da zelite da obrisete skladiste {{s.ime}}?</p>
+                      <p>Da li ste sigurni da želite da obrišete skladiste {{s.ime}}?</p>
                     </div>
                     <div class="modal-footer">
                         <form method="POST" name="izbrisi" action="{{ url_for('brisanje_magacina', id=s.id) }}">

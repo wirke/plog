@@ -9,7 +9,6 @@
             <div class="blok zadnji">Ime korisnika</div>
             <div class="blok col-1">Rola</div>
             <div class="blok zadnji">Lokacija</div>
-            <div class="blok col-1">Funkcija</div>
 
             <form>
                 <button class="blok1" type="submit">
@@ -30,14 +29,6 @@
             <div class="blok col-1">{{k.rola}}</div>
             <div class="blok zadnji">{{k.lokacija}}</div>
 
-            {% if k.rola == 'Proizvođač' %}
-                <div class="blok col-1">Broj.proizvoda</div>
-            {% elif k.rola == 'Logističar' %}
-                <div class="blok col-1">Broj.magacina</div>
-            {% elif k.rola == 'Kupac' %}
-                <div class="blok col-1">Broj.porudzbina</div>
-            {% endif %}
-
             <button class="blok2" data-bs-toggle="modal" data-bs-target="#brisanjeModal{{k.id}}">
                 <i class="ikonica fa-solid fa-trash ikonica" style="color: #fff;"></i>
             </button>
@@ -51,7 +42,7 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
                     </div>
                     <div class="modal-body">
-                      <p>Da li ste sigurni da zelite da obrisete korisnika {{k.ime}}?</p>
+                      <p>Da li ste sigurni da želite da obrišete korisnika {{k.ime}}?</p>
                     </div>
                     <div class="modal-footer">
                         <form method="POST" action="{{ url_for('pregled_korisnika') }}">

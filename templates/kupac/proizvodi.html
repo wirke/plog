@@ -14,7 +14,7 @@
             </select>
 
             <select class="blok col-3" name="proizvodjac" id="proizvodjac">
-                <option value="">Svi proizvodjaci</option>
+                <option value="">Svi proizvođači</option>
                 {% for proizvodjac in svi_proizvodjaci %}
                     <option value="{{ proizvodjac.id }}">{{ proizvodjac.ime }}</option>
                 {% endfor %}
@@ -36,7 +36,7 @@
                 Naziv
             </div>
             <div class="blok col-3">
-                Proizvodljac
+                Proizvođač
             </div>
             <div class="blok col-3">
                 Kategorija
