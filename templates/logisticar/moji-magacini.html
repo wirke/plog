@@ -3,7 +3,7 @@
 {% block content %}
 <div class="display">
     <div class="kontejner">
-        
+        {% if skladiste %}
         <div class="red col-12">
             <div class="blok col-4">
                 Ime skladista 
@@ -62,7 +62,7 @@
                       <p>Da li ste sigurni da zelite da obrisete skladiste {{s.ime}}?</p>
                     </div>
                     <div class="modal-footer">
-                        <form method="POST" name="izbrisi">
+                        <form method="POST" name="izbrisi" action="{{ url_for('brisanje_magacina', id=s.id) }}">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
                       <button type="submit" class="btn btn-danger" name="izbrisi_magacin" value="{{ s.id }}">Obriši</button>
                       </form>
@@ -71,16 +71,15 @@
                 </div>
               </div>
               <!-- Kraj modala -->
-            <!--<div style="margin-right: 15px;">
-                <form method="POST" action="{{ url_for('brisanje_magacina', id=s.id) }}">
-                    <button class="blok2 zadnji" name="izbrisi" type="submit">
-                        <i class="fa-solid fa-trash" style="color: #fff;"></i>
-                    </button>
-                </form>                               
-            </div>      -->      
-
         </div>
     {% endfor %}
+    {% else %}
+    <div class="kontejner">
+        <div class="blok">
+            <h1>Prazno za sada</h1>
+        </div>
+    </div>
+    {% endif %}
     </div>
 </div>
 {% endblock %}
