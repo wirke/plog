@@ -42,9 +42,11 @@
                   <h1>Ukupno korisnika: {{ ukupno_korisnika }}</h1>
               </div>
           {% endif %}
-          <div class="blok" style="height: fit-content;">
-            <a style="text-decoration:none;" href="{{ url_for('izmena_korisnika') }}"><h1>Izmeni nalog</h1></a>
-          </div>
+            <a style="height: fit-content; text-decoration:none;" href="{{ url_for('izmena_korisnika') }}">
+                <div class="blok2">
+                    <h1 style="color:#fff">Izmeni nalog</h1>
+                </div>
+            </a>
         </div>
       </div>
     </div>

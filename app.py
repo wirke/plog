@@ -66,7 +66,7 @@ def zahteva_ulogovanje(f):
 @app.errorhandler(404)
 def not_found(error):
     flash('Nepostojeća stranica!')
-    return redirect(url_for('greska')), 404
+    return redirect(url_for('greska'))
 
 @app.route("/greska", methods=['GET', 'POST'])
 def greska():
@@ -215,22 +215,33 @@ def pocetna() -> html:
     else:
         flash('KAKO?')
         return render_template("/greska.html")
-    
+#############################################################################
 @app.route("/izmena-naloga", methods=["GET","POST"])
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
 def izmena_korisnika():
+    
     if request.method == "GET":
         return render_template("/izmeni_korisnika.html")
     
+    stara_sifra = request.form.get('pwPolje')
+    novi_password = request.form.get('pwNoviPolje')
+
+    upit_stare_sifre = "SELECT sifra FROM user WHERE id = %s"
+    kursor.execute(upit_stare_sifre, (session['korisnik_id'],))
+    rezultat = kursor.fetchone()
+
+    if not rezultat or not bcrypt.check_password_hash(rezultat['sifra'], stara_sifra):
+        flash("Uneli ste pogrešnu šifru!")
+        return redirect(url_for('greska'))
+
     upit = """UPDATE user
-        SET ime= %s, sifra= %s, lokacija = %s
+        SET ime = %s, sifra = %s, lokacija = %s
         WHERE id = %s
     """
-    password = request.form.get('pwNoviPolje')
-    pw_hash = bcrypt.generate_password_hash(password)
+    pw_hash = bcrypt.generate_password_hash(novi_password)
     forma = (request.form['imePolje'], pw_hash, request.form['lokacijaPolje'], session['korisnik_id'])
-    kursor.execute(upit,forma)
+    kursor.execute(upit, forma)
     konekcija.commit()
     return redirect(url_for('pocetna'))
 #############################################################################
