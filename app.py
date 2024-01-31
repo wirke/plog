@@ -624,7 +624,7 @@ def novi_magacin() -> html:
         forma = (session['korisnik_id'], request.form['magacinNaziv'], request.form['magacinKapacitet'], request.form['magacinLokacija'])
         kursor.execute(upit, forma)
         konekcija.commit()
-        return redirect(url_for("novi_magacin"))
+        return redirect(url_for("moji_magacini"))
 
 @app.route("/logisticar/moji-magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje
@@ -637,16 +637,15 @@ def moji_magacini() -> html:
             brisanje_magacina(skladiste_id, kursor, konekcija)
             return redirect(url_for('magacin', skladiste_id=skladiste_id))
 
-    if request.method == 'GET':
-        upit = """
-        SELECT s.id, s.ime, s.lokacija, s.kapacitet, SUM(ps.kolicina) AS popunjenost
-        FROM skladiste s
-        LEFT JOIN sadrzi ps ON s.id = ps.skladiste_id
-        WHERE s.logisticar_id = %s
-        GROUP BY s.id
-        """
-        kursor.execute(upit, (session['korisnik_id'],))
-        skladiste = kursor.fetchall()
+    upit = """
+    SELECT s.id, s.ime, s.lokacija, s.kapacitet, SUM(ps.kolicina) AS popunjenost
+    FROM skladiste s
+    LEFT JOIN sadrzi ps ON s.id = ps.skladiste_id
+    WHERE s.logisticar_id = %s
+    GROUP BY s.id
+    """
+    kursor.execute(upit, (session['korisnik_id'],))
+    skladiste = kursor.fetchall()
 
     return render_template("/logisticar/moji-magacini.html", skladiste=skladiste)
 
