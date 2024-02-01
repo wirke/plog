@@ -17,7 +17,7 @@
             <button class="blok col-1" type="submit">Primeni</button>
         </form>
     </div>
-
+    {% if skladiste %}
     <div class="kontejner">
 
         <div class="red col-12" style="padding-right: 15px;">
@@ -63,5 +63,12 @@
             </div>
         </form>
         {% endfor %}
-</div>
+    </div>
+    {% else %}
+    <div class="kontejner">
+        <div class="blok">
+            <h1>Prazno za sada</h1>
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}

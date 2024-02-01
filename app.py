@@ -1,9 +1,11 @@
-from flask import Flask, render_template, url_for, request, redirect, session, abort, flash
+from flask import Flask, render_template, url_for, request, redirect, session, flash, Response
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 from functools import wraps
 import mysql.connector
 import html
+import io
+import csv
 #############################################################################
 konekcija = mysql.connector.connect(
     passwd='',
@@ -154,6 +156,32 @@ def pregled_korisnika() -> html:
             return redirect(url_for('pregled_korisnika'))
         
     return render_template("/admin/korisnici.html", korisnici=korisnici)
+
+@app.route("/admin/export/<tip>")
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin'])
+def export(tip):
+    switch = {
+        "skladiste": "SELECT * FROM skladiste",
+        "proizvod": "SELECT * FROM proizvod",
+        "porudzbina": "SELECT * FROM porudzbina",
+    }
+    upit = switch.get(tip)
+    kursor.execute(upit)
+    rezultat = kursor.fetchall()
+    output = io.StringIO()
+    writer = csv.writer(output)
+    for row in rezultat:
+        red = []
+        for value in row.values():
+            red.append(str(value))
+        writer.writerow(red)
+
+    output.seek(0)
+    return Response(
+        output,
+        mimetype="text/csv", headers={"Content-Disposition": "attachment;filename=" + tip + ".csv"},
+    )
 #############################################################################
 @app.route("/pocetna", methods=['GET', 'POST'])
 @zahteva_ulogovanje
