@@ -39,15 +39,19 @@
       {% for sk in skladiste %}
         <div class="red col-12">
 
-          <button class="blok2">
-            <i class="fa-solid fa-trash ikonica" style="color: #fff;"></i>
-          </button>
+          <form method="POST" action="{{ url_for('proizvod', proizvod_id = proizvod.id, skladiste_id=sk.id) }}">
+            <button class="blok2" name='brisanje_iz_skladista'>
+              <i class="fa-solid fa-trash ikonica"  style="color: #fff;"></i>
+            </button>
+            <input hidden name="skladiste_id" value="{{sk.id}}">
+          </form>
 
           <div class="blok col-3">{{ sk.ime }}</div>
 
           <div class="blok col-3">{{ sk.lokacija }}</div>
 
           <div class="blok col-3">{{ sk.kapacitet }}</div>
+
         </div>
       {% endfor %}
       <form method="POST" action="{{ url_for('proizvod', proizvod_id = proizvod.id) }}" style="margin-right: 15px;" class="red col-12">
@@ -61,8 +65,7 @@
             <option value="{{ skl.id }}">{{ skl.ime }}{{ skl.lokacija }}({{ skl.dostupni_kapacitet }})</option>
           {% endfor %}
         </select>
-        <div class="blok">Količina:</div>
-        <input class="blok" id="form1" min="1" name="kolicina" type="number" style="width: 310px;" required>
+        <input class="blok" id="form1" min="0" placeholder="Kolicina" name="kolicina" type="number" style="width: 310px;" required>
       </form>
     </div>
   </div>
