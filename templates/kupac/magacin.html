@@ -56,6 +56,7 @@
             </div>
         </div>
 
+        {%if proizvodi%}
         <div style="margin-left: 15px; margin-bottom: -15px;">
             <hr class="zubor">
          </div>
@@ -84,6 +85,9 @@
             </div>
         </div>
         {% endfor %}
+        {%else%}
+        
+        {%endif%}
     </div>
 </div>
 {% endblock %}

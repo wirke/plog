@@ -470,6 +470,9 @@ def poruci_proizvod(proizvod_id):
         trenutna_kolicina = kursor.fetchone()
 
         if trenutna_kolicina and int(kolicina) <= trenutna_kolicina['kolicina']:
+            if skladiste_id == None:
+                flash('Molimo izaberite magacin')
+                return redirect(url_for('greska'))
             dodaj_porudzbinu = """
             INSERT INTO porudzbina (datum, kolicina, isporuceno, napomena, kupac_id, proizvod_id, skladiste_id)
             VALUES (CURDATE(), %s, 0, %s, %s, %s, %s)
@@ -484,10 +487,11 @@ def poruci_proizvod(proizvod_id):
 
             return redirect(url_for('porudzbine_korisnik'))
         else:
-            flash('Niste popunili sve parametre!')
+            flash('Trenutno nema toliko proizvoda na stanju')
             return redirect(url_for('greska'))
     else:
-        return redirect(url_for('greska', poruka='Proizvod nije dostupan!'))
+        flash('Proizvod nije dostupan!')
+        return redirect(url_for('greska'))
 #############################################################################
 @app.route("/proizvodjac/novi-proizvod", methods=['GET', 'POST'])
 @zahteva_ulogovanje

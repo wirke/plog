@@ -12,20 +12,23 @@
 
             <div class="column">
                 {% for proizvod in proizvod %}
-            <form action="{{ url_for('poruci_proizvod', proizvod_id = proizvod.id) }}" required method="post">
-                <div  style="margin-right: 15px;">
-                    <div class="red">
-                        <div class="blok zadnji">
-                            {{ proizvod.ime }} - {{ proizvod.proizvodjac_ime }}
+                <form action="{{ url_for('poruci_proizvod', proizvod_id = proizvod.id) }}" required method="post">
+                    <div>
+                        <div class="red">
+                            <div class="blok zadnji">
+                                {{ proizvod.ime }} - {{ proizvod.proizvodjac_ime }}
+                            </div>
+                        
+                            <div class="blok col-2">
+                                {{ proizvod.cena }} RSD
+                            </div>
                         </div>
-    
-                        <div class="blok col-2">
-                            {{ proizvod.cena }} RSD
-                        </div>
-                    </div>
 
-                    <div class="blok zadnji">
-                        {{ proizvod.opis }}
+                        {%if opis != ''%}
+                        <div class="blok">
+                            {{ proizvod.opis }}
+                        </div>
+                        {%endif%}
                     </div>
                 </div>
             <div class="red">
@@ -56,9 +59,6 @@
             </form>
             {% endfor %}
             </div>
+        </div>
     </div>
-</div>
-{% endblock %}
-
-{% block skripte %}
 {% endblock %}
