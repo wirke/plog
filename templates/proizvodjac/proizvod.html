@@ -60,10 +60,14 @@
         </button>
 
         <select class="blok col-3" name="izabrano_skl" required>
-          <option selected disabled>Dodajte u magacin</option>
+          {%if sva_skladista%}
+            <option selected disabled>Dodajte u magacin</option>
           {% for skl in sva_skladista %}
-            <option value="{{ skl.id }}">{{ skl.ime }}{{ skl.lokacija }}({{ skl.dostupni_kapacitet }})</option>
+            <option value="{{ skl.id }}">{{ skl.ime }} - {{ skl.lokacija }} ({{ skl.dostupan_kapacitet }})</option>
           {% endfor %}
+          {%else%}
+            <option disabled selected>Nema dostupnih skladista</option>
+          {%endif%}
         </select>
         <input class="blok" id="form1" min="0" placeholder="Kolicina" name="kolicina" type="number" style="width: 310px;" required>
       </form>
