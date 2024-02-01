@@ -33,8 +33,8 @@
                     {% if not skladista %}
                     <option selected disabled>Proizvod nedostupan</option>
                     {%else%}
-                    {% for skladiste in skladista %}
                     <option selected disabled>Izaberi magacin</option>
+                    {% for skladiste in skladista %}
                         <option value="{{ skladiste.id }}">{{ skladiste.logisticar_ime }} - {{ skladiste.lokacija }} ({{skladiste.kolicina_proizvoda}})</option>
                     {% endfor %}
                     {%endif%}
