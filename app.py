@@ -553,6 +553,33 @@ def postoji_proizvod(korisnik_id):
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
 def proizvod(proizvod_id) -> html:
     
+    if request.method == 'GET':
+        upit_pr= """
+        SELECT p.id, p.ime, p.kategorija, p.cena, p.opis
+        FROM proizvod p
+        WHERE p.id = %s
+        """
+        kursor.execute(upit_pr, (proizvod_id,))
+        proizvod = kursor.fetchone()
+
+        upit_mag = """
+        SELECT s.id, s.ime, s.kapacitet, s.lokacija
+        FROM skladiste s
+        JOIN sadrzi sd ON s.id=sd.skladiste_id
+        WHERE sd.proizvod_id = %s
+        """
+        kursor.execute(upit_mag, (proizvod_id,))
+        skladiste = kursor.fetchall()
+
+        upit_sva_skladista = """
+        SELECT s.id, s.ime, s.kapacitet, s.lokacija
+        FROM skladiste s
+        LEFT JOIN sadrzi sd ON s.id = sd.skladiste_id AND sd.proizvod_id = <id_proizvoda>
+        WHERE sd.proizvod_id IS NULL;
+        """
+        kursor.execute(upit_sva_skladista, (proizvod_id,))
+        sva_skladista= kursor.fetchall()
+
     if request.method == "POST":
         if 'azuriraj_proizvod' in request.form:
             upit = """UPDATE proizvod
@@ -560,37 +587,46 @@ def proizvod(proizvod_id) -> html:
             WHERE id = %s
             """
             vrednosti = (request.form['prIme'], request.form['prKategorija'],request.form['prCena'],request.form['prOpis'], proizvod_id)
-            kursor.execute(upit, vrednosti)
+            kursor.execute(upit, (vrednosti,))
             konekcija.commit()
-            return redirect(url_for('moji_proizvodi'))
+            return redirect(url_for('prenos', proizvod_id=proizvod_id))
+
         elif 'dodavanje' in request.form:
-            upit = """INSERT INTO
-            sadrzi (proizvod_id, skladiste_id, kolicina)
-            VALUES (%s, %s, %s)
+            kap_mag = """
+            SELECT s.id, s.ime, s.kapacitet - COALESCE(SUM(sd.kolicina), 0) AS dostupni_kapacitet
+            FROM skladiste s
+            LEFT JOIN sadrzi sd ON s.id = sd.skladiste_id
+            WHERE s.id = %s
             """
-            kursor.execute(upit, (proizvod_id, request.form.get('izabrano_skl'), request.form.get('quantity'),))
-            konekcija.commit()
-            return redirect(url_for('pregledaj_magacine'))
-        
-    upit_pr= """SELECT p.id, p.ime, p.kategorija, p.cena, p.opis
-    FROM proizvod p
-    WHERE p.id = %s
-    """
-    kursor.execute(upit_pr, (proizvod_id,))
-    proizvod = kursor.fetchall()
+            kursor.execute(kap_mag, (request.form.get('izabrano_skl'),))
+            rezultat = kursor.fetchone()
+            dostupni_kapacitet = int(rezultat['dostupni_kapacitet'])
+            
+            if int(request.form.get('kolicina')) <= dostupni_kapacitet:
+                upit = """INSERT INTO
+                sadrzi (proizvod_id, skladiste_id, kolicina)
+                VALUES (%s, %s, %s)
+                """
+                kursor.execute(upit, (proizvod_id, request.form.get('izabrano_skl'), request.form.get('kolicina'),))
+                konekcija.commit()
+                return redirect(url_for('prenos', proizvod_id=proizvod_id))
 
-    upit_mag = """SELECT s.id, s.ime, s.kapacitet, s.lokacija
-    FROM skladiste s
-    JOIN sadrzi sd ON s.id=sd.skladiste_id
-    WHERE sd.proizvod_id = %s
-    """
-    kursor.execute(upit_mag, (proizvod_id,))
-    skladiste = kursor.fetchall()
+            else:
+                flash('Proizvod prelazi dostupnu kolicinu magacina')
+                return redirect(url_for('greska'))
 
-    upit_sva_skladista = """SELECT * FROM skladiste"""
-    kursor.execute(upit_sva_skladista)
-    sva_skladista= kursor.fetchall()
+        elif 'brisanje_iz_skladista' in request.form:
+            skladiste_id = request.form['skladiste_id']
+            izbrisi_proizvod_iz_skladista(proizvod_id, skladiste_id, kursor, konekcija)
+            return redirect(url_for('prenos', proizvod_id=proizvod_id))
+
     return render_template("/proizvodjac/proizvod.html", proizvod=proizvod, skladiste=skladiste, sva_skladista=sva_skladista)
+
+@app.route("/proizvodjac/redirect/<int:proizvod_id>", methods=['GET', 'POST'])
+@zahteva_ulogovanje
+@zahteva_dozvolu(roles=['Admin', 'Proizvođač'])
+def prenos(proizvod_id):
+    return redirect(url_for('proizvod', proizvod_id=proizvod_id))
 
 @app.route("/proizvodjac/magacini", methods=['GET', 'POST'])
 @zahteva_ulogovanje

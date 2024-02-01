@@ -1,97 +1,74 @@
 {% extends 'navbar.html' %}
-{% block title %}Plog - Moji proizvodi{% endblock %}
+{% block title %}
+  Plog - Moji proizvodi
+{% endblock %}
 {% block content %}
-<div class="display">
+  <div class="display">
     <div class="kontejner">
+      {% if proizvodi %}
+        <div class="red col-12">
+          <div class="blok zadnji">Ime proizvoda</div>
+          <div class="blok col-3">Kategorija</div>
+          <div class="blok col-2">Cena</div>
+          <button class="blok1"><i class="fa-solid fa-eye ikonica" style="color:#ff8a5b;"></i></button>
+          <button class="blok1"><i class="fa-solid fa-trash ikonica" style="color: #ff8a5b;"></i></button>
+        </div>
 
-        {% if proizvodi %} 
-            <div class="red col-12">
-                <div class="blok zadnji">Ime proizvoda</div>
-                <div class="blok col-3">Kategorija</div>
-                <div class="blok col-2">Cena</div>
-                <div class="d-flex" style="width: fit-content;">
-                <button class="blok1 sabmit">
-                    <i class="fa-solid fa-eye ikonica" style="color:#ff8a5b;"></i>
-                </button>
-                <button class="blok1 sabmit">
-                    <i class="fa-solid fa-trash ikonica" style="color: #ff8a5b;"></i>
-                </button>
-                </div>
-            </div> 
+        {% for p in proizvodi %}
+          <div style="margin-left: 15px; margin-bottom: -15px;">
+            <hr class="zubor" />
+          </div>
 
-            <div style="margin-left: 15px; margin-bottom: -15px;">
-                <hr class="zubor">
-             </div>
+          <div class="column col-12">
+            <div class="red" style="padding-right:15px;">
+              <div class="blok zadnji">{{ p.ime }}</div>
+              <div class="blok col-3">{{ p.kategorija }}</div>
 
-            {% for p in proizvodi %}
-            <div class="column col-12">
-                <div class="red" style="padding-right:15px;">
-                    <div class="blok zadnji">
-                        {{ p.ime }}
-                    </div>
-                    <div class="blok col-3">
-                        {{ p.kategorija }}
-                    </div>
+              <div class="blok col-2">{{ p.cena }}</div>
 
-                    <div class="blok col-2">
-                       {{ p.cena }}
-                    </div>
+              <form action="{{ url_for('proizvod', proizvod_id = p.id) }}" method="get">
+                <button class="blok2" type="submit"><i class="fa-solid fa-eye ikonica" style="color:#fff;"></i></button>
+              </form>
 
-                    <div class="d-flex">
-                        <form action="{{ url_for('proizvod', proizvod_id=p.id) }}" method="get"> 
-                            <button class="blok2 sabmit" type="submit" style="width: auto;">
-                                <i class="fa-solid fa-eye ikonica" style="color:#fff;"></i>
-                            </button>
-                        </form>
+              <button class="blok2" data-bs-toggle="modal" data-bs-target="#brisanjeModal{{ p.id }}">
+                <i class="fa-solid fa-trash ikonica" style="color: #fff;"></i>
+              </button>
 
-                        <button class="blok2 sabmit" data-bs-toggle="modal" data-bs-target="#brisanjeModal{{p.id}}" style="width: auto;">
-                            <i class="ikonica fa-solid fa-trash ikonica" style="color: #fff;"></i>
-                        </button>
-                            
-                        <!-- Modal -->
-            <div class="modal" tabindex="-1" id="brisanjeModal{{p.id}}">
+              <!-- Modal -->
+              <div class="modal" tabindex="-1" id="brisanjeModal{{ p.id }}">
                 <div class="modal-dialog modal-dialog-centered" data-bs-backdrop="static">
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title">Upozorenje</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                      <p>Da li ste sigurni da želite da obrišete proizvod {{p.ime}}?</p>
+                      <p>Da li ste sigurni da želite da obrišete proizvod {{ p.ime }}?</p>
                     </div>
                     <div class="modal-footer">
-                        <form method="POST" action="{{ url_for('brisanje_proizvoda', proizvod_id=p.id) }}">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
-                      <button type="submit" class="btn btn-danger">Obriši</button>
+                      <form method="POST" action="{{ url_for('brisanje_proizvoda', proizvod_id = p.id) }}">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                        <button type="submit" class="btn btn-danger">Obriši</button>
                       </form>
                     </div>
                   </div>
                 </div>
               </div>
-                    </div>
-                </div>
-                {%if p.opis%}
-                <div class="red">
-                    <div class="blok zadnji">
-                        {{ p.opis }}
-                    </div>
-                </div>
-                {% endif %}
             </div>
-
-            <div style="margin-left: 15px; margin-bottom: -15px;">
-                <hr class="zubor">
-            </div>
+            {% if p.opis %}
+              <div class="red">
+                <div class="blok zadnji">{{ p.opis }}</div>
+              </div>
+            {% endif %}
+          </div>
         {% endfor %}
-
-        {% else %}
+      {% else %}
         <div class="kontejner">
-            <div class="blok">
-                <h1>Trenutno nemate proizvode</h1>
-            </div>
+          <div class="blok">
+            <h1>Trenutno nemate proizvode</h1>
+          </div>
         </div>
-        {% endif %} 
-
+      {% endif %}
     </div>
-</div>
+  </div>
 {% endblock %}
