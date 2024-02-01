@@ -1,71 +1,61 @@
 {% extends 'navbar.html' %}
 {% block title %}Plog - Proizvod{% endblock %}
 {% block content %}
-<div class="display">
-    <div class="kontejner">
+<div class="display" style="padding-right: 30px;">
+    <div class="kontejner red">
 
-        <div class="red">
-            <div class="blok col-3">
-                Naziv proizvoda
-            </div>
-            <div class="blok col-2">
-                Naziv proizvođača
-            </div>
-            <div class="blok col-2">
-                Cena
-            </div>
-            <div class="blok red">
-                Magacin
-            </div>
-            <div class="blok col-1">
-                Količina
-            </div>
-            <button class="blok1" type="submit">
-                <i class="fa-solid fa-cart-shopping" style="color: #ff8a5b;"></i>
-            </button>
+        <div class="blok" style="width: 500px; height: 500px; padding: 0px;">
+            <img style="border-radius: 17px;" src="{{ url_for('static', filename='../static/img/placeholder.jpg') }}">
         </div>
 
-        <div style="margin-left: 15px; margin-bottom: -15px;">
-            <hr class="zubor">
-         </div>
+        <div class="column zadnji">
 
-        <div class="red">
+            <div class="column">
+                {% for proizvod in proizvod %}
+            <form action="{{ url_for('poruci_proizvod', proizvod_id = proizvod.id) }}" required method="post">
+                <div  style="margin-right: 15px;">
+                    <div class="red">
+                        <div class="blok zadnji">
+                            {{ proizvod.ime }} - {{ proizvod.proizvodjac_ime }}
+                        </div>
+    
+                        <div class="blok col-2">
+                            {{ proizvod.cena }} RSD
+                        </div>
+                    </div>
 
-            {% for proizvod in proizvod %}
-            <div class="blok col-3">
-                {{ proizvod.ime }}
-            </div>
-
-            <div class="blok col-2">
-                {{ proizvod.proizvodjac_ime }}
-            </div>
-
-            <div class="blok col-2">
-                {{ proizvod.cena }}
-            </div>
-            <form class="red" action="{{ url_for('poruci_proizvod', proizvod_id = proizvod.id) }}" required method="post">
+                    <div class="blok zadnji">
+                        {{ proizvod.opis }}
+                    </div>
+                </div>
+            <div class="red">
                 <select class="blok zadnji" id="skladiste_id" name="skladiste_id" required>
-                    <option selected disabled>Izaberi magacin</option>
+                    {% if not skladista %}
+                    <option selected disabled>Proizvod nedostupan</option>
+                    {%else%}
                     {% for skladiste in skladista %}
+                    <option selected disabled>Izaberi magacin</option>
                         <option value="{{ skladiste.id }}">{{ skladiste.logisticar_ime }} - {{ skladiste.lokacija }} ({{skladiste.kolicina_proizvoda}})</option>
                     {% endfor %}
+                    {%endif%}
                 </select>
 
                 <div class="col-3" style="height: 55px;">
                     <input name="kolicina" class="blok" required id="form1" min="1" max="{{ kolicina_proizvoda }}" value="1" type="number">
                 </div>
-                
+
                 <button class="blok2"  type="submit" {% if not skladista %}disabled{% endif %}>
-                    <i class="fa-solid fa-cart-shopping" style="color:#fff"></i>
+                    <i class="fa-solid fa-cart-shopping ikonica" style="color:#fff"></i>
                 </button>
-        </div>
-            <div>
-                <div class="red">
-                    <input for="napomena" class="blok zadnji" type="text" name="napomena" placeholder="Napomena">
-                </div>
-            </form>
+
             </div>
+            <div class="red">
+                <input for="napomena" class="blok zadnji" type="text" name="napomena" placeholder="Napomena">
+            </div>
+
+            </form>
             {% endfor %}
+            </div>
     </div>
 </div>
 {% endblock %}
