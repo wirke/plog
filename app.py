@@ -468,11 +468,12 @@ def poruci_proizvod(proizvod_id):
         upit_kolicine = "SELECT kolicina FROM sadrzi WHERE skladiste_id = %s AND proizvod_id = %s"
         kursor.execute(upit_kolicine, (skladiste_id, proizvod_id))
         trenutna_kolicina = kursor.fetchone()
+        
+        if not skladiste_id:
+            flash('Molimo izaberite magacin')
+            return redirect(url_for('greska'))
 
         if trenutna_kolicina and int(kolicina) <= trenutna_kolicina['kolicina']:
-            if skladiste_id == None:
-                flash('Molimo izaberite magacin')
-                return redirect(url_for('greska'))
             dodaj_porudzbinu = """
             INSERT INTO porudzbina (datum, kolicina, isporuceno, napomena, kupac_id, proizvod_id, skladiste_id)
             VALUES (CURDATE(), %s, 0, %s, %s, %s, %s)
@@ -501,8 +502,8 @@ def novi_proizvod() -> html:
         return render_template("/proizvodjac/novi-proizvod.html")
     
     if request.method == "POST":
-        upit = """INSERT INTO proizvod(proizvodjac_id, ime, kategorija, opis, cena)
-        VALUES (%s, %s, %s, %s, %s)
+        upit = """INSERT INTO proizvod(proizvodjac_id, ime, kategorija, opis, cena, slika)
+        VALUES (%s, %s, %s, %s, %s, 'Null')
         """
         forma = (session['korisnik_id'], request.form['proizvodIme'], request.form['kategorijaIme'], request.form['proizvodOpis'], request.form['proizvodCena'])
         kursor.execute(upit, forma)
@@ -560,7 +561,8 @@ def proizvod(proizvod_id) -> html:
     
     if request.method == 'GET':
         upit_pr= """
-        SELECT p.id, p.ime, p.kategorija, p.cena, p.opis
+        SELECT p.id, p.ime, p.kategorija, p.cena, p.opis, 
+               (SELECT COUNT(*) FROM porudzbina WHERE proizvod_id = p.id) AS ukupno_porudzbina
         FROM proizvod p
         WHERE p.id = %s
         """
@@ -568,10 +570,14 @@ def proizvod(proizvod_id) -> html:
         proizvod = kursor.fetchone()
 
         upit_mag = """
-        SELECT s.id, s.ime, s.kapacitet, s.lokacija
+        SELECT s.id, s.ime, s.kapacitet, s.lokacija, 
+               SUM(sd.kolicina) AS kolicina_proizvoda,
+               COUNT(o.id) AS broj_porudzbina
         FROM skladiste s
-        JOIN sadrzi sd ON s.id=sd.skladiste_id
+        JOIN sadrzi sd ON s.id = sd.skladiste_id
+        LEFT JOIN porudzbina o ON sd.proizvod_id = o.proizvod_id AND sd.skladiste_id = o.skladiste_id
         WHERE sd.proizvod_id = %s
+        GROUP BY s.id, s.ime, s.kapacitet, s.lokacija
         """
         kursor.execute(upit_mag, (proizvod_id,))
         skladiste = kursor.fetchall()

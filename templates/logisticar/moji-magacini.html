@@ -41,7 +41,7 @@
             <div class="blok zadnji">
                 {{ s.kapacitet }}
             </div>
-            <div class="zadnji blok">{%if s.popunjenost == None%} Prazan {%else%} {{s.popunjenost}} {%endif%}</div>
+            <div class="zadnji blok">{%if s.popunjenost == None%} Prazan {%elif s.popunjenost == 0%} Prazan {%else%} {{s.popunjenost}} {%endif%}</div>
             <div style="margin-right: 15px;">
                 <form method="POST" action="{{ url_for('magacin', skladiste_id=s.id ) }}">
                     <button class="blok2 zadnji" type="submit">
