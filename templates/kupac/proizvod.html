@@ -12,53 +12,53 @@
 
             <div class="column">
                 {% for proizvod in proizvod %}
-            <form action="{{ url_for('poruci_proizvod', proizvod_id = proizvod.id) }}" required method="post">
-                <div  style="margin-right: 15px;">
+                <form action="{{ url_for('poruci_proizvod', proizvod_id = proizvod.id) }}" required method="post">
+                    <div>
+                        <div class="red">
+                            <div class="blok zadnji">
+                                {{ proizvod.ime }} - {{ proizvod.proizvodjac_ime }}
+                            </div>
+                        
+                            <div class="blok col-2">
+                                {{ proizvod.cena }} RSD
+                            </div>
+                        </div>
+
+                        {%if opis != ''%}
+                        <div class="blok">
+                            {{ proizvod.opis }}
+                        </div>
+                        {%endif%}
+                    </div>
+                    <div>
+                        <div class="red">
+                            <select class="blok zadnji" id="skladiste_id" name="skladiste_id" required>
+                                {% if not skladista %}
+                                <option selected disabled>Proizvod nedostupan</option>
+                                {%else%}
+                                {% for skladiste in skladista %}
+                                <option selected disabled>Izaberi magacin</option>
+                                    <option value="{{ skladiste.id }}">{{ skladiste.logisticar_ime }} - {{ skladiste.lokacija }} ( {{skladiste.kolicina_proizvoda}} )</option>
+                                {% endfor %}
+                                {%endif%}
+                            </select>
+                        
+                            <div class="col-3" style="height: 55px;">
+                                <input name="kolicina" class="blok" required id="form1" min="1" max="{{ kolicina_proizvoda }}" value="1" type="number">
+                            </div>
+                        
+                            <button class="blok2"  type="submit" {% if not skladista %}disabled{% endif %}>
+                                <i class="fa-solid fa-cart-shopping ikonica" style="color:#fff"></i>
+                            </button>
+                        
+                        </div>
                     <div class="red">
-                        <div class="blok zadnji">
-                            {{ proizvod.ime }} - {{ proizvod.proizvodjac_ime }}
-                        </div>
-    
-                        <div class="blok col-2">
-                            {{ proizvod.cena }} RSD
-                        </div>
-                    </div>
-
-                    <div class="blok zadnji">
-                        {{ proizvod.opis }}
+                        <input for="napomena" class="blok zadnji" type="text" name="napomena" placeholder="Napomena">
                     </div>
                 </div>
-            <div class="red">
-                <select class="blok zadnji" id="skladiste_id" name="skladiste_id" required>
-                    {% if not skladista %}
-                    <option selected disabled>Proizvod nedostupan</option>
-                    {%else%}
-                    {% for skladiste in skladista %}
-                    <option selected disabled>Izaberi magacin</option>
-                        <option value="{{ skladiste.id }}">{{ skladiste.logisticar_ime }} - {{ skladiste.lokacija }} ({{skladiste.kolicina_proizvoda}})</option>
-                    {% endfor %}
-                    {%endif%}
-                </select>
-
-                <div class="col-3" style="height: 55px;">
-                    <input name="kolicina" class="blok" required id="form1" min="1" max="{{ kolicina_proizvoda }}" value="1" type="number">
-                </div>
-
-                <button class="blok2"  type="submit" {% if not skladista %}disabled{% endif %}>
-                    <i class="fa-solid fa-cart-shopping ikonica" style="color:#fff"></i>
-                </button>
-
+                </form>
+                {% endfor %}
             </div>
-            <div class="red">
-                <input for="napomena" class="blok zadnji" type="text" name="napomena" placeholder="Napomena">
-            </div>
-
-            </form>
-            {% endfor %}
-            </div>
+        </div>
     </div>
-</div>
-{% endblock %}
-
-{% block skripte %}
 {% endblock %}
