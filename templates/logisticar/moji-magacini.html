@@ -27,7 +27,6 @@
          </div>
         {% for s in skladiste %}
         <div class="red col-12">
-
             <div class="blok col-4">
                 {{ s.ime }}
             </div>
@@ -47,8 +46,8 @@
                     </button>
                 </form>
             </div>
-            <button class="blok2 zadnji" data-bs-toggle="modal" data-bs-target="#brisanjeModal{{s.id}}">
-                <i class="fa-solid fa-trash" style="color: #fff;"></i>
+            <button class="blok2" data-bs-toggle="modal" data-bs-target="#brisanjeModal{{s.id}}">
+                <i class="fa-solid fa-trash ikonica" style="color: #fff;"></i>
             </button>
                 <!-- Modal -->
             <div class="modal" tabindex="-1" id="brisanjeModal{{s.id}}">

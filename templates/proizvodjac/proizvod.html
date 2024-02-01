@@ -1,71 +1,69 @@
 {% extends 'navbar.html' %}
-{% block title %}Plog - Proizvod{% endblock %}
+{% block title %}
+  Plog - Proizvod
+{% endblock %}
 {% block content %}
-<div class="display">
+  <div class="display">
     <div class="kontejner">
-        <div class="pozadina">
-           {% for pr in proizvod %}
-            <form method="POST">
-            <div class="red col-12" style="padding-right: 15px; padding-bottom: 15px;">
-
-                <div style="margin-right: 15px;">
-                    <button class="blok2 sabmit" type="submit" name="azuriraj_proizvod">
-                        <i class="fa-solid fa-pen" style="color:#fff;"></i>
-                    </button>
-                </div>
-                <div class="vlaga col-3">
-                   <input class="blok col-12" name="prIme" type="text" value="{{ pr.ime }}">
-                </div>
-                <div class="vlaga col-3">
-                    <input class="blok col-12" type="text" name="prKategorija" value="{{ pr.kategorija }}">
-                </div>
-        
-                <div class="vlaga zadnji">
-                    <input class="blok col-12" type="text" name="prCena" value="{{ pr.cena }}">
-                </div>
-                <div class="vlaga zadnji">
-                    <input class="blok col-12" type="text" name="prOpis" value="{{ pr.opis }}">
-                </div>
+      <div class="pozadina">
+        <form method="POST">
+          <div class="red col-12" style="padding-right: 15px; padding-bottom: 15px;">
+            <div style="margin-right: 15px;">
+              <button class="blok2 sabmit" type="submit" name="azuriraj_proizvod">
+                <i class="fa-solid fa-pen" style="color:#fff;"></i>
+              </button>
             </div>
-            </form>
-             {% endfor %} 
-        </div>
-    </div>
-
-    <div class="kontejner">
-        {% for sk in skladiste %}
-    <div class="red col-12">
-        <div class="blok col-3">
-            {{ sk.ime }}
-        </div>
-    
-        <div class="blok col-3">
-            {{ sk.lokacija }}
-        </div>
-
-        <div class="blok col-3">
-            {{ sk.kapacitet }}
-        </div>
-
-    </div>
-    {% endfor %}
-        <form method="POST" style="margin-right: 15px;" class="red col-12">
-            <button class="col-1 blok2" type="submit" name="dodavanje">
-                <i class="fa-solid fa-plus ikonica" style="color: #fff;"></i>
-            </button>
-        <div class="col-2 vlaga">
-            <select class="magacin-select blok" name="izabrano_skl" required>
-                <option selected disabled>Dodajte u magacin</option>
-                {% for skl in sva_skladista %}
-                <option value="{{skl.id}}"> {{skl.ime}}({{skl.kapacitet}}/{{skl.lokacija}})</option>
-                {% endfor %}
-            </select>
-        </div>
-            <div class="blok col-2" style="margin-inline: 2%;">
-                    <input id="form1" min="1" name="quantity" type="number" required>
+            <div class="vlaga col-3">
+              <input class="blok col-12" name="prIme" type="text" value="{{ proizvod.ime }}" />
             </div>
+            <div class="vlaga col-3">
+              <input class="blok col-12" type="text" name="prKategorija" value="{{ proizvod.kategorija }}" />
+            </div>
+
+            <div class="vlaga zadnji">
+              <input class="blok col-12" type="text" name="prCena" value="{{ proizvod.cena }}" />
+            </div>
+          </div>
+          {% if proizvod.opis != '' %}
+            <div class="red col-12" style="padding-right: 15px; padding-bottom: 15px; margin-top: -15px;">
+              <div class="vlaga zadnji">
+                <input class="blok col-12" type="text" name="prOpis" value="{{ proizvod.opis }}" />
+              </div>
+            </div>
+          {% endif %}
         </form>
-    
-</div>
-</div>
+      </div>
+    </div>
+
+    <div class="kontejner">
+      {% for sk in skladiste %}
+        <div class="red col-12">
+
+          <button class="blok2">
+            <i class="fa-solid fa-trash ikonica" style="color: #fff;"></i>
+          </button>
+
+          <div class="blok col-3">{{ sk.ime }}</div>
+
+          <div class="blok col-3">{{ sk.lokacija }}</div>
+
+          <div class="blok col-3">{{ sk.kapacitet }}</div>
+        </div>
+      {% endfor %}
+      <form method="POST" action="{{ url_for('proizvod', proizvod_id = proizvod.id) }}" style="margin-right: 15px;" class="red col-12">
+        <button class="blok2" type="submit" name="dodavanje">
+          <i class="fa-solid fa-plus ikonica" style="color: #fff;"></i>
+        </button>
+
+        <select class="blok col-3" name="izabrano_skl" required>
+          <option selected disabled>Dodajte u magacin</option>
+          {% for skl in sva_skladista %}
+            <option value="{{ skl.id }}">{{ skl.ime }}{{ skl.lokacija }}({{ skl.dostupni_kapacitet }})</option>
+          {% endfor %}
+        </select>
+        <div class="blok">Količina:</div>
+        <input class="blok" id="form1" min="1" name="kolicina" type="number" style="width: 310px;" required>
+      </form>
+    </div>
+  </div>
 {% endblock %}
