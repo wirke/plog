@@ -1,8 +1,4 @@
 # da ne moze da se ubaci proizvod u skladistu u kojem je vec ubacen 
-
-# ukoliko proizvod_id se ne nalazi u ni jednoj sadrzi tabeli, ispisati proizvod nedostupan 
-
-# brisanje proizvoda iz magacina 
 # ukloniti pregled magacina (linkove magacini i magacin) za proizvodjaca 
 ----------------------------------------------------------------------------------
 # ukoliko budes imao vremena dodaj mogucnost ubacivanja slike za proizvod 
@@ -12,6 +8,5 @@
 # za kupca urediti stranicu proizvod po wireframe-u 
 ----------------------------------------------------------------------------------
 # urediti ostale stranice (uredi elemente da budu aligned i tako to) 
-# takodje filtriranje na neke od stranica bi bilo pozeljno 
 ----------------------------------------------------------------------------------
 # dovrsiti wireframe 

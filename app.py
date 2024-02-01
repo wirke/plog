@@ -291,7 +291,7 @@ def prikaz_proizvoda() -> html:
     svi_proizvodjaci = kursor.fetchall()
 
     upit_proizvoda = """
-        SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
+        SELECT p.id, p.ime, p.kategorija, p.cena, p.opis, u.ime AS proizvodjac_ime
         FROM proizvod p
         JOIN user u ON p.proizvodjac_id = u.id
         WHERE (%s = '' OR p.kategorija = %s) AND (%s = '' OR p.proizvodjac_id = %s)
@@ -319,7 +319,7 @@ def kupi_proizvod(proizvod_id: int) -> html:
     skladista = kursor.fetchall()
 
     upit_proizvoda = """
-        SELECT p.id, p.ime, p.kategorija, p.cena, u.ime AS proizvodjac_ime
+        SELECT p.id, p.ime, p.opis, p.kategorija, p.cena, u.ime AS proizvodjac_ime
         FROM proizvod p
         JOIN user u ON p.proizvodjac_id = u.id
         WHERE p.id = %s
