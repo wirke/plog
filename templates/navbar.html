@@ -55,6 +55,9 @@
 
                 {% elif user_data['rola'] == 'Admin' %}
                 <a href="/admin/korisnici" class="bezista link" type="submit">Nalozi</a>
+                <a href="{{ url_for('export', tip='proizvod') }}" class="bezista link" type="submit">Proizvodi.csv</a>
+                <a href="{{ url_for('export', tip='skladiste') }}" class="bezista link" type="submit">Skladista.csv</a>
+                <a href="{{ url_for('export', tip='porudzbina') }}" class="bezista link" type="submit">Porudzbine.csv</a>
 
                 <a href="/logout" class="bezista link" type="submit">
                     <i class="fa-solid fa-right-from-bracket bezista"></i>
