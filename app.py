@@ -19,6 +19,7 @@ kursor = konekcija.cursor(dictionary=True)
 app = Flask(__name__)
 app.secret_key = "tajni_kljuc_aplikacije"
 bcrypt = Bcrypt(app)
+
 #############################################################################
 def ulogovan():
     return 'korisnik_id' in session
@@ -566,7 +567,7 @@ def proizvod(proizvod_id) -> html:
         SELECT s.id, s.ime, s.kapacitet, s.lokacija
         FROM skladiste s
         JOIN sadrzi sd ON s.id=sd.skladiste_id
-        WHERE sd.proizvod_id NOT %s
+        WHERE sd.proizvod_id = %s
         """
         kursor.execute(upit_mag, (proizvod_id,))
         skladiste = kursor.fetchall()
