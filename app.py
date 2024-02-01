@@ -566,7 +566,7 @@ def proizvod(proizvod_id) -> html:
         SELECT s.id, s.ime, s.kapacitet, s.lokacija
         FROM skladiste s
         JOIN sadrzi sd ON s.id=sd.skladiste_id
-        WHERE sd.proizvod_id = %s
+        WHERE sd.proizvod_id NOT %s
         """
         kursor.execute(upit_mag, (proizvod_id,))
         skladiste = kursor.fetchall()
