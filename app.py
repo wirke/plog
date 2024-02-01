@@ -572,10 +572,10 @@ def proizvod(proizvod_id) -> html:
         skladiste = kursor.fetchall()
 
         upit_sva_skladista = """
-        SELECT s.id, s.ime, s.kapacitet, s.lokacija
+        SELECT s.id, s.ime, s.kapacitet, s.lokacija, s.kapacitet - COALESCE(SUM(sr.kolicina), 0) AS dostupan_kapacitet
         FROM skladiste s
-        LEFT JOIN sadrzi sd ON s.id = sd.skladiste_id AND sd.proizvod_id = <id_proizvoda>
-        WHERE sd.proizvod_id IS NULL;
+        LEFT JOIN sadrzi sr ON s.id = sr.skladiste_id
+        WHERE sr.proizvod_id IS NULL OR sr.proizvod_id != %s
         """
         kursor.execute(upit_sva_skladista, (proizvod_id,))
         sva_skladista= kursor.fetchall()
@@ -587,13 +587,13 @@ def proizvod(proizvod_id) -> html:
             WHERE id = %s
             """
             vrednosti = (request.form['prIme'], request.form['prKategorija'],request.form['prCena'],request.form['prOpis'], proizvod_id)
-            kursor.execute(upit, (vrednosti,))
+            kursor.execute(upit, vrednosti)
             konekcija.commit()
             return redirect(url_for('prenos', proizvod_id=proizvod_id))
 
         elif 'dodavanje' in request.form:
             kap_mag = """
-            SELECT s.id, s.ime, s.kapacitet - COALESCE(SUM(sd.kolicina), 0) AS dostupni_kapacitet
+            SELECT s.id, s.ime, s.kapacitet - COALESCE(SUM(sd.kolicina), 0) AS dostupni_kapacitet, s.lokacija
             FROM skladiste s
             LEFT JOIN sadrzi sd ON s.id = sd.skladiste_id
             WHERE s.id = %s
