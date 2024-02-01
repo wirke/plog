@@ -72,19 +72,5 @@
         <input class="blok" id="form1" min="0" placeholder="Kolicina" name="kolicina" type="number" style="width: 310px;" required>
       </form>
     </div>
-    <div class="kontejner">
-      <label for="slika">
-        <img {% if proizvod.slika %}
-        src="/static/uploads/{{ proizvod.slika }}"
-        {% else %}
-        src="/static/uploads/placeholder.png"
-        {% endif %}
-        id="slika_pregled"/>
-        </label>
-        <label for="slika" class="btn btn-primary">Odaberi sliku</label>
-        <input type="file" accept="image/*" class="custom-file-input" hidden
-        id="slika" name="slika">
-
-    </div>
   </div>
 {% endblock %}
