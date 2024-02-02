@@ -9,3 +9,25 @@
 flash('Poruka koju želite da prikažete.')
 
 href="{{url_for('isporuci', porudzbina_id=p.id)}}"
+
+odabrana_kategorija = request.args.get('kategorija', '')
+odabrano_sortiranje = request.args.get('sortiranje', 'asc')
+odabrani_proizvodjac = request.args.get('proizvodjac', '')
+
+upit_kategorije = "SELECT DISTINCT kategorija FROM proizvod"
+kursor.execute(upit_kategorije)
+sve_kategorije = [red['kategorija'] for red in kursor.fetchall()]
+
+upit_proizvodjaci = "SELECT id, ime FROM user WHERE rola = 'Proizvođač'"
+kursor.execute(upit_proizvodjaci)
+svi_proizvodjaci = kursor.fetchall()
+
+upit_proizvoda = """
+    SELECT p.id, p.ime, p.kategorija, p.cena, p.opis, u.ime AS proizvodjac_ime
+    FROM proizvod p
+    JOIN user u ON p.proizvodjac_id = u.id
+    WHERE (%s = '' OR p.kategorija = %s) AND (%s = '' OR p.proizvodjac_id = %s)
+    ORDER BY p.cena {0}
+""".format(odabrano_sortiranje)
+kursor.execute(upit_proizvoda, (odabrana_kategorija, odabrana_kategorija, odabrani_proizvodjac, odabrani_proizvodjac))
+proizvodi = kursor.fetchall()

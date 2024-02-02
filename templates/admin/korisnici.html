@@ -2,6 +2,28 @@
 {% block title %}Plog - Korisnici{% endblock %}
 {% block content %}
 <div class="display">
+
+  <div class="kontejner">
+    {% if korisnici %}
+    <form  method="GET" action="{{ url_for('prikaz_proizvoda') }}">
+        <select class="blok col-3" name="lokacija" id="lokacija">
+            <option value="">Sve lokacije</option>
+            {% for lokacija in lokacije %}
+                <option value="{{ lokacija }}">{{ lokacija }}</option>
+            {% endfor %}
+        </select>
+
+        <select class="blok col-3" name="rola" id="rola">
+            <option value="">Sve role</option>
+            {% for rola in roles %}
+                <option value="{{ rola }}">{{ rola }}</option>
+            {% endfor %}
+        </select>
+        
+        <button class="blok col-1" type="submit">Primeni</button>
+    </form>
+  </div>    
+
     <div class="kontejner">
 
         <div class="red col-12">
@@ -56,6 +78,11 @@
         </div>
         {% endif %}
     {% endfor %}
+    {%else%}
+    <div class="blok">
+      <h1>Trenutno nema registrovanih korisnika</h1>
+    </div>
+    {% endif %}
     </div>
     </div>
 {% endblock %}

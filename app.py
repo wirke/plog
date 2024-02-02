@@ -137,26 +137,27 @@ def logout():
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin'])
 def pregled_korisnika() -> html:
-    
-    if request.method == 'GET':
-        upit = """SELECT id, email, ime, rola, lokacija
-                  FROM user"""
-        kursor.execute(upit)
-        korisnici = kursor.fetchall()
 
-    elif request.method == 'POST':
-        if 'izbrisi_korisnika' in request.form:
-            korisnik_id = request.form['izbrisi_korisnika']
-            izbrisi = """
-                DELETE FROM user
-                WHERE id = %s
-            """
-            kursor.execute(izbrisi, (korisnik_id,))
-            konekcija.commit()
-            flash("Korisnik uspešno izbrisan!")
-            return redirect(url_for('pregled_korisnika'))
-        
-    return render_template("/admin/korisnici.html", korisnici=korisnici)
+    odabrana_lokacija = request.args.get('lokacija', '')
+    odabrana_rola = request.args.get('rola', '')
+    
+    upit_lokacija = "SELECT DISTINCT lokacija FROM user"
+    kursor.execute(upit_lokacija)
+    lokacije = [red['lokacija'] for red in kursor.fetchall()]
+
+    upit_rola = "SELECT DISTINCT rola FROM user"
+    kursor.execute(upit_rola)
+    role = [red['rola'] for red in kursor.fetchall()]
+
+    upit_korisnici = """
+    SELECT id, email, ime, rola, lokacija 
+    FROM user
+    WHERE (%s = '' OR user.lokacija = %s) AND (%s = '' OR user.rola = %s)
+    """
+    kursor.execute(upit_korisnici, (odabrana_lokacija, odabrana_lokacija, odabrana_rola, odabrana_rola))
+    korisnici = kursor.fetchall()
+
+    return render_template("/admin/korisnici.html", korisnici=korisnici, roles=role, lokacije=lokacije)
 
 @app.route("/admin/export/<tip>")
 @zahteva_ulogovanje
@@ -249,7 +250,7 @@ def pocetna() -> html:
 @zahteva_ulogovanje
 @zahteva_dozvolu(roles=['Admin', 'Proizvođač', 'Logističar', 'Kupac'])
 def izmena_korisnika():
-    
+
     if request.method == "GET":
         return render_template("/izmeni_korisnika.html")
     
@@ -583,10 +584,11 @@ def proizvod(proizvod_id) -> html:
         skladiste = kursor.fetchall()
 
         upit_sva_skladista = """
-        SELECT s.id, s.ime, s.kapacitet, s.lokacija, s.kapacitet - COALESCE(SUM(sr.kolicina), 0) AS dostupan_kapacitet
+        SELECT s.id, s.ime, s.kapacitet, s.lokacija, s.kapacitet - COALESCE(SUM(sd.kolicina), 0) AS dostupan_kapacitet
         FROM skladiste s
-        LEFT JOIN sadrzi sr ON s.id = sr.skladiste_id
-        WHERE sr.proizvod_id IS NULL OR sr.proizvod_id != %s
+        LEFT JOIN sadrzi sd ON s.id = sd.skladiste_id AND sd.proizvod_id = %s
+        WHERE sd.proizvod_id IS NULL
+        GROUP BY s.id, s.ime, s.kapacitet, s.lokacija;
         """
         kursor.execute(upit_sva_skladista, (proizvod_id,))
         sva_skladista= kursor.fetchall()
@@ -810,7 +812,7 @@ def azuriraj_kolicinu_proizvoda(proizvod_id:int, skladiste_id:int, nova_kolicina
             flash("Nova količina proizvoda premašuje trenutni kapacitet")
             return redirect(url_for('greska'))
 
-def izbrisi_proizvod_iz_skladista(proizvod_id:int, skladiste_id:int, kursor, konekcija):
+def izbrisi_proizvod_iz_skladista(proizvod_id: int, skladiste_id: int, kursor, konekcija):
     upit_brisanja = """
         DELETE FROM sadrzi
         WHERE proizvod_id = %s AND skladiste_id = %s

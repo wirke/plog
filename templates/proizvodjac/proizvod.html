@@ -25,7 +25,7 @@
             </div>
 
             <div class="vlaga zadnji">
-              <input class="blok col-12" type="text" name="prCena" value="{{ proizvod.ukupno_porudzbina }}" />
+              <input class="blok col-12" type="text" name="prCena" value="Naruceno: {{ proizvod.ukupno_porudzbina }}" />
             </div>
           </div>
           {% if proizvod.opis != '' %}
@@ -43,12 +43,30 @@
       {% for sk in skladiste %}
         <div class="red col-12">
 
-          <form method="POST" action="{{ url_for('proizvod', proizvod_id = proizvod.id, skladiste_id=sk.id) }}">
-            <button class="blok2" name='brisanje_iz_skladista'>
-              <i class="fa-solid fa-trash ikonica"  style="color: #fff;"></i>
-            </button>
-            <input hidden name="skladiste_id" value="{{sk.id}}">
-          </form>
+          <button class="blok2" data-bs-toggle="modal" data-bs-target="#brisanjeModal{{ proizvod.id }}">
+            <i class="fa-solid fa-trash ikonica" style="color: #fff;"></i>
+        </button>
+        
+        <!-- Modal -->
+        <div class="modal" tabindex="-1" id="brisanjeModal{{ proizvod.id }}">
+            <div class="modal-dialog modal-dialog-centered" data-bs-backdrop="static">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Upozorenje</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Da li ste sigurni da želite da obrišete proizvod {{ proizvod.ime }} iz magacina {{sk.ime}}?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="POST" action="{{ url_for('proizvod', proizvod_id=proizvod.id, skladiste_id=sk.id) }}">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                            <button type="submit" class="btn btn-danger">Obriši</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
           <div class="blok col-3">{{ sk.ime }}</div>
 
@@ -56,7 +74,7 @@
 
           <div class="blok zadnji">{{ sk.kolicina_proizvoda }} / {{ sk.kapacitet }}</div>
 
-          <div class="blok zadnji">{{ sk.broj_porudzbina }}</div>
+          <div class="blok zadnji">Naruceno: {{ sk.broj_porudzbina }}</div>
 
         </div>
       {% endfor %}
@@ -66,15 +84,16 @@
         </button>
 
         <select class="blok col-3" name="izabrano_skl" required>
-          {%if sva_skladista%}
-            <option selected disabled>Dodajte u magacin</option>
-          {% for skl in sva_skladista %}
-            <option value="{{ skl.id }}">{{ skl.ime }} - {{ skl.lokacija }} ( {{ skl.dostupan_kapacitet }} )</option>
-          {% endfor %}
-          {%else%}
-            <option disabled selected>Nema dostupnih skladista</option>
-          {%endif%}
+          {% if sva_skladista %}
+              <option selected disabled>Dodajte u magacin</option>
+              {% for skl in sva_skladista %}
+                  <option value="{{ skl.id }}">{{ skl.ime }} - {{ skl.lokacija }} ({{ skl.dostupan_kapacitet }})</option>
+              {% endfor %}
+          {% else %}
+              <option disabled selected>Nema dostupnih skladista</option>
+          {% endif %}
         </select>
+      
         <input class="blok" id="form1" min="0" placeholder="Kolicina" name="kolicina" type="number" style="width: 310px;" required>
       </form>
     </div>
