@@ -156,6 +156,14 @@ def pregled_korisnika() -> html:
     """
     kursor.execute(upit_korisnici, (odabrana_lokacija, odabrana_lokacija, odabrana_rola, odabrana_rola))
     korisnici = kursor.fetchall()
+    
+    if 'izbrisi_korisnika' in request.form:
+        upit_izbrisi = """
+        DELETE FROM user
+        WHERE id = %s
+        """
+        kursor.execute(upit_izbrisi, (id,))
+        return redirect(url_for('pregled_korisnika'))
 
     return render_template("/admin/korisnici.html", korisnici=korisnici, roles=role, lokacije=lokacije)
 
